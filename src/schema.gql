@@ -1,0 +1,736 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type courierSheet {
+  id: Int!
+  userId: Int!
+  status: Int!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  sheetOrders: [sheetOrder!]!
+  user: user!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type sheetOrderStatusHistory {
+  id: Int!
+  sheetOrderId: Int!
+  status: Int!
+  description: String!
+  userId: Int!
+  createdAt: DateTime!
+  sheetOrder: sheetOrder!
+  user: user!
+}
+
+type sheetOrder {
+  id: Int!
+  sheetId: Int!
+  orderId: Int!
+  latestStatus: Int!
+  createdAt: DateTime!
+  sheet: courierSheet!
+  order: order!
+  sheetOrderStatusHistory: [sheetOrderStatusHistory!]!
+}
+
+type orderStatus {
+  id: Int!
+  orderId: Int!
+  status: Int!
+  description: String!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  order: order!
+}
+
+type orderItem {
+  orderId: Int!
+  itemSku: String!
+  count: Int!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  order: order!
+  item: item!
+}
+
+type orderRelation {
+  firstOrderId: Int!
+  secondOrderId: Int!
+  createdAt: DateTime!
+  firstOrder: order!
+  secondOrder: order!
+}
+
+type order {
+  id: Int!
+  otherId: Int!
+  type: Int!
+  userId: Int!
+  merchantId: Int!
+  userAddressId: Int!
+  shippingPrice: Int!
+  includesVat: Boolean!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  sheetOrders: [sheetOrder!]!
+  orderStatuses: [orderStatus!]!
+  orderItems: [orderItem!]!
+  user: user!
+  merchant: merchant!
+  userAddress: userAddress!
+  orderRelations: [orderRelation!]!
+  orderRelations2: [orderRelation!]!
+}
+
+type userAddress {
+  id: Int!
+  userId: Int!
+  countryId: Int!
+  cityId: Int!
+  details: String!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  user: user!
+  orders: [order!]!
+}
+
+type financalRequestStatus {
+  requestId: Int!
+  status: Int!
+  createdAt: DateTime!
+  request: financialTransaction!
+}
+
+type financialTransaction {
+  id: Int!
+  type: Int!
+  description: String!
+  fromAccountId: Int!
+  toAccountId: Int!
+  amount: Int!
+  receipt: String!
+  latestStatus: Int!
+  approvedById: Int!
+  createdAt: DateTime!
+  fromAccount: financialAccount!
+  toAccount: financialAccount!
+  approvedBy: user!
+  financialRequestStatus: financalRequestStatus!
+}
+
+type requestStatusHistory {
+  id: Int!
+  requestId: Int!
+  status: Int!
+  userId: Int!
+  createdAt: DateTime!
+  request: request!
+}
+
+type request {
+  id: Int!
+  type: Int!
+  priority: Int!
+  fromId: Int!
+  description: String!
+  status: Int!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  requestStatusHistory: [requestStatusHistory!]!
+  from: user!
+  users: [user!]!
+}
+
+type user {
+  id: Int!
+  type: Int!
+  name: String!
+  email: String!
+  birthdate: DateTime!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  userAddresses: [userAddress!]!
+  financialAccounts: [financialAccount!]!
+  sheetOrderStatusHistories: [sheetOrderStatusHistory!]!
+  financialTransactions: [financialTransaction!]!
+  requestsSent: [request!]!
+  courierSheets: [courierSheet!]!
+  orders: [order!]!
+  requestsReceived: [request!]!
+}
+
+type expense {
+  id: Int!
+  type: String!
+  fromAccountId: Int!
+  amount: Int!
+  receipt: String!
+  comment: String!
+  createdAt: DateTime!
+  fromAccount: financialAccount!
+}
+
+type financialAccount {
+  id: Int!
+  name: String!
+  userId: Int!
+  merchantId: Int!
+  balance: Int!
+  createdAt: DateTime!
+  user: user!
+  merchant: merchant!
+  transactionsSent: [financialTransaction!]!
+  transactionsReceived: [financialTransaction!]!
+  expenses: [expense!]!
+}
+
+type merchant {
+  id: Int!
+  name: String!
+  includesVat: Boolean!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  items: [item!]!
+  financialAccounts: [financialAccount!]!
+  orders: [order!]!
+}
+
+type itemPrices {
+  id: Int!
+  itemSku: String!
+  currency: String!
+  price: Int!
+  discount: Int!
+  startDiscount: DateTime!
+  endDiscount: DateTime!
+  item: item!
+}
+
+type inventoryHistory {
+  id: Int!
+  itemInBoxId: Int!
+  description: String!
+  type: Int!
+  amount: Int!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  itemInBox: itemInBox!
+}
+
+type inventoryPrices {
+  id: Int!
+  inventoryId: Int!
+  currency: String!
+  pricePerUnit: Int!
+  discount: Int!
+  startDiscount: DateTime!
+  endDiscount: DateTime!
+  inventory: inventory!
+}
+
+type inventorySupport {
+  id: Int!
+  inventoryId: Int!
+  governorateId: Int!
+  zoneId: Int!
+  inventory: inventory!
+}
+
+type inventory {
+  id: Int!
+  hubId: Int!
+  name: String!
+  module: Int!
+  zone: String!
+  location: String!
+  rentType: Int!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  inventoryPrices: [inventoryPrices!]!
+  racks: [rack!]!
+  inventorySupports: [inventorySupport!]!
+}
+
+type rack {
+  id: Int!
+  inventoryId: Int!
+  levels: Int!
+  name: String!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  inventory: inventory!
+  ballots: [ballot!]!
+}
+
+type ballot {
+  id: Int!
+  rackId: Int!
+  level: Int!
+  name: String!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  boxes: [box!]!
+  rack: rack!
+}
+
+type box {
+  id: Int!
+  ballotId: Int!
+  name: String!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  ballot: ballot!
+  itemsInBox: [itemInBox!]!
+}
+
+type itemInBox {
+  id: Int!
+  itemSku: String!
+  boxId: Int!
+  count: Int!
+  minCount: Int!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  inventoryHistory: [inventoryHistory!]!
+  item: item!
+  box: box!
+}
+
+type item {
+  sku: String!
+  merchantSku: String!
+  merchantId: Int!
+  name: String!
+  description: String!
+  imageUrl: String!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  merchant: merchant!
+  itemPrices: [itemPrices!]!
+  itemsInBox: [itemInBox!]!
+  orderItems: [orderItem!]!
+}
+
+type RequestTo {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Query {
+  item(id: Int!): item!
+  itemPrices: [itemPrices!]!
+  itemPrice(id: Int!): itemPrices!
+  inventory(id: Int!): inventory!
+  inventorySupport(id: Int!): inventorySupport!
+  inventoryPrices: [inventoryPrices!]!
+  inventoryPrice(id: Int!): inventoryPrices!
+  rack(id: Int!): rack!
+  ballot(id: Int!): ballot!
+  box(id: Int!): box!
+  itemInBox(id: Int!): itemInBox!
+  inventoryHistory(id: Int!): inventoryHistory!
+  order(id: Int!): order!
+  orderRelation(id: Int!): orderRelation!
+  orderItem(id: Int!): orderItem!
+  merchant(id: Int!): merchant!
+  user(id: Int!): user!
+  userAddress(id: Int!): userAddress!
+  courierSheet(id: Int!): courierSheet!
+  sheetOrderStatusHistory(id: Int!): sheetOrderStatusHistory!
+  sheetOrder(id: Int!): sheetOrder!
+  orderStatus(id: Int!): orderStatus!
+  requestStatusHistory(id: Int!): requestStatusHistory!
+  request(id: Int!): request!
+  requestTo(id: Int!): RequestTo!
+  financialAccount(id: Int!): financialAccount!
+  expense(id: Int!): expense!
+  financialTransaction(id: Int!): financialTransaction!
+  financialRequestStatus(id: Int!): financalRequestStatus!
+}
+
+type Mutation {
+  createItem(createItemInput: CreateItemInput!): item!
+  updateItem(updateItemInput: UpdateItemInput!): item!
+  removeItem(id: Int!): item!
+  createItemPrice(createItemPriceInput: CreateItemPriceInput!): itemPrices!
+  updateItemPrice(updateItemPriceInput: UpdateItemPriceInput!): itemPrices!
+  removeItemPrice(id: Int!): itemPrices!
+  createInventory(createInventoryInput: CreateInventoryInput!): inventory!
+  updateInventory(updateInventoryInput: UpdateInventoryInput!): inventory!
+  removeInventory(id: Int!): inventory!
+  createInventorySupport(createInventorySupportInput: CreateInventorySupportInput!): inventorySupport!
+  updateInventorySupport(updateInventorySupportInput: UpdateInventorySupportInput!): inventorySupport!
+  removeInventorySupport(id: Int!): inventorySupport!
+  createInventoryPrice(createInventoryPriceInput: CreateInventoryPriceInput!): inventoryPrices!
+  updateInventoryPrice(updateInventoryPriceInput: UpdateInventoryPriceInput!): inventoryPrices!
+  removeInventoryPrice(id: Int!): inventoryPrices!
+  createRack(createRackInput: CreateRackInput!): rack!
+  updateRack(updateRackInput: UpdateRackInput!): rack!
+  removeRack(id: Int!): rack!
+  createBallot(createBallotInput: CreateBallotInput!): ballot!
+  updateBallot(updateBallotInput: UpdateBallotInput!): ballot!
+  removeBallot(id: Int!): ballot!
+  createBox(createBoxInput: CreateBoxInput!): box!
+  updateBox(updateBoxInput: UpdateBoxInput!): box!
+  removeBox(id: Int!): box!
+  createItemInBox(createItemInBoxInput: CreateItemInBoxInput!): itemInBox!
+  updateItemInBox(updateItemInBoxInput: UpdateItemInBoxInput!): itemInBox!
+  removeItemInBox(id: Int!): itemInBox!
+  createInventoryHistory(createInventoryHistoryInput: CreateInventoryHistoryInput!): inventoryHistory!
+  updateInventoryHistory(updateInventoryHistoryInput: UpdateInventoryHistoryInput!): inventoryHistory!
+  removeInventoryHistory(id: Int!): inventoryHistory!
+  createOrder(createOrderInput: CreateOrderInput!): order!
+  updateOrder(updateOrderInput: UpdateOrderInput!): order!
+  removeOrder(id: Int!): order!
+  createOrderRelation(createOrderRelationInput: CreateOrderRelationInput!): orderRelation!
+  updateOrderRelation(updateOrderRelationInput: UpdateOrderRelationInput!): orderRelation!
+  removeOrderRelation(id: Int!): orderRelation!
+  createOrderItem(createOrderItemInput: CreateOrderItemInput!): orderItem!
+  updateOrderItem(updateOrderItemInput: UpdateOrderItemInput!): orderItem!
+  removeOrderItem(id: Int!): orderItem!
+  createMerchant(createMerchantInput: CreateMerchantInput!): merchant!
+  updateMerchant(updateMerchantInput: UpdateMerchantInput!): merchant!
+  removeMerchant(id: Int!): merchant!
+  createUser(createUserInput: CreateUserInput!): user!
+  updateUser(updateUserInput: UpdateUserInput!): user!
+  removeUser(id: Int!): user!
+  createUserAddress(createUserAddressInput: CreateUserAddressInput!): userAddress!
+  updateUserAddress(updateUserAddressInput: UpdateUserAddressInput!): userAddress!
+  removeUserAddress(id: Int!): userAddress!
+  createCourierSheet(createCourierSheetInput: CreateCourierSheetInput!): courierSheet!
+  updateCourierSheet(updateCourierSheetInput: UpdateCourierSheetInput!): courierSheet!
+  removeCourierSheet(id: Int!): courierSheet!
+  createSheetOrderStatusHistory(createSheetOrderStatusHistoryInput: CreateSheetOrderStatusHistoryInput!): sheetOrderStatusHistory!
+  updateSheetOrderStatusHistory(updateSheetOrderStatusHistoryInput: UpdateSheetOrderStatusHistoryInput!): sheetOrderStatusHistory!
+  removeSheetOrderStatusHistory(id: Int!): sheetOrderStatusHistory!
+  createSheetOrder(createSheetOrderInput: CreateSheetOrderInput!): sheetOrder!
+  updateSheetOrder(updateSheetOrderInput: UpdateSheetOrderInput!): sheetOrder!
+  removeSheetOrder(id: Int!): sheetOrder!
+  createOrderStatus(createOrderStatusInput: CreateOrderStatusInput!): orderStatus!
+  updateOrderStatus(updateOrderStatusInput: UpdateOrderStatusInput!): orderStatus!
+  removeOrderStatus(id: Int!): orderStatus!
+  createRequestStatusHistory(createRequestStatusHistoryInput: CreateRequestStatusHistoryInput!): requestStatusHistory!
+  updateRequestStatusHistory(updateRequestStatusHistoryInput: UpdateRequestStatusHistoryInput!): requestStatusHistory!
+  removeRequestStatusHistory(id: Int!): requestStatusHistory!
+  createRequest(createRequestInput: CreateRequestInput!): request!
+  updateRequest(updateRequestInput: UpdateRequestInput!): request!
+  removeRequest(id: Int!): request!
+  createRequestTo(createRequestToInput: CreateRequestToInput!): RequestTo!
+  updateRequestTo(updateRequestToInput: UpdateRequestToInput!): RequestTo!
+  removeRequestTo(id: Int!): RequestTo!
+  createFinancialAccount(createFinancialAccountInput: CreateFinancialAccountInput!): financialAccount!
+  updateFinancialAccount(updateFinancialAccountInput: UpdateFinancialAccountInput!): financialAccount!
+  removeFinancialAccount(id: Int!): financialAccount!
+  createExpense(createExpenseInput: CreateExpenseInput!): expense!
+  updateExpense(updateExpenseInput: UpdateExpenseInput!): expense!
+  removeExpense(id: Int!): expense!
+  createFinancialTransaction(createFinancialTransactionInput: CreateFinancialTransactionInput!): financialTransaction!
+  updateFinancialTransaction(updateFinancialTransactionInput: UpdateFinancialTransactionInput!): financialTransaction!
+  removeFinancialTransaction(id: Int!): financialTransaction!
+  createFinancialRequestStatus(createFinancialRequestStatusInput: CreateFinancialRequestStatusInput!): financalRequestStatus!
+  updateFinancialRequestStatus(updateFinancialRequestStatusInput: UpdateFinancialRequestStatusInput!): financalRequestStatus!
+  removeFinancialRequestStatus(id: Int!): financalRequestStatus!
+}
+
+input CreateItemInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateItemInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateItemPriceInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateItemPriceInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateInventoryInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateInventoryInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateInventorySupportInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateInventorySupportInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateInventoryPriceInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateInventoryPriceInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateRackInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateRackInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateBallotInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateBallotInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateBoxInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateBoxInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateItemInBoxInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateItemInBoxInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateInventoryHistoryInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateInventoryHistoryInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateOrderInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateOrderInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateOrderRelationInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateOrderRelationInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateOrderItemInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateOrderItemInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateMerchantInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateMerchantInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateUserInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateUserAddressInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateUserAddressInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateCourierSheetInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateCourierSheetInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateSheetOrderStatusHistoryInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateSheetOrderStatusHistoryInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateSheetOrderInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateSheetOrderInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateOrderStatusInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateOrderStatusInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateRequestStatusHistoryInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateRequestStatusHistoryInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateRequestInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateRequestInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateRequestToInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateRequestToInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateFinancialAccountInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateFinancialAccountInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateExpenseInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateExpenseInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateFinancialTransactionInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateFinancialTransactionInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateFinancialRequestStatusInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateFinancialRequestStatusInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
