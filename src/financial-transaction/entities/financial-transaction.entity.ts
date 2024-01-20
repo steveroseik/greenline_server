@@ -11,9 +11,9 @@ import { User } from "src/user/entities/user.entity";
 import { FinancialRequestStatus } from "src/financial-request-status/entities/financial-request-status.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 
-@Index("fromAccount", ["fromAccount"], {})
-@Index("toAccount", ["toAccount"], {})
-@Index("approvedBy", ["approvedBy"], {})
+@Index("fromAccountId", ["fromAccountId"], {})
+@Index("toAccountId", ["toAccountId"], {})
+@Index("approvedById", ["approvedById"], {})
 @Entity("financialTransaction", { schema: "greenline_db" })
 @ObjectType('financialTransaction')
 export class FinancialTransaction {
@@ -29,13 +29,13 @@ export class FinancialTransaction {
   @Field()
   description: string;
 
-  @Column("int", { name: "fromAccountId" })
+  @Column("varchar", { name: "fromAccountId" })
   @Field()
-  fromAccountId: number;
+  fromAccountId: string;
 
-  @Column("int", { name: "toAccountId" })
+  @Column("varchar", { name: "toAccountId" })
   @Field()
-  toAccountId: number;
+  toAccountId: string;
 
   @Column("float", { name: "amount", precision: 12 })
   @Field()
@@ -49,11 +49,11 @@ export class FinancialTransaction {
   @Field()
   latestStatus: number;
 
-  @Column("int", { name: "approvedById" })
+  @Column("varchar", { name: "approvedById" })
   @Field()
-  approvedById: number;
+  approvedById: string;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
 
@@ -62,7 +62,7 @@ export class FinancialTransaction {
     (financialAccount) => financialAccount.transactionsSent,
     { onDelete: "RESTRICT", onUpdate: "RESTRICT" }
   )
-  @JoinColumn([{ name: "fromAccount", referencedColumnName: "id" }])
+  @JoinColumn([{ name: "fromAccountId", referencedColumnName: "id" }])
   @Field(() => FinancialAccount)
   fromAccount: FinancialAccount;
 
@@ -71,7 +71,7 @@ export class FinancialTransaction {
     (financialAccount) => financialAccount.transactionsReceived,
     { onDelete: "RESTRICT", onUpdate: "RESTRICT" }
   )
-  @JoinColumn([{ name: "toAccount", referencedColumnName: "id" }])
+  @JoinColumn([{ name: "toAccountId", referencedColumnName: "id" }])
   @Field(() => FinancialAccount)
   toAccount: FinancialAccount;
 
@@ -79,7 +79,7 @@ export class FinancialTransaction {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
-  @JoinColumn([{ name: "approvedBy", referencedColumnName: "id" }])
+  @JoinColumn([{ name: "approvedById", referencedColumnName: "id" }])
   @Field(() => User)
   approvedBy: User;
 

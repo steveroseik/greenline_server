@@ -23,7 +23,7 @@ export class RequestStatusHistory {
   @Field()
   userId: number;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
 

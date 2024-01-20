@@ -6,14 +6,17 @@ import { FinancialTransaction } from "src/financial-transaction/entities/financi
 import { Request } from "src/request/entities/request.entity";
 import { CourierSheet } from "src/courier-sheet/entities/courier-sheet.entity";
 import { Order } from "src/order/entities/order.entity";
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { UserRole } from "src/user-role/entities/user-role.entity";
 
 @Entity("user", { schema: "greenline_db" })
 @ObjectType('user')
 export class User {
-  @Column("int", { primary: true, name: "id" })
+
+
+  @Column("varchar", { primary: true, name: "id" })
   @Field()
-  id: number;
+  id: string;
 
   @Column("int", { name: "type" })
   @Field()
@@ -31,11 +34,11 @@ export class User {
   @Field()
   birthdate: Date;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
 
-  @Column("datetime", { name: "lastModified" })
+  @Column("timestamp", { name: "lastModified"})
   @Field()
   lastModified: Date;
 
@@ -79,4 +82,8 @@ export class User {
   @ManyToMany(() => Request, (request) => request.users)
   @Field(() => [Request])
   requestsReceived: Request[];
+
+  @OneToMany(() => UserRole, (userRole) => userRole.user)
+  @Field(() => [UserRole])
+  userRoles: UserRole[];
 }

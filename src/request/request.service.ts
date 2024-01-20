@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateRequestInput } from './dto/create-request.input';
 import { UpdateRequestInput } from './dto/update-request.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class RequestService {
+
+  constructor(@InjectRepository(Request) private requestRepository: Repository<Request>) {}
+  
   create(createRequestInput: CreateRequestInput) {
+  
     return 'This action adds a new request';
   }
 

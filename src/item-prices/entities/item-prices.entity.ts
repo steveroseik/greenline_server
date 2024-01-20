@@ -26,11 +26,11 @@ export class ItemPrices {
   @Field()
   discount: number;
 
-  @Column("datetime", { name: "startDiscount" })
+  @Column("timestamp", { name: "startDiscount" })
   @Field()
   startDiscount: Date;
 
-  @Column("datetime", { name: "endDiscount" })
+  @Column("timestamp", { name: "endDiscount" })
   @Field()
   endDiscount: Date;
 

@@ -19,11 +19,11 @@ export class OrderItem {
   @Field()
   count: number;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
 
-  @Column("datetime", { name: "lastModified" })
+  @Column("timestamp", { name: "lastModified" })
   @Field()
   lastModified: Date;
 
@@ -39,6 +39,7 @@ export class OrderItem {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
+  
   @JoinColumn([{ name: "itemSku", referencedColumnName: "sku" }])
   @Field(() => Item)
   item: Item;

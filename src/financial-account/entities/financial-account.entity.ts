@@ -25,9 +25,9 @@ export class FinancialAccount {
   @Field()
   name: string;
 
-  @Column("int", { name: "userId" })
+  @Column("varchar", { name: "userId" })
   @Field()
-  userId: number;
+  userId: string;
 
   @Column("int", { name: "merchantId" })
   @Field()
@@ -37,9 +37,13 @@ export class FinancialAccount {
   @Field()
   balance: number;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
+
+  @Column("timestamp", { name: "lastModified" })
+  @Field()
+  lastModified: Date;
 
   @ManyToOne(() => User, (user) => user.financialAccounts, {
     onDelete: "RESTRICT",

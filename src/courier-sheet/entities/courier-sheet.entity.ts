@@ -18,19 +18,19 @@ export class CourierSheet {
   @Field()
   id: number;
 
-  @Column("int", { name: "userId" })
+  @Column("varchar", { name: "userId" })
   @Field()
-  userId: number;
+  userId: string;
 
   @Column("int", { name: "status" })
   @Field()
   status: number;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
 
-  @Column("datetime", { name: "lastModified" })
+  @Column("timestamp", { name: "lastModified" })
   @Field()
   lastModified: Date;
 

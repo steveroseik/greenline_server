@@ -2,7 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 import { FinancialAccount } from "src/financial-account/entities/financial-account.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 
-@Index("fromAccount", ["fromAccount"], {})
+@Index("fromAccountId", ["fromAccountId"], {})
 @Entity("expense", { schema: "greenline_db" })
 @ObjectType('expense')
 export class Expense {
@@ -30,7 +30,7 @@ export class Expense {
   @Field()
   comment: string;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
 
@@ -39,7 +39,7 @@ export class Expense {
     (financialAccount) => financialAccount.expenses,
     { onDelete: "RESTRICT", onUpdate: "RESTRICT" }
   )
-  @JoinColumn([{ name: "fromAccount", referencedColumnName: "id" }])
+  @JoinColumn([{ name: "fromAccountId", referencedColumnName: "id" }])
   @Field(() => FinancialAccount)
   fromAccount: FinancialAccount;
 }

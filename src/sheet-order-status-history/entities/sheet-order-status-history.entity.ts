@@ -24,11 +24,11 @@ export class SheetOrderStatusHistory {
   @Field()
   description: string;
 
-  @Column("int", { name: "userId" })
+  @Column("varchar", { name: "userId" })
   @Field()
-  userId: number;
+  userId: string;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
 

@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany } from "typeorm";
+import { Column, Entity, GeoJSON, OneToMany } from "typeorm";
 import { InventoryPrices } from "src/inventory-prices/entities/inventory-prices.entity";
 import { Rack } from "src/rack/entities/rack.entity";
 import { InventorySupport } from "src/inventory-support/entities/inventory-support.entity";
@@ -27,19 +27,18 @@ export class Inventory {
   @Field()
   zone: string;
 
-  @Column("varchar", { name: "location", length: 255 })
-  @Field()
-  location: string;
+  @Field(() => String)
+  location: GeoJSON;
 
   @Column("int", { name: "rentType" })
   @Field()
   rentType: number;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
 
-  @Column("datetime", { name: "lastModified" })
+  @Column("timestamp", { name: "lastModified" })
   @Field()
   lastModified: Date;
 
@@ -60,4 +59,6 @@ export class Inventory {
   )
   @Field(() => [InventorySupport])
   inventorySupports: InventorySupport[];
+
+  
 }

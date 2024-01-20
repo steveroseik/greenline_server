@@ -1,7 +1,6 @@
 
 import { MysqlConnectionOptions } from "typeorm/driver/mysql/MysqlConnectionOptions";
 import * as dotenv from 'dotenv';
-
 dotenv.config();
 
 const config:MysqlConnectionOptions = {
@@ -12,10 +11,12 @@ const config:MysqlConnectionOptions = {
     password: process.env.local_password,
     database: "greenline_db",
     entities: ["./dist/**/*.entity{.ts,.js}"],
+    // migrationsRun: true,
+    // migrations: ['./db/migrations/*{.ts,.js}'],
     //TODO: REMOVE IN PRODUCTION
     synchronize: true,
     // don't
     logging: true
 }
 
- export default config;
+ export default (config);

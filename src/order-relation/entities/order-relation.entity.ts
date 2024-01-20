@@ -2,7 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 import { Order } from "src/order/entities/order.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 
-@Index("secondOrder", ["secondOrder"], {})
+@Index("secondOrderId", ["secondOrderId"], {})
 @Entity("orderRelation", { schema: "greenline_db" })
 @ObjectType('orderRelation')
 export class OrderRelation {
@@ -14,7 +14,7 @@ export class OrderRelation {
   @Field()
   secondOrderId: number;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
 
@@ -22,7 +22,7 @@ export class OrderRelation {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
-  @JoinColumn([{ name: "firstOrder", referencedColumnName: "id" }])
+  @JoinColumn([{ name: "firstOrderId", referencedColumnName: "id" }])
   @Field(() => Order)
   firstOrder: Order;
 
@@ -30,7 +30,7 @@ export class OrderRelation {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
-  @JoinColumn([{ name: "secondOrder", referencedColumnName: "id" }])
+  @JoinColumn([{ name: "secondOrderId", referencedColumnName: "id" }])
   @Field(() => Order)
   secondOrder: Order;
 }

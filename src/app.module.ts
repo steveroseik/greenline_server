@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ItemModule } from './item/item.module';
 import { OrderItemModule } from './order-item/order-item.module';
 import { FinancialAccountModule } from './financial-account/financial-account.module';
-import { RequestToModule } from './request-to/request-to.module';
 import { RequestModule } from './request/request.module';
 import { RequestStatusHistoryModule } from './request-status-history/request-status-history.module';
 import { OrderStatusModule } from './order-status/order-status.module';
@@ -33,10 +32,21 @@ import { ExpenseModule } from './expense/expense.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
 import { join } from 'path';
+import { RoleModule } from './role/role.module';
+import { UserRoleModule } from './user-role/user-role.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import typeorm from "../db/data-source";
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(config),
+     ConfigModule.forRoot({
+      isGlobal: true,
+      load: [typeorm]
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => (configService.get('typeorm'))
+    }),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -54,10 +64,11 @@ import { join } from 'path';
     MerchantModule, UserModule, UserAddressModule, 
     CourierSheetModule, SheetOrderStatusHistoryModule, 
     SheetOrderModule, OrderStatusModule, RequestStatusHistoryModule, 
-    RequestModule, RequestToModule, FinancialAccountModule, ExpenseModule, 
-    FinancialTransactionModule, FinancialRequestStatusModule,
+    RequestModule, FinancialAccountModule, ExpenseModule, 
+    FinancialTransactionModule, FinancialRequestStatusModule, RoleModule, UserRoleModule,
     ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+

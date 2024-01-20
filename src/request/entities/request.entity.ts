@@ -28,9 +28,9 @@ export class Request {
   @Field()
   priority: number;
 
-  @Column("int", { name: "fromId" })
+  @Column("varchar", { name: "fromId" })
   @Field()
-  fromId: number;
+  fromId: string;
 
   @Column("varchar", { name: "description", length: 255 })
   @Field()
@@ -40,11 +40,11 @@ export class Request {
   @Field()
   status: number;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
 
-  @Column("datetime", { name: "lastModified" })
+  @Column("timestamp", { name: "lastModified" })
   @Field()
   lastModified: Date;
 

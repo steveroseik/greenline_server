@@ -4,7 +4,7 @@
 
 type courierSheet {
   id: Int!
-  userId: Int!
+  userId: String!
   status: Int!
   createdAt: DateTime!
   lastModified: DateTime!
@@ -22,7 +22,7 @@ type sheetOrderStatusHistory {
   sheetOrderId: Int!
   status: Int!
   description: String!
-  userId: Int!
+  userId: String!
   createdAt: DateTime!
   sheetOrder: sheetOrder!
   user: user!
@@ -71,7 +71,7 @@ type order {
   id: Int!
   otherId: Int!
   type: Int!
-  userId: Int!
+  userId: String!
   merchantId: Int!
   userAddressId: Int!
   shippingPrice: Int!
@@ -90,7 +90,7 @@ type order {
 
 type userAddress {
   id: Int!
-  userId: Int!
+  userId: String!
   countryId: Int!
   cityId: Int!
   details: String!
@@ -111,12 +111,12 @@ type financialTransaction {
   id: Int!
   type: Int!
   description: String!
-  fromAccountId: Int!
-  toAccountId: Int!
+  fromAccountId: String!
+  toAccountId: String!
   amount: Int!
   receipt: String!
   latestStatus: Int!
-  approvedById: Int!
+  approvedById: String!
   createdAt: DateTime!
   fromAccount: financialAccount!
   toAccount: financialAccount!
@@ -137,7 +137,7 @@ type request {
   id: Int!
   type: Int!
   priority: Int!
-  fromId: Int!
+  fromId: String!
   description: String!
   status: Int!
   createdAt: DateTime!
@@ -147,8 +147,25 @@ type request {
   users: [user!]!
 }
 
-type user {
+type Role {
   id: Int!
+  name: String!
+  type: String!
+  description: String!
+  createdAt: DateTime!
+  lastModified: DateTime!
+  roleAssigns: [UserRole!]!
+}
+
+type UserRole {
+  userId: String!
+  roleId: Int!
+  user: user!
+  role: Role!
+}
+
+type user {
+  id: String!
   type: Int!
   name: String!
   email: String!
@@ -163,6 +180,7 @@ type user {
   courierSheets: [courierSheet!]!
   orders: [order!]!
   requestsReceived: [request!]!
+  userRoles: [UserRole!]!
 }
 
 type expense {
@@ -179,10 +197,11 @@ type expense {
 type financialAccount {
   id: Int!
   name: String!
-  userId: Int!
+  userId: String!
   merchantId: Int!
   balance: Int!
   createdAt: DateTime!
+  lastModified: DateTime!
   user: user!
   merchant: merchant!
   transactionsSent: [financialTransaction!]!
@@ -317,11 +336,6 @@ type item {
   orderItems: [orderItem!]!
 }
 
-type RequestTo {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
 type Query {
   item(id: Int!): item!
   itemPrices: [itemPrices!]!
@@ -339,19 +353,21 @@ type Query {
   orderRelation(id: Int!): orderRelation!
   orderItem(id: Int!): orderItem!
   merchant(id: Int!): merchant!
+  findAllUsers: [user!]!
   user(id: Int!): user!
+  request(id: Int!): request!
   userAddress(id: Int!): userAddress!
   courierSheet(id: Int!): courierSheet!
   sheetOrderStatusHistory(id: Int!): sheetOrderStatusHistory!
   sheetOrder(id: Int!): sheetOrder!
   orderStatus(id: Int!): orderStatus!
   requestStatusHistory(id: Int!): requestStatusHistory!
-  request(id: Int!): request!
-  requestTo(id: Int!): RequestTo!
   financialAccount(id: Int!): financialAccount!
   expense(id: Int!): expense!
   financialTransaction(id: Int!): financialTransaction!
   financialRequestStatus(id: Int!): financalRequestStatus!
+  role(id: Int!): Role!
+  userRole(id: Int!): UserRole!
 }
 
 type Mutation {
@@ -397,9 +413,12 @@ type Mutation {
   createMerchant(createMerchantInput: CreateMerchantInput!): merchant!
   updateMerchant(updateMerchantInput: UpdateMerchantInput!): merchant!
   removeMerchant(id: Int!): merchant!
-  createUser(createUserInput: CreateUserInput!): user!
+  createUser(createUserInput: CreateUserInput!): Boolean!
   updateUser(updateUserInput: UpdateUserInput!): user!
   removeUser(id: Int!): user!
+  createRequest(createRequestInput: CreateRequestInput!): request!
+  updateRequest(updateRequestInput: UpdateRequestInput!): request!
+  removeRequest(id: Int!): request!
   createUserAddress(createUserAddressInput: CreateUserAddressInput!): userAddress!
   updateUserAddress(updateUserAddressInput: UpdateUserAddressInput!): userAddress!
   removeUserAddress(id: Int!): userAddress!
@@ -418,12 +437,6 @@ type Mutation {
   createRequestStatusHistory(createRequestStatusHistoryInput: CreateRequestStatusHistoryInput!): requestStatusHistory!
   updateRequestStatusHistory(updateRequestStatusHistoryInput: UpdateRequestStatusHistoryInput!): requestStatusHistory!
   removeRequestStatusHistory(id: Int!): requestStatusHistory!
-  createRequest(createRequestInput: CreateRequestInput!): request!
-  updateRequest(updateRequestInput: UpdateRequestInput!): request!
-  removeRequest(id: Int!): request!
-  createRequestTo(createRequestToInput: CreateRequestToInput!): RequestTo!
-  updateRequestTo(updateRequestToInput: UpdateRequestToInput!): RequestTo!
-  removeRequestTo(id: Int!): RequestTo!
   createFinancialAccount(createFinancialAccountInput: CreateFinancialAccountInput!): financialAccount!
   updateFinancialAccount(updateFinancialAccountInput: UpdateFinancialAccountInput!): financialAccount!
   removeFinancialAccount(id: Int!): financialAccount!
@@ -436,6 +449,12 @@ type Mutation {
   createFinancialRequestStatus(createFinancialRequestStatusInput: CreateFinancialRequestStatusInput!): financalRequestStatus!
   updateFinancialRequestStatus(updateFinancialRequestStatusInput: UpdateFinancialRequestStatusInput!): financalRequestStatus!
   removeFinancialRequestStatus(id: Int!): financalRequestStatus!
+  createRole(createRoleInput: CreateRolesInput!): Role!
+  updateRole(updateRoleInput: UpdateRoleInput!): Role!
+  removeRole(id: Int!): Role!
+  createUserRole(createUserRoleInput: CreateUserRoleInput!): UserRole!
+  updateUserRole(updateUserRoleInput: UpdateUserRoleInput!): UserRole!
+  removeUserRole(id: Int!): UserRole!
 }
 
 input CreateItemInput {
@@ -593,11 +612,31 @@ input UpdateMerchantInput {
 }
 
 input CreateUserInput {
+  id: String
+  name: String!
+  email: String!
+  type: Int!
+  birthdate: DateTime!
+  createdAt: DateTime
+  lastModified: DateTime
+}
+
+input UpdateUserInput {
+  id: String!
+  name: String
+  email: String
+  type: Int
+  birthdate: DateTime
+  createdAt: DateTime
+  lastModified: DateTime
+}
+
+input CreateRequestInput {
   """Example field (placeholder)"""
   exampleField: Int!
 }
 
-input UpdateUserInput {
+input UpdateRequestInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
@@ -669,28 +708,6 @@ input UpdateRequestStatusHistoryInput {
   id: Int!
 }
 
-input CreateRequestInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateRequestInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateRequestToInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateRequestToInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
 input CreateFinancialAccountInput {
   """Example field (placeholder)"""
   exampleField: Int!
@@ -730,6 +747,26 @@ input CreateFinancialRequestStatusInput {
 }
 
 input UpdateFinancialRequestStatusInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateRolesInput {
+  roles: [Int!]!
+}
+
+input UpdateRoleInput {
+  roles: [Int!]
+  id: Int!
+}
+
+input CreateUserRoleInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateUserRoleInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!

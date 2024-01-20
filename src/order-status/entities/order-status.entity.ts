@@ -22,11 +22,11 @@ export class OrderStatus {
   @Field()
   description: string;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;
 
-  @Column("datetime", { name: "lastModified" })
+  @Column("timestamp", { name: "lastModified" })
   @Field()
   lastModified: Date;
 

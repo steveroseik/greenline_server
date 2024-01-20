@@ -15,7 +15,9 @@ export class RequestResolver {
 
   @Query(() => [Request], { name: 'request' })
   findAll() {
+
     return this.requestService.findAll();
+
   }
 
   @Query(() => Request, { name: 'request' })
