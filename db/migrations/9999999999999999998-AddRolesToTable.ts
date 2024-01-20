@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class InsertRoles9999999999999999998 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-      INSERT INTO role (id, name, type, description,) VALUES
+      INSERT INTO role (id, name, type, description) VALUES
       (1, 'admin', 'super', 'Super admin with full access'),
       (2, 'accessInventory', 'inventory', 'Can access the inventory module'),
       (3, 'viewInventories', 'inventory', 'Can view inventories'),
