@@ -11,9 +11,9 @@ const dataConfig = {
     username: "root",
     password: process.env.local_password,
     database: "greenline_db",
-    entities: ["./dist/**/*.entity{.ts,.js}"],
+    entities: ["../dist/**/*.entity{.ts,.js}"],
     // migrationsRun: true,
-    migrations: ['./dist/db/migrations/*{.ts,.js}'],
+    migrations: ['../dist/db/migrations/*{.ts,.js}'],
     migrationsTableName: "migrations",
     //TODO: REMOVE IN PRODUCTION
     // don't

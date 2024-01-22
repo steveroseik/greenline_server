@@ -1,6 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class InsertRoles9999999999999999998 implements MigrationInterface {
+export class InsertRoles1705759284008 implements MigrationInterface {
+  
+  name = 'InsertRoles1705759284008';
+  
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       INSERT INTO role (id, name, type, description) VALUES

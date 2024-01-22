@@ -30,16 +30,18 @@ import { BallotModule } from './ballot/ballot.module';
 import { OrderModule } from './order/order.module';
 import { ExpenseModule } from './expense/expense.module';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver } from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { RoleModule } from './role/role.module';
 import { UserRoleModule } from './user-role/user-role.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ListenersModule } from './listeners/listeners.module';
 import typeorm from "../db/data-source";
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
-     ConfigModule.forRoot({
+    ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm]
     }),
@@ -47,13 +49,19 @@ import typeorm from "../db/data-source";
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => (configService.get('typeorm'))
     }),
-    GraphQLModule.forRoot({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
+      installSubscriptionHandlers: true,
+      subscriptions: {
+        'graphql-ws': true,
+        'subscriptions-transport-ws': true,
+      },
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       buildSchemaOptions: {
-        dateScalarMode: 'datetime',
-        numberScalarMode: 'integer'
-      }
+        numberScalarMode: 'integer',
+        dateScalarMode: 'timestamp',
+      },
+      context: ({ req }) => ({ req }),
     }),
     ItemModule, ItemPricesModule, 
     InventoryModule, InventorySupportModule, 
@@ -65,7 +73,9 @@ import typeorm from "../db/data-source";
     CourierSheetModule, SheetOrderStatusHistoryModule, 
     SheetOrderModule, OrderStatusModule, RequestStatusHistoryModule, 
     RequestModule, FinancialAccountModule, ExpenseModule, 
-    FinancialTransactionModule, FinancialRequestStatusModule, RoleModule, UserRoleModule,
+    FinancialTransactionModule, FinancialRequestStatusModule, 
+    AuthModule,
+    RoleModule, UserRoleModule, ListenersModule,
     ],
   controllers: [AppController],
   providers: [AppService],

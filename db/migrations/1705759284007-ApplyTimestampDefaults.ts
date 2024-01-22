@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class SetDefaultTimestamps9999999999999999997 implements MigrationInterface {
+export class SetDefaultTimestamps1705759284007 implements MigrationInterface {
+
+    name = 'InitialMigration1705759284007'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         const tables = [
