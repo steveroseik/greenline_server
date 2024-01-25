@@ -30,9 +30,4 @@ export class Role {
   @Field()
   lastModified: Date;
 
-
-  @OneToMany(() => UserRole, (userRole) => userRole.role)
-  @Field(() => [UserRole])
-  roleAssigns: UserRole[];
-
 }

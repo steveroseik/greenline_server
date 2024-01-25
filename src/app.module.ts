@@ -23,14 +23,13 @@ import { InventoryModule } from './inventory/inventory.module';
 import { ItemPricesModule } from './item-prices/item-prices.module';
 import { FinancialTransactionModule } from './financial-transaction/financial-transaction.module';
 import { FinancialRequestStatusModule } from './financial-request-status/financial-request-status.module';
-import config from 'ormconfig';
 import { RackModule } from './rack/rack.module';
 import { BoxModule } from './box/box.module';
 import { BallotModule } from './ballot/ballot.module';
 import { OrderModule } from './order/order.module';
 import { ExpenseModule } from './expense/expense.module';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig, ApolloFederationDriver, ApolloFederationDriverAsyncConfig, ApolloFederationDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { RoleModule } from './role/role.module';
 import { UserRoleModule } from './user-role/user-role.module';
@@ -39,29 +38,54 @@ import { ListenersModule } from './listeners/listeners.module';
 import typeorm from "../db/data-source";
 import { AuthModule } from './auth/auth.module';
 
+// import  { dataConfig } from "../db/data-source";
+import { dataConfig } from 'ormconfig';
+import { DataloaderRegistryFactory } from './dataloaders/dataloaderRegistryFactory';
+import { UserRoleService } from './user-role/user-role.service';
+import { DataloadersModule } from './dataloaders/dataloaders.module';
+
+import { DateScalarMode, NumberScalarMode } from "@nestjs/graphql";
+
 @Module({
   imports: [
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => (configService.get('typeorm')),
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm]
     }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => (configService.get('typeorm'))
-    }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    // GraphQLModule.forRoot<ApolloDriverConfig>({
+    //   driver: ApolloDriver,
+    //   installSubscriptionHandlers: true,
+    //   subscriptions: {
+    //     'graphql-ws': true,
+    //     'subscriptions-transport-ws': true,
+    //   },
+    //   autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+    //   buildSchemaOptions: {
+    //     numberScalarMode: 'integer',
+    //     dateScalarMode: 'timestamp',
+    //   },
+    //   context: ({ req }) => ({ req }),
+    // }),
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      installSubscriptionHandlers: true,
-      subscriptions: {
-        'graphql-ws': true,
-        'subscriptions-transport-ws': true,
-      },
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      buildSchemaOptions: {
-        numberScalarMode: 'integer',
-        dateScalarMode: 'timestamp',
-      },
-      context: ({ req }) => ({ req }),
+      imports: [DataloadersModule],
+      inject: [DataloaderRegistryFactory],
+      useFactory: (dataloaderService: DataloaderRegistryFactory) => ({
+        installSubscriptionHandlers: true,
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+          buildSchemaOptions: {
+            numberScalarMode: 'integer',
+            dateScalarMode: 'timestamp'
+          },
+          context: () => ({
+            loaders: dataloaderService.create(),
+          }),
+      }),
     }),
     ItemModule, ItemPricesModule, 
     InventoryModule, InventorySupportModule, 
@@ -75,10 +99,10 @@ import { AuthModule } from './auth/auth.module';
     RequestModule, FinancialAccountModule, ExpenseModule, 
     FinancialTransactionModule, FinancialRequestStatusModule, 
     AuthModule,
-    RoleModule, UserRoleModule, ListenersModule,
+    RoleModule, UserRoleModule, ListenersModule, DataloadersModule,
     ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, DataloaderRegistryFactory],
 })
 export class AppModule {}
 

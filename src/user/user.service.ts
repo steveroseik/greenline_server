@@ -32,6 +32,12 @@ export class UserService {
       }
   }
 
+
+  async getUserDataWithRoles(userId:string): Promise<User | null>{
+
+    return await this.userRepository.findOne({where: {id: userId}});
+  }
+
   findAll() {
     return this.userRepository.find();
   }

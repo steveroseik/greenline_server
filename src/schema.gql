@@ -147,28 +147,12 @@ type request {
   users: [user!]!
 }
 
-type Role {
-  id: Int!
-  name: String!
-  type: String!
-  description: String!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  roleAssigns: [UserRole!]!
-}
-
-type UserRole {
-  userId: String!
-  roleId: Int!
-  user: user!
-  role: Role!
-}
-
 type user {
   id: String!
   type: Int!
   name: String!
   email: String!
+  phone: String!
   birthdate: Timestamp!
   createdAt: Timestamp!
   lastModified: Timestamp!
@@ -180,7 +164,7 @@ type user {
   courierSheets: [courierSheet!]!
   orders: [order!]!
   requestsReceived: [request!]!
-  userRoles: [UserRole!]!
+  userRoles: UserRole
 }
 
 type expense {
@@ -336,6 +320,21 @@ type item {
   orderItems: [orderItem!]!
 }
 
+type UserRole {
+  userId: String!
+  roleId: Int!
+  role: Role
+}
+
+type Role {
+  id: Int!
+  name: String!
+  type: String!
+  description: String!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+}
+
 type Listener {
   """Example field (placeholder)"""
   exampleField: Int!
@@ -351,6 +350,8 @@ type AuthPayload {
 }
 
 type Query {
+  userRole(id: Int!): UserRole!
+  role(id: Int!): Role!
   item(id: Int!): item!
   itemPrices: [itemPrices!]!
   itemPrice(id: Int!): itemPrices!
@@ -381,14 +382,18 @@ type Query {
   financialTransaction(id: Int!): financialTransaction!
   financialRequestStatus(id: Int!): financalRequestStatus!
   auth(id: Int!): AuthPayload!
-  role(id: Int!): Role!
-  userRole(id: Int!): UserRole!
   sendToEvent: EventListenObject!
   listeners: [Listener!]!
   listener(id: Int!): Listener!
 }
 
 type Mutation {
+  createUserRole(createUserRoleInput: CreateUserRoleInput!): UserRole!
+  updateUserRole(updateUserRoleInput: UpdateUserRoleInput!): UserRole!
+  removeUserRole(id: Int!): UserRole!
+  createRole(createRoleInput: CreateRolesInput!): Role!
+  updateRole(updateRoleInput: UpdateRoleInput!): Role!
+  removeRole(id: Int!): Role!
   createItem(createItemInput: CreateItemInput!): item!
   updateItem(updateItemInput: UpdateItemInput!): item!
   removeItem(id: Int!): item!
@@ -467,17 +472,31 @@ type Mutation {
   createFinancialRequestStatus(createFinancialRequestStatusInput: CreateFinancialRequestStatusInput!): financalRequestStatus!
   updateFinancialRequestStatus(updateFinancialRequestStatusInput: UpdateFinancialRequestStatusInput!): financalRequestStatus!
   removeFinancialRequestStatus(id: Int!): financalRequestStatus!
-  requestToken(requestToken: TokenRequestInput!): String!
+  requestToken(requestToken: TokenRequestInput!): user!
   updateAuth(updateAuthInput: UpdateAuthInput!): AuthPayload!
   removeAuth(id: Int!): AuthPayload!
-  createRole(createRoleInput: CreateRolesInput!): Role!
-  updateRole(updateRoleInput: UpdateRoleInput!): Role!
-  removeRole(id: Int!): Role!
-  createUserRole(createUserRoleInput: CreateUserRoleInput!): UserRole!
-  updateUserRole(updateUserRoleInput: UpdateUserRoleInput!): UserRole!
-  removeUserRole(id: Int!): UserRole!
   updateListener(updateListenerInput: UpdateListenerInput!): Listener!
   removeListener(id: Int!): Listener!
+}
+
+input CreateUserRoleInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateUserRoleInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateRolesInput {
+  roles: [Int!]!
+}
+
+input UpdateRoleInput {
+  roles: [Int!]
+  id: Int!
 }
 
 input CreateItemInput {
@@ -638,6 +657,7 @@ input CreateUserInput {
   id: String
   name: String!
   email: String!
+  phone: String!
   type: Int!
   birthdate: Timestamp!
   createdAt: Timestamp
@@ -648,6 +668,7 @@ input UpdateUserInput {
   id: String!
   name: String
   email: String
+  phone: String
   type: Int
   birthdate: Timestamp
   createdAt: Timestamp
@@ -781,26 +802,6 @@ input TokenRequestInput {
 
 input UpdateAuthInput {
   token: Int!
-}
-
-input CreateRolesInput {
-  roles: [Int!]!
-}
-
-input UpdateRoleInput {
-  roles: [Int!]
-  id: Int!
-}
-
-input CreateUserRoleInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateUserRoleInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
 }
 
 input UpdateListenerInput {

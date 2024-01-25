@@ -1,8 +1,8 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreatePointColumnInInventoryTable1705759284009 implements MigrationInterface {
+export class CreatePointColumnInInventoryTable1706102618193 implements MigrationInterface {
 
-    name = "CreatePointColumnInInventoryTable1705759284009"
+    name = "CreatePointColumnInInventoryTable1706102618193"
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         

@@ -26,9 +26,13 @@ export class User {
   @Field()
   name: string;
 
-  @Column("varchar", { name: "email", length: 255 })
+  @Column("varchar", { name: "email", length: 255, unique: true })
   @Field()
   email: string;
+
+  @Column("varchar", { name: "phone", length: 15})
+  @Field()
+  phone: string;
 
   @Column("datetime", { name: "birthdate" })
   @Field()
@@ -83,7 +87,7 @@ export class User {
   @Field(() => [Request])
   requestsReceived: Request[];
 
-  @OneToMany(() => UserRole, (userRole) => userRole.user)
-  @Field(() => [UserRole])
-  userRoles: UserRole[];
+  // @OneToMany(() => UserRole, (userRole) => userRole.user, {eager: false})
+  // @Field(() => [UserRole], {nullable: true})
+  // userRoles: UserRole[];
 }

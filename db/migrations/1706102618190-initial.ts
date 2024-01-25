@@ -1,14 +1,9 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class InitialMigration1705759284006 implements MigrationInterface {
-
-    name = 'InitialMigration1705759284006'
+export class Initial1706102618190 implements MigrationInterface {
+    name = 'Initial1706102618190'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE \`role\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`type\` varchar(255) NOT NULL, \`description\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
-        await queryRunner.query(`CREATE TABLE \`courierSheet\` (\`id\` int NOT NULL, \`userId\` varchar(255) NOT NULL, \`status\` int NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, INDEX \`userId\` (\`userId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
-        await queryRunner.query(`CREATE TABLE \`sheetOrderStatusHistory\` (\`id\` int NOT NULL, \`sheetOrderId\` int NOT NULL, \`status\` int NOT NULL, \`description\` varchar(255) NOT NULL, \`userId\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL, INDEX \`userId\` (\`userId\`), INDEX \`sheetOrderId\` (\`sheetOrderId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
-        await queryRunner.query(`CREATE TABLE \`sheetOrder\` (\`id\` int NOT NULL, \`sheetId\` int NOT NULL, \`orderId\` int NOT NULL, \`latestStatus\` int NOT NULL, \`createdAt\` datetime NOT NULL, INDEX \`orderId\` (\`orderId\`), INDEX \`sheetId\` (\`sheetId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`orderStatus\` (\`id\` int NOT NULL, \`orderId\` int NOT NULL, \`status\` int NOT NULL, \`description\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, INDEX \`orderId\` (\`orderId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`financialRequestStatus\` (\`requestId\` int NOT NULL, \`status\` int NOT NULL, \`createdAt\` timestamp NOT NULL, PRIMARY KEY (\`requestId\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`financialTransaction\` (\`id\` int NOT NULL, \`type\` int NOT NULL, \`description\` varchar(255) NOT NULL, \`fromAccountId\` int NOT NULL, \`toAccountId\` int NOT NULL, \`amount\` float(12) NOT NULL, \`receipt\` varchar(255) NOT NULL, \`latestStatus\` int NOT NULL, \`approvedById\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL, INDEX \`approvedById\` (\`approvedById\`), INDEX \`toAccountId\` (\`toAccountId\`), INDEX \`fromAccountId\` (\`fromAccountId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
@@ -29,16 +24,15 @@ export class InitialMigration1705759284006 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE \`orderRelation\` (\`firstOrderId\` int NOT NULL, \`secondOrderId\` int NOT NULL, \`createdAt\` timestamp NOT NULL, INDEX \`secondOrderId\` (\`secondOrderId\`), PRIMARY KEY (\`firstOrderId\`, \`secondOrderId\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`order\` (\`id\` int NOT NULL, \`otherId\` int NOT NULL, \`type\` int NOT NULL, \`userId\` varchar(255) NOT NULL, \`merchantId\` int NOT NULL, \`userAddressId\` int NOT NULL, \`shippingPrice\` float(12) NOT NULL, \`includesVAT\` tinyint(1) NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, INDEX \`userAddressId\` (\`userAddressId\`), INDEX \`merchantId\` (\`merchantId\`), INDEX \`userId\` (\`userId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`userAddress\` (\`id\` int NOT NULL, \`userId\` varchar(255) NOT NULL, \`countryId\` int NOT NULL, \`cityId\` int NOT NULL, \`details\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, INDEX \`userId\` (\`userId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`sheetOrderStatusHistory\` (\`id\` int NOT NULL, \`sheetOrderId\` int NOT NULL, \`status\` int NOT NULL, \`description\` varchar(255) NOT NULL, \`userId\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL, INDEX \`userId\` (\`userId\`), INDEX \`sheetOrderId\` (\`sheetOrderId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`requestStatusHistory\` (\`id\` int NOT NULL, \`requestId\` int NOT NULL, \`status\` int NOT NULL, \`userId\` int NOT NULL, \`createdAt\` timestamp NOT NULL, INDEX \`requestId\` (\`requestId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`request\` (\`id\` int NOT NULL, \`type\` int NOT NULL, \`priority\` int NOT NULL, \`fromId\` varchar(255) NOT NULL, \`description\` varchar(255) NOT NULL, \`status\` int NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, INDEX \`fromId\` (\`fromId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
-        await queryRunner.query(`CREATE TABLE \`user\` (\`id\` varchar(255) NOT NULL, \`type\` int NOT NULL, \`name\` varchar(255) NOT NULL, \`email\` varchar(255) NOT NULL, \`birthdate\` datetime NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`role\` (\`id\` int NOT NULL AUTO_INCREMENT, \`name\` varchar(255) NOT NULL, \`type\` varchar(255) NOT NULL, \`description\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`userRole\` (\`userId\` varchar(255) NOT NULL, \`roleId\` int NOT NULL, INDEX \`userId\` (\`userId\`), PRIMARY KEY (\`userId\`, \`roleId\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`user\` (\`id\` varchar(255) NOT NULL, \`type\` int NOT NULL, \`name\` varchar(255) NOT NULL, \`email\` varchar(255) NOT NULL, \`birthdate\` datetime NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, UNIQUE INDEX \`IDX_e12875dfb3b1d92d7d7c5377e2\` (\`email\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`courierSheet\` (\`id\` int NOT NULL, \`userId\` varchar(255) NOT NULL, \`status\` int NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, INDEX \`userId\` (\`userId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`sheetOrder\` (\`id\` int NOT NULL, \`sheetId\` int NOT NULL, \`orderId\` int NOT NULL, \`latestStatus\` int NOT NULL, \`createdAt\` datetime NOT NULL, INDEX \`orderId\` (\`orderId\`), INDEX \`sheetId\` (\`sheetId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`requestTo\` (\`requestId\` int NOT NULL, \`toId\` varchar(255) NOT NULL, INDEX \`IDX_b0948e735107443bfd4b56da73\` (\`requestId\`), INDEX \`IDX_eef4b47b0a1c58c9b71c1a4930\` (\`toId\`), PRIMARY KEY (\`requestId\`, \`toId\`)) ENGINE=InnoDB`);
-        await queryRunner.query(`ALTER TABLE \`courierSheet\` ADD CONSTRAINT \`FK_a47d0847d957c8c131b7fdb8198\` FOREIGN KEY (\`userId\`) REFERENCES \`user\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
-        await queryRunner.query(`ALTER TABLE \`sheetOrderStatusHistory\` ADD CONSTRAINT \`FK_c5320338c30a49742418504f17d\` FOREIGN KEY (\`sheetOrderId\`) REFERENCES \`sheetOrder\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
-        await queryRunner.query(`ALTER TABLE \`sheetOrderStatusHistory\` ADD CONSTRAINT \`FK_e80b14bb26efa9a7cd573d1e259\` FOREIGN KEY (\`userId\`) REFERENCES \`user\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
-        await queryRunner.query(`ALTER TABLE \`sheetOrder\` ADD CONSTRAINT \`FK_30a67e48d918830c0ae1553b5db\` FOREIGN KEY (\`sheetId\`) REFERENCES \`courierSheet\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
-        await queryRunner.query(`ALTER TABLE \`sheetOrder\` ADD CONSTRAINT \`FK_921340992a871353a00bcf9e156\` FOREIGN KEY (\`orderId\`) REFERENCES \`order\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
         await queryRunner.query(`ALTER TABLE \`orderStatus\` ADD CONSTRAINT \`FK_7e8150a61d7f184d1da4b72857a\` FOREIGN KEY (\`orderId\`) REFERENCES \`order\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
         await queryRunner.query(`ALTER TABLE \`financialRequestStatus\` ADD CONSTRAINT \`FK_3bf3f72d1417d6ec542a4665116\` FOREIGN KEY (\`requestId\`) REFERENCES \`financialTransaction\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
         await queryRunner.query(`ALTER TABLE \`financialTransaction\` ADD CONSTRAINT \`FK_c4519c34e9d07757d22ad3051c8\` FOREIGN KEY (\`fromAccountId\`) REFERENCES \`financialAccount\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
@@ -65,10 +59,15 @@ export class InitialMigration1705759284006 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE \`order\` ADD CONSTRAINT \`FK_293ad75db4c3b2aa62996c75ad1\` FOREIGN KEY (\`merchantId\`) REFERENCES \`merchant\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
         await queryRunner.query(`ALTER TABLE \`order\` ADD CONSTRAINT \`FK_a4734288e8248e76b4c7c72390f\` FOREIGN KEY (\`userAddressId\`) REFERENCES \`userAddress\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
         await queryRunner.query(`ALTER TABLE \`userAddress\` ADD CONSTRAINT \`FK_8b251cbfcbf880bcdec80cf36c5\` FOREIGN KEY (\`userId\`) REFERENCES \`user\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
+        await queryRunner.query(`ALTER TABLE \`sheetOrderStatusHistory\` ADD CONSTRAINT \`FK_c5320338c30a49742418504f17d\` FOREIGN KEY (\`sheetOrderId\`) REFERENCES \`sheetOrder\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
+        await queryRunner.query(`ALTER TABLE \`sheetOrderStatusHistory\` ADD CONSTRAINT \`FK_e80b14bb26efa9a7cd573d1e259\` FOREIGN KEY (\`userId\`) REFERENCES \`user\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
         await queryRunner.query(`ALTER TABLE \`requestStatusHistory\` ADD CONSTRAINT \`FK_7aaa47775d9fcc8bfa4bd827586\` FOREIGN KEY (\`requestId\`) REFERENCES \`request\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
         await queryRunner.query(`ALTER TABLE \`request\` ADD CONSTRAINT \`FK_c344f10cc6327fbc7ab6a8bec51\` FOREIGN KEY (\`fromId\`) REFERENCES \`user\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
         await queryRunner.query(`ALTER TABLE \`userRole\` ADD CONSTRAINT \`FK_bc794a2ac3d2f53fc2bc04c3cf4\` FOREIGN KEY (\`userId\`) REFERENCES \`user\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE \`userRole\` ADD CONSTRAINT \`FK_aa72ae0c32996d476c28f12eb78\` FOREIGN KEY (\`roleId\`) REFERENCES \`role\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE \`courierSheet\` ADD CONSTRAINT \`FK_a47d0847d957c8c131b7fdb8198\` FOREIGN KEY (\`userId\`) REFERENCES \`user\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
+        await queryRunner.query(`ALTER TABLE \`sheetOrder\` ADD CONSTRAINT \`FK_30a67e48d918830c0ae1553b5db\` FOREIGN KEY (\`sheetId\`) REFERENCES \`courierSheet\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
+        await queryRunner.query(`ALTER TABLE \`sheetOrder\` ADD CONSTRAINT \`FK_921340992a871353a00bcf9e156\` FOREIGN KEY (\`orderId\`) REFERENCES \`order\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
         await queryRunner.query(`ALTER TABLE \`requestTo\` ADD CONSTRAINT \`FK_b0948e735107443bfd4b56da733\` FOREIGN KEY (\`requestId\`) REFERENCES \`request\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE`);
         await queryRunner.query(`ALTER TABLE \`requestTo\` ADD CONSTRAINT \`FK_eef4b47b0a1c58c9b71c1a4930e\` FOREIGN KEY (\`toId\`) REFERENCES \`user\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
     }
@@ -76,10 +75,15 @@ export class InitialMigration1705759284006 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`ALTER TABLE \`requestTo\` DROP FOREIGN KEY \`FK_eef4b47b0a1c58c9b71c1a4930e\``);
         await queryRunner.query(`ALTER TABLE \`requestTo\` DROP FOREIGN KEY \`FK_b0948e735107443bfd4b56da733\``);
+        await queryRunner.query(`ALTER TABLE \`sheetOrder\` DROP FOREIGN KEY \`FK_921340992a871353a00bcf9e156\``);
+        await queryRunner.query(`ALTER TABLE \`sheetOrder\` DROP FOREIGN KEY \`FK_30a67e48d918830c0ae1553b5db\``);
+        await queryRunner.query(`ALTER TABLE \`courierSheet\` DROP FOREIGN KEY \`FK_a47d0847d957c8c131b7fdb8198\``);
         await queryRunner.query(`ALTER TABLE \`userRole\` DROP FOREIGN KEY \`FK_aa72ae0c32996d476c28f12eb78\``);
         await queryRunner.query(`ALTER TABLE \`userRole\` DROP FOREIGN KEY \`FK_bc794a2ac3d2f53fc2bc04c3cf4\``);
         await queryRunner.query(`ALTER TABLE \`request\` DROP FOREIGN KEY \`FK_c344f10cc6327fbc7ab6a8bec51\``);
         await queryRunner.query(`ALTER TABLE \`requestStatusHistory\` DROP FOREIGN KEY \`FK_7aaa47775d9fcc8bfa4bd827586\``);
+        await queryRunner.query(`ALTER TABLE \`sheetOrderStatusHistory\` DROP FOREIGN KEY \`FK_e80b14bb26efa9a7cd573d1e259\``);
+        await queryRunner.query(`ALTER TABLE \`sheetOrderStatusHistory\` DROP FOREIGN KEY \`FK_c5320338c30a49742418504f17d\``);
         await queryRunner.query(`ALTER TABLE \`userAddress\` DROP FOREIGN KEY \`FK_8b251cbfcbf880bcdec80cf36c5\``);
         await queryRunner.query(`ALTER TABLE \`order\` DROP FOREIGN KEY \`FK_a4734288e8248e76b4c7c72390f\``);
         await queryRunner.query(`ALTER TABLE \`order\` DROP FOREIGN KEY \`FK_293ad75db4c3b2aa62996c75ad1\``);
@@ -106,21 +110,26 @@ export class InitialMigration1705759284006 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE \`financialTransaction\` DROP FOREIGN KEY \`FK_c4519c34e9d07757d22ad3051c8\``);
         await queryRunner.query(`ALTER TABLE \`financialRequestStatus\` DROP FOREIGN KEY \`FK_3bf3f72d1417d6ec542a4665116\``);
         await queryRunner.query(`ALTER TABLE \`orderStatus\` DROP FOREIGN KEY \`FK_7e8150a61d7f184d1da4b72857a\``);
-        await queryRunner.query(`ALTER TABLE \`sheetOrder\` DROP FOREIGN KEY \`FK_921340992a871353a00bcf9e156\``);
-        await queryRunner.query(`ALTER TABLE \`sheetOrder\` DROP FOREIGN KEY \`FK_30a67e48d918830c0ae1553b5db\``);
-        await queryRunner.query(`ALTER TABLE \`sheetOrderStatusHistory\` DROP FOREIGN KEY \`FK_e80b14bb26efa9a7cd573d1e259\``);
-        await queryRunner.query(`ALTER TABLE \`sheetOrderStatusHistory\` DROP FOREIGN KEY \`FK_c5320338c30a49742418504f17d\``);
-        await queryRunner.query(`ALTER TABLE \`courierSheet\` DROP FOREIGN KEY \`FK_a47d0847d957c8c131b7fdb8198\``);
         await queryRunner.query(`DROP INDEX \`IDX_eef4b47b0a1c58c9b71c1a4930\` ON \`requestTo\``);
         await queryRunner.query(`DROP INDEX \`IDX_b0948e735107443bfd4b56da73\` ON \`requestTo\``);
         await queryRunner.query(`DROP TABLE \`requestTo\``);
+        await queryRunner.query(`DROP INDEX \`sheetId\` ON \`sheetOrder\``);
+        await queryRunner.query(`DROP INDEX \`orderId\` ON \`sheetOrder\``);
+        await queryRunner.query(`DROP TABLE \`sheetOrder\``);
+        await queryRunner.query(`DROP INDEX \`userId\` ON \`courierSheet\``);
+        await queryRunner.query(`DROP TABLE \`courierSheet\``);
+        await queryRunner.query(`DROP INDEX \`IDX_e12875dfb3b1d92d7d7c5377e2\` ON \`user\``);
+        await queryRunner.query(`DROP TABLE \`user\``);
         await queryRunner.query(`DROP INDEX \`userId\` ON \`userRole\``);
         await queryRunner.query(`DROP TABLE \`userRole\``);
-        await queryRunner.query(`DROP TABLE \`user\``);
+        await queryRunner.query(`DROP TABLE \`role\``);
         await queryRunner.query(`DROP INDEX \`fromId\` ON \`request\``);
         await queryRunner.query(`DROP TABLE \`request\``);
         await queryRunner.query(`DROP INDEX \`requestId\` ON \`requestStatusHistory\``);
         await queryRunner.query(`DROP TABLE \`requestStatusHistory\``);
+        await queryRunner.query(`DROP INDEX \`sheetOrderId\` ON \`sheetOrderStatusHistory\``);
+        await queryRunner.query(`DROP INDEX \`userId\` ON \`sheetOrderStatusHistory\``);
+        await queryRunner.query(`DROP TABLE \`sheetOrderStatusHistory\``);
         await queryRunner.query(`DROP INDEX \`userId\` ON \`userAddress\``);
         await queryRunner.query(`DROP TABLE \`userAddress\``);
         await queryRunner.query(`DROP INDEX \`userId\` ON \`order\``);
@@ -164,15 +173,6 @@ export class InitialMigration1705759284006 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE \`financialRequestStatus\``);
         await queryRunner.query(`DROP INDEX \`orderId\` ON \`orderStatus\``);
         await queryRunner.query(`DROP TABLE \`orderStatus\``);
-        await queryRunner.query(`DROP INDEX \`sheetId\` ON \`sheetOrder\``);
-        await queryRunner.query(`DROP INDEX \`orderId\` ON \`sheetOrder\``);
-        await queryRunner.query(`DROP TABLE \`sheetOrder\``);
-        await queryRunner.query(`DROP INDEX \`sheetOrderId\` ON \`sheetOrderStatusHistory\``);
-        await queryRunner.query(`DROP INDEX \`userId\` ON \`sheetOrderStatusHistory\``);
-        await queryRunner.query(`DROP TABLE \`sheetOrderStatusHistory\``);
-        await queryRunner.query(`DROP INDEX \`userId\` ON \`courierSheet\``);
-        await queryRunner.query(`DROP TABLE \`courierSheet\``);
-        await queryRunner.query(`DROP TABLE \`role\``);
     }
 
 }

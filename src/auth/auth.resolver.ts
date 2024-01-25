@@ -6,28 +6,19 @@ import { UpdateAuthInput } from './dto/sign-up.input';
 import { AccessPayload } from './entities/accessPayload.entity';
 import admin from '../../src/main';
 import { Auth } from 'firebase-admin/auth';
+import { User } from 'src/user/entities/user.entity';
 
 @Resolver(() => AuthPayload)
 export class AuthResolver {
 
   private firebaseAuth:Auth;
 
-  constructor(private readonly authService: AuthService) {
-    this.firebaseAuth = admin.auth();
-  }
+  constructor(private readonly authService: AuthService) {}
 
-  @Mutation(() => String)
-  async requestToken(@Args('requestToken') requestTokenPayload: TokenRequestInput) {
+  @Mutation(() => User)
+  async requestToken(@Args('requestToken') requestTokenPayload: TokenRequestInput): Promise<User | null> {
 
-    try{
-
-      const decoded = await this.firebaseAuth.verifyIdToken(requestTokenPayload.token);
-
-
-      return JSON.stringify(decoded);
-    }catch (e){
-      return e;
-    }
+    return this.authService.requestToken(requestTokenPayload);
   }
 
   @Query(() => [AuthPayload], { name: 'auth' })

@@ -1,15 +1,16 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent, ResolveProperty, Context } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
+import { UserRole } from 'src/user-role/entities/user-role.entity';
+import { UserRoleService } from 'src/user-role/user-role.service';
+import { DataloaderRegistry } from 'src/dataloaders/dataLoaderRegistry';
 
 @Resolver(() => User)
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
-
-
-  
+  constructor(private readonly userService: UserService,
+      private userRoleService:UserRoleService) {}
 
   @Mutation(() => Boolean)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
@@ -36,5 +37,16 @@ export class UserResolver {
   @Mutation(() => User)
   removeUser(@Args('id', { type: () => Int }) id: number) {
     return this.userService.remove(id);
+  }
+
+  // @ResolveField(returns => [UserRole], {nullable: true})
+  // userRoles(@Parent() user:User): Promise<UserRole[]>{
+  //     return this.userRoleService.getRolesById(user.id);
+  // }
+
+  @ResolveProperty(() => UserRole, {nullable: true})
+  userRoles(@Parent() user:User, @Context() { loaders }: { loaders: DataloaderRegistry}): Promise<UserRole[]>{
+    return loaders.UserRoleDataLoader.load(user.id);
+    //this.roleService.findOne(userRole.roleId);
   }
 }

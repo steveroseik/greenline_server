@@ -17,15 +17,4 @@ export class UserRole {
   @PrimaryColumn({name: "roleId", type: 'int'})
   @Field()
   roleId: number;
-
-
-  @ManyToOne(() => User, (user) => user.userRoles)
-  @JoinColumn([{ name: "userId", referencedColumnName: "id" }])
-  @Field(() => User)
-  user: User;
-
-  @ManyToOne(() => Role, (role) => role.roleAssigns)
-  @JoinColumn([{ name: "roleId", referencedColumnName: "id" }])
-  @Field(() => Role)
-  role: Role;
 }
