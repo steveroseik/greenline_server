@@ -164,7 +164,7 @@ type user {
   courierSheets: [courierSheet!]!
   orders: [order!]!
   requestsReceived: [request!]!
-  userRoles: UserRole
+  userRoles: [UserRole!]
 }
 
 type expense {

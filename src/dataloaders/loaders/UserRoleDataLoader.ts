@@ -9,21 +9,25 @@ class UserRoleDataLoader {
       const userRoles = await service.findAllUserRoles(keys);
       const grouped = _.groupBy(userRoles, 'userId');
       console.log(grouped);
+      const result = keys.map((key) => grouped.hasOwnProperty(key) ? grouped[key] : []);
+      console.log(result);
+      return result;
+      
 
-      const resultMap: Record<string, UserRole[]> = {};
-      // Iterate over the keys array
-      keys.forEach(key => {
-          // Check if the key exists in the grouped data
-          if (grouped[key]) {
-              // If it exists, add it to the resultMap with its corresponding value
-              resultMap[key] = grouped[key];
-          } else {
-              // If it doesn't exist, add it to the resultMap with an empty array
-              resultMap[key] = [];
-          }
-      });
-      console.log(resultMap);
-      return keys.map(key => resultMap[key] || []);
+      // const resultMap = {};
+      // // Iterate over the keys array
+      // keys.forEach(key => {
+      //     // Check if the key exists in the grouped data
+      //     if (grouped[key]) {
+      //         // If it exists, add it to the resultMap with its corresponding value
+      //         resultMap[key] = grouped[key];
+      //     } else {
+      //         // If it doesn't exist, add it to the resultMap with an empty array
+      //         resultMap[key] = [];
+      //     }
+      // });
+      // console.log(resultMap);
+      // return resultMap;
     });
   }
 }

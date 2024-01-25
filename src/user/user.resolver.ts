@@ -44,7 +44,7 @@ export class UserResolver {
   //     return this.userRoleService.getRolesById(user.id);
   // }
 
-  @ResolveProperty(() => UserRole, {nullable: true})
+  @ResolveProperty(() => [UserRole], {nullable: true})
   userRoles(@Parent() user:User, @Context() { loaders }: { loaders: DataloaderRegistry}): Promise<UserRole[]>{
     return loaders.UserRoleDataLoader.load(user.id);
     //this.roleService.findOne(userRole.roleId);
