@@ -323,7 +323,7 @@ type item {
 type UserRole {
   userId: String!
   roleId: Int!
-  role: Role
+  role: Role!
 }
 
 type Role {
@@ -349,8 +349,15 @@ type AuthPayload {
   exampleField: Int!
 }
 
+type UserLoginResponse {
+  user: user!
+  userRoles: [UserRole!]!
+  accessToken: String!
+  refreshToken: String!
+}
+
 type Query {
-  userRole(id: Int!): UserRole!
+  userRole: [UserRole!]!
   role(id: Int!): Role!
   item(id: Int!): item!
   itemPrices: [itemPrices!]!
@@ -472,7 +479,7 @@ type Mutation {
   createFinancialRequestStatus(createFinancialRequestStatusInput: CreateFinancialRequestStatusInput!): financalRequestStatus!
   updateFinancialRequestStatus(updateFinancialRequestStatusInput: UpdateFinancialRequestStatusInput!): financalRequestStatus!
   removeFinancialRequestStatus(id: Int!): financalRequestStatus!
-  requestToken(requestToken: TokenRequestInput!): user!
+  requestToken(requestToken: TokenRequestInput!): UserLoginResponse!
   updateAuth(updateAuthInput: UpdateAuthInput!): AuthPayload!
   removeAuth(id: Int!): AuthPayload!
   updateListener(updateListenerInput: UpdateListenerInput!): Listener!

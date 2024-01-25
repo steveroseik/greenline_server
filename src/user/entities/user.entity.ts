@@ -38,6 +38,9 @@ export class User {
   @Field()
   birthdate: Date;
 
+
+  // @Column('varchar', { name: 'refreshToken', length: })
+
   @Column("timestamp", { name: "createdAt" })
   @Field()
   createdAt: Date;

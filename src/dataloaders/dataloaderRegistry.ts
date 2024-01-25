@@ -1,10 +1,14 @@
 import { UserRoleService } from "src/user-role/user-role.service";
 import UserRoleDataLoader from "./loaders/UserRoleDataLoader";
+import { RoleService } from "src/role/role.service";
+import RoleDataLoader from "./loaders/RoleDataLoader";
 
 export class DataloaderRegistry {
   private cache: Record<string, any> = {};
 
-  constructor(private readonly userRoleService: UserRoleService) {}
+  constructor(
+    private readonly userRoleService: UserRoleService,
+    private readonly roleService: RoleService) {}
 
   /**
    * Fetches a memoized service based on a string key, or invokes fallback to create one.
@@ -21,5 +25,9 @@ export class DataloaderRegistry {
    */
   public get UserRoleDataLoader() {
     return this.get('UserRoleDataLoader', () => UserRoleDataLoader.create(this.userRoleService));
+  }
+
+  public get RoleDataLoader() {
+    return this.get('RoleDataLoader', () => RoleDataLoader.create(this.roleService))
   }
 }

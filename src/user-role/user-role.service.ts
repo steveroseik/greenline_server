@@ -21,8 +21,7 @@ export class UserRoleService {
     return await this.userRoleRepo.find({where: {userId: In(keys)}});
   }
 
-  async getRolesById(uid:string): Promise<UserRole[]>{
-
+  async findRolesById(uid:string): Promise<UserRole[]>{
     return await this.userRoleRepo.find({where: {userId: uid}});
   }
 
@@ -30,9 +29,6 @@ export class UserRoleService {
     return `This action returns all userRole`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} userRole`;
-  }
 
   update(id: number, updateUserRoleInput: UpdateUserRoleInput) {
     return `This action updates a #${id} userRole`;

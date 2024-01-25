@@ -7,6 +7,7 @@ import { AccessPayload } from './entities/accessPayload.entity';
 import admin from '../../src/main';
 import { Auth } from 'firebase-admin/auth';
 import { User } from 'src/user/entities/user.entity';
+import { UserLoginResponse } from 'src/compoundEntities/userLoginResponse.entity';
 
 @Resolver(() => AuthPayload)
 export class AuthResolver {
@@ -15,8 +16,8 @@ export class AuthResolver {
 
   constructor(private readonly authService: AuthService) {}
 
-  @Mutation(() => User)
-  async requestToken(@Args('requestToken') requestTokenPayload: TokenRequestInput): Promise<User | null> {
+  @Mutation(() => UserLoginResponse)
+  async requestToken(@Args('requestToken') requestTokenPayload: TokenRequestInput): Promise<UserLoginResponse | null> {
 
     return this.authService.requestToken(requestTokenPayload);
   }

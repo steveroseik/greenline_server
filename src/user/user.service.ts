@@ -6,12 +6,19 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { genId } from 'support/random-uuid-generator';
 import moment from 'moment';
+import { UserRoleService } from 'src/user-role/user-role.service';
+import { UserLoginResponse } from 'src/compoundEntities/userLoginResponse.entity';
+import { UserRole } from 'src/user-role/entities/user-role.entity';
+import { UserAndRoles } from 'src/compoundEntities/userAndRoles.entity';
+
 
 @Injectable()
 export class UserService {
 
 
-  constructor(@InjectRepository(User) private userRepository:Repository<User>){};
+  constructor(
+    @InjectRepository(User) private userRepository:Repository<User>,
+    private userRoleService:UserRoleService){};
 
   async create(createUserInput: CreateUserInput) {
     try {
@@ -33,9 +40,19 @@ export class UserService {
   }
 
 
-  async getUserDataWithRoles(userId:string): Promise<User | null>{
+  async getUserDataWithRoles(userId:string): Promise<UserAndRoles| null>{
 
-    return await this.userRepository.findOne({where: {id: userId}});
+    const userDataPromise = this.userRepository.findOne({ where: { id: userId } });
+    const rolesDataPromise = this.userRoleService.findRolesById(userId);
+
+    const [userData, rolesData] = await Promise.all([userDataPromise, rolesDataPromise]);
+
+     const res = {
+      user: userData,
+      roles: rolesData
+     };
+     console.log(res);
+     return res;
   }
 
   findAll() {

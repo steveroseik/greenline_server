@@ -8,6 +8,8 @@ import admin from 'src/main';
 import { Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import { UserLoginResponse } from 'src/compoundEntities/userLoginResponse.entity';
 // import admin from "../main";
 
 @Injectable()
@@ -17,17 +19,37 @@ export class AuthService {
 
   private firebaseAuth:Auth;
 
-  constructor( private configService:ConfigService, private userService:UserService){
+  constructor( private configService:ConfigService, 
+    private userService:UserService,
+    private jwtService:JwtService){
     this.firebaseAuth = admin.auth();
   }
 
-  async requestToken(tokenPayload: TokenRequestInput): Promise<User | null> {
+  async requestToken(tokenPayload: TokenRequestInput): Promise<UserLoginResponse | null> {
 
     try{
       // const decoded = await this.firebaseAuth.verifyIdToken(tokenPayload.token);
-      const userData = this.userService.getUserDataWithRoles('btLckRA');
+      const data = await this.userService.getUserDataWithRoles('btLckRA');
 
-      return userData;
+      console.log(this.configService.get('access_token_secret'));
+      const accessToken = this.jwtService.sign({
+        id: data.user.id,
+        email: data.user.email,
+        roles: data.roles.map((role) => role.roleId),
+      },{expiresIn: '30m', secret: this.configService.get('access_token_secret')});
+
+      const refreshToken = this.jwtService.sign({
+        id: data.user.id,
+        email: data.user.email,
+        roles: data.roles.map((role) => role.roleId),
+      },{expiresIn: '10d',  secret: this.configService.get('refresh_token_secret')});
+      
+      return {
+        user: data.user,
+        userRoles: data.roles,
+        accessToken,
+        refreshToken
+      }
 
     }catch (e){
       return e;

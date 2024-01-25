@@ -3,7 +3,7 @@ import { CreateRolesInput } from './dto/create-role.input';
 import { UpdateRoleInput } from './dto/update-role.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from './entities/role.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @Injectable()
 export class RoleService {
@@ -18,6 +18,12 @@ export class RoleService {
   findAll() {
     return this.roleRepo.find();
   }
+
+  async findAllRoles(listOfIds: readonly number[]): Promise<Role[]>{
+
+    return await this.roleRepo.find({where: {id: In(listOfIds)}})
+  }
+
 
   async findOne(id: number) {
     return await this.roleRepo.findOne({where: {id: id}})
