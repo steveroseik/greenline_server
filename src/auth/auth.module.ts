@@ -2,12 +2,15 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { JwtService } from '@nestjs/jwt';
-import { AuthPayload } from './entities/authPayload.entity';
-import { AccessPayload } from './entities/accessPayload.entity';
 import { UserModule } from 'src/user/user.module';
+import { AccessTokenStrategy } from './strategies/accessToken.strategy';
+import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
 
 @Module({
-  imports: [AuthPayload, AccessPayload, UserModule],
-  providers: [AuthResolver, AuthService, JwtService],
+  imports: [UserModule],
+  providers: [
+    AuthResolver, AuthService, 
+    JwtService, AccessTokenStrategy,
+    RefreshTokenStrategy],
 })
 export class AuthModule {}

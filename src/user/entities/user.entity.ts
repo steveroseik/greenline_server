@@ -39,7 +39,9 @@ export class User {
   birthdate: Date;
 
 
-  // @Column('varchar', { name: 'refreshToken', length: })
+  @Column('varchar', { name: 'refreshToken', length: 64, nullable: true})
+  @Field({nullable: true})
+  refreshToken?: string;
 
   @Column("timestamp", { name: "createdAt" })
   @Field()

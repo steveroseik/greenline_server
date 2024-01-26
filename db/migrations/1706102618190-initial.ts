@@ -70,6 +70,7 @@ export class Initial1706102618190 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE \`sheetOrder\` ADD CONSTRAINT \`FK_921340992a871353a00bcf9e156\` FOREIGN KEY (\`orderId\`) REFERENCES \`order\`(\`id\`) ON DELETE RESTRICT ON UPDATE RESTRICT`);
         await queryRunner.query(`ALTER TABLE \`requestTo\` ADD CONSTRAINT \`FK_b0948e735107443bfd4b56da733\` FOREIGN KEY (\`requestId\`) REFERENCES \`request\`(\`id\`) ON DELETE CASCADE ON UPDATE CASCADE`);
         await queryRunner.query(`ALTER TABLE \`requestTo\` ADD CONSTRAINT \`FK_eef4b47b0a1c58c9b71c1a4930e\` FOREIGN KEY (\`toId\`) REFERENCES \`user\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query('ALTER TABLE \'inventory\' ADD location POINT');
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
@@ -173,6 +174,7 @@ export class Initial1706102618190 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE \`financialRequestStatus\``);
         await queryRunner.query(`DROP INDEX \`orderId\` ON \`orderStatus\``);
         await queryRunner.query(`DROP TABLE \`orderStatus\``);
+        await queryRunner.query(`ALTER TABLE \'inventory\' DROP COLUMN location`);
     }
 
 }

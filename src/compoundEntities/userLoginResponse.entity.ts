@@ -4,7 +4,7 @@ import { User } from "src/user/entities/user.entity";
 
 
 @ObjectType()
-export class UserLoginResponse {
+export class UserTokenResponse {
 
     @Field(() => User)
     user: User;

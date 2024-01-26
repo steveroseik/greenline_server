@@ -7,7 +7,7 @@ import { User } from './entities/user.entity';
 import { genId } from 'support/random-uuid-generator';
 import moment from 'moment';
 import { UserRoleService } from 'src/user-role/user-role.service';
-import { UserLoginResponse } from 'src/compoundEntities/userLoginResponse.entity';
+import { UserTokenResponse } from 'src/compoundEntities/userLoginResponse.entity';
 import { UserRole } from 'src/user-role/entities/user-role.entity';
 import { UserAndRoles } from 'src/compoundEntities/userAndRoles.entity';
 
@@ -40,9 +40,9 @@ export class UserService {
   }
 
 
-  async getUserDataWithRoles(userId:string): Promise<UserAndRoles| null>{
+  async getUserWithRoles(userId:string): Promise<UserAndRoles| null>{
 
-    const userDataPromise = this.userRepository.findOne({ where: { id: userId } });
+    const userDataPromise = this.findOne(userId);
     const rolesDataPromise = this.userRoleService.findRolesById(userId);
 
     const [userData, rolesData] = await Promise.all([userDataPromise, rolesDataPromise]);
@@ -55,12 +55,43 @@ export class UserService {
      return res;
   }
 
+  async signUpAccount(oldId:string, email:string, id:string): Promise<boolean>{
+
+    try{
+      const data = await this.userRepository.update({id:oldId, email}, {id});
+      if (data.affected === 1) return true;
+    }catch(e){
+      console.log(e);
+    }
+
+    return false;
+  }
+
+
+  async setRefreshToken(token:string){
+    const resp = await this.userRepository.insert({refreshToken: token})
+  }
+
   findAll() {
+    //TODO: Exhaustive, paginate
     return this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+
+  async saveRefreshToken(email:string, token:string): Promise<boolean>{
+
+    const data = await this.userRepository.update({email}, {refreshToken: token});
+    if (data.affected === 1) return true;
+
+    return false;
+  }
+
+  async findOne(id: string): Promise<User | null> {
+    return await this.userRepository.findOne({where: {id}})
+  }
+
+  async findOneByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findOne({where: {email}})
   }
 
   update(id: number, updateUserInput: UpdateUserInput) {

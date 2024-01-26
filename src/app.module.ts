@@ -45,6 +45,8 @@ import { UserRoleService } from './user-role/user-role.service';
 import { DataloadersModule } from './dataloaders/dataloaders.module';
 
 import { DateScalarMode, NumberScalarMode } from "@nestjs/graphql";
+import { APP_GUARD } from '@nestjs/core';
+import { AccessTokenGaurd } from './auth/gaurds/accessToken.gaurd';
 
 @Module({
   imports: [
@@ -102,7 +104,8 @@ import { DateScalarMode, NumberScalarMode } from "@nestjs/graphql";
     RoleModule, UserRoleModule, ListenersModule, DataloadersModule,
     ],
   controllers: [AppController],
-  providers: [AppService, DataloaderRegistryFactory],
+  providers: [AppService, DataloaderRegistryFactory, 
+    {provide: APP_GUARD, useClass: AccessTokenGaurd}],
 })
 export class AppModule {}
 

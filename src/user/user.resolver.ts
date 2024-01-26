@@ -6,6 +6,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { UserRole } from 'src/user-role/entities/user-role.entity';
 import { UserRoleService } from 'src/user-role/user-role.service';
 import { DataloaderRegistry } from 'src/dataloaders/dataLoaderRegistry';
+import { Public } from 'src/auth/decorators/publicDecorator';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -14,8 +15,6 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-
-
     return this.userService.create(createUserInput);
   }
 
@@ -26,7 +25,7 @@ export class UserResolver {
 
   @Query(() => User, { name: 'user' })
   findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.userService.findOne(id);
+    // return this.userService.findOne(id);
   }
 
   @Mutation(() => User)

@@ -1,45 +1,47 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { AuthPayload } from './entities/authPayload.entity';
-import { TokenRequestInput } from './dto/sign-in.input';
-import { UpdateAuthInput } from './dto/sign-up.input';
-import { AccessPayload } from './entities/accessPayload.entity';
+import { TokenRequestInput } from './dto/tokenRequest.input';
 import admin from '../../src/main';
 import { Auth } from 'firebase-admin/auth';
 import { User } from 'src/user/entities/user.entity';
-import { UserLoginResponse } from 'src/compoundEntities/userLoginResponse.entity';
+import { UserTokenResponse } from 'src/compoundEntities/userLoginResponse.entity';
+import { EmailValidityPayload } from 'src/compoundEntities/EmailValidity.entity';
+import { Public } from './decorators/publicDecorator';
+import { CurrentUserId } from './decorators/currentUserId';
+import { CurrentUser } from './decorators/currentUserDecorator';
+import { RefreshTokenGaurd } from './gaurds/refreshToken.gaurd';
+import { UseGuards } from '@nestjs/common';
 
-@Resolver(() => AuthPayload)
+@Resolver()
 export class AuthResolver {
 
   private firebaseAuth:Auth;
 
   constructor(private readonly authService: AuthService) {}
 
-  @Mutation(() => UserLoginResponse)
-  async requestToken(@Args('requestToken') requestTokenPayload: TokenRequestInput): Promise<UserLoginResponse | null> {
+  @Public()
+  @Mutation(() => UserTokenResponse)
+  async requestToken(@Args('requestTokenInput') requestTokenPayload: TokenRequestInput): Promise<UserTokenResponse | null> {
 
     return this.authService.requestToken(requestTokenPayload);
   }
 
-  @Query(() => [AuthPayload], { name: 'auth' })
-  findAll() {
-    return this.authService.findAll();
+  @Public()
+  @UseGuards(RefreshTokenGaurd)
+  @Mutation(() => UserTokenResponse)
+  refreshToken(
+    @Args('firebaseToken') firebaseToken:string,
+    @CurrentUser('refreshToken') refreshToken:string){
+    return this.authService.getNewToken({
+      token: firebaseToken,
+      refreshToken
+    })
   }
 
-  @Query(() => AuthPayload, { name: 'auth' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.authService.findOne(id);
+  @Public()
+  @Query(() => EmailValidityPayload)
+  isValidEmail(@Args('email') email:string) {
+    return this.authService.isEmailValid(email);
   }
 
-  @Mutation(() => AuthPayload)
-  updateAuth(@Args('updateAuthInput') updateAuthInput: UpdateAuthInput) {
-    throw Error('unimplemented')
-    // return this.authService.update(updateAuthInput.id, updateAuthInput);
-  }
-
-  @Mutation(() => AuthPayload)
-  removeAuth(@Args('id', { type: () => Int }) id: number) {
-    return this.authService.remove(id);
-  }
 }

@@ -1,7 +1,18 @@
 
 export type JwtPayload = {
     email:string
-    userId:string
+    id:string
+    roles: number[]
 }
 
-export type JwtPayloadWithRefreshToken = JwtPayload & { refreshToken: string}
+export type JwtRefreshPayload = {
+    email:string
+    id:string
+}
+
+export type RefreshWithTokenPayload = JwtRefreshPayload & {refreshToken:string}
+
+export type refreshWithFirebasePayload = {
+
+    firebaseToken:string;
+}

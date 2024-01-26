@@ -154,6 +154,7 @@ type user {
   email: String!
   phone: String!
   birthdate: Timestamp!
+  refreshToken: String
   createdAt: Timestamp!
   lastModified: Timestamp!
   userAddresses: [userAddress!]!
@@ -344,16 +345,16 @@ type EventListenObject {
   message: String!
 }
 
-type AuthPayload {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-type UserLoginResponse {
+type UserTokenResponse {
   user: user!
   userRoles: [UserRole!]!
   accessToken: String!
   refreshToken: String!
+}
+
+type EmailValidityPayload {
+  isValid: Boolean!
+  id: String
 }
 
 type Query {
@@ -388,7 +389,7 @@ type Query {
   expense(id: Int!): expense!
   financialTransaction(id: Int!): financialTransaction!
   financialRequestStatus(id: Int!): financalRequestStatus!
-  auth(id: Int!): AuthPayload!
+  isValidEmail(email: String!): EmailValidityPayload!
   sendToEvent: EventListenObject!
   listeners: [Listener!]!
   listener(id: Int!): Listener!
@@ -479,9 +480,8 @@ type Mutation {
   createFinancialRequestStatus(createFinancialRequestStatusInput: CreateFinancialRequestStatusInput!): financalRequestStatus!
   updateFinancialRequestStatus(updateFinancialRequestStatusInput: UpdateFinancialRequestStatusInput!): financalRequestStatus!
   removeFinancialRequestStatus(id: Int!): financalRequestStatus!
-  requestToken(requestToken: TokenRequestInput!): UserLoginResponse!
-  updateAuth(updateAuthInput: UpdateAuthInput!): AuthPayload!
-  removeAuth(id: Int!): AuthPayload!
+  requestToken(requestTokenInput: TokenRequestInput!): UserTokenResponse!
+  refreshToken(firebaseToken: String!): UserTokenResponse!
   updateListener(updateListenerInput: UpdateListenerInput!): Listener!
   removeListener(id: Int!): Listener!
 }
@@ -804,11 +804,8 @@ input UpdateFinancialRequestStatusInput {
 }
 
 input TokenRequestInput {
-  token: String!
-}
-
-input UpdateAuthInput {
-  token: Int!
+  firebaseToken: String!
+  id: String
 }
 
 input UpdateListenerInput {

@@ -1,30 +1,29 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-// import { PassportStrategy } from "@nestjs/passport";
+import { PassportStrategy } from "@nestjs/passport";
 
-// import { Strategy, ExtractJwt } from "passport-jwt";
+import { Strategy, ExtractJwt } from "passport-jwt";
 
 import * as  dotenv from "dotenv";
 import { JwtPayload } from "../types/jwtPayload.type";
+import { Request } from "express";
 
 dotenv.config();
 
 
-// @Injectable()
+@Injectable()
+export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt'){
 
-// export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt'){
+    constructor() {
+        super({
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            secretOrKey: process.env.access_token_secret,
+            passReqToCallback: true,
+        })
+    }
 
-//     // constructor(public config:ConfigService) {
-
-//     //     super({
-//     //         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-//     //         secretOrKey: config.get(process.env.secret_key),
-//     //         passReqToCallback: true,
-//     //     })
-//     // }
-
-//     async validate(payload:JwtPayload) {
-
-//         return payload;
-//     }
-// }
+    async validate(req: Request, payload:JwtPayload) {
+        console.log(req.get('authorization'));
+        return payload;
+    }
+}
