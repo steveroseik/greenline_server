@@ -7,6 +7,7 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { RequestStatusHistory } from "src/request-status-history/entities/request-status-history.entity";
 import { User } from "src/user/entities/user.entity";
@@ -16,7 +17,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 @Entity("request", { schema: "greenline_db" })
 @ObjectType('request')
 export class Request {
-  @Column("int", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
 

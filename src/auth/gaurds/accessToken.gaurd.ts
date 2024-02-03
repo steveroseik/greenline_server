@@ -6,7 +6,6 @@ import { Observable } from "rxjs";
 
 
 @Injectable()
-
 export class AccessTokenGaurd extends AuthGuard('jwt') {
 
     constructor(private reflector:Reflector){
@@ -21,11 +20,7 @@ export class AccessTokenGaurd extends AuthGuard('jwt') {
     }
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        const isPublic = this.reflector.getAllAndOverride('isPublic', [
-            context.getHandler(),
-            context.getClass()
-        ])
-
+        const isPublic = this.reflector.get('isPublic', context.getHandler())
         if (isPublic) return true;
 
         return super.canActivate(context);

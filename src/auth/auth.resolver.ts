@@ -7,10 +7,11 @@ import { User } from 'src/user/entities/user.entity';
 import { UserTokenResponse } from 'src/compoundEntities/userLoginResponse.entity';
 import { EmailValidityPayload } from 'src/compoundEntities/EmailValidity.entity';
 import { Public } from './decorators/publicDecorator';
-import { CurrentUserId } from './decorators/currentUserId';
 import { CurrentUser } from './decorators/currentUserDecorator';
 import { RefreshTokenGaurd } from './gaurds/refreshToken.gaurd';
 import { UseGuards } from '@nestjs/common';
+import { AllowedRoles, Roles } from './decorators/RolesDecorator';
+import { RolesGaurd } from './gaurds/Roles.gaurd';
 
 @Resolver()
 export class AuthResolver {
@@ -26,17 +27,17 @@ export class AuthResolver {
     return this.authService.requestToken(requestTokenPayload);
   }
 
-  @Public()
-  @UseGuards(RefreshTokenGaurd)
-  @Mutation(() => UserTokenResponse)
-  refreshToken(
-    @Args('firebaseToken') firebaseToken:string,
-    @CurrentUser('refreshToken') refreshToken:string){
-    return this.authService.getNewToken({
-      token: firebaseToken,
-      refreshToken
-    })
-  }
+  // @Public()
+  // @UseGuards(RefreshTokenGaurd)
+  // @Mutation(() => UserTokenResponse)
+  // refreshToken(
+  //   @Args('firebaseToken') firebaseToken:string,
+  //   @CurrentUser('refreshToken') refreshToken:string){
+  //   return this.authService.getNewToken({
+  //     token: firebaseToken,
+  //     refreshToken
+  //   })
+  // }
 
   @Public()
   @Query(() => EmailValidityPayload)

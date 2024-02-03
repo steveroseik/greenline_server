@@ -20,7 +20,7 @@ import { ItemInBoxModule } from './item-in-box/item-in-box.module';
 import { InventoryPricesModule } from './inventory-prices/inventory-prices.module';
 import { InventorySupportModule } from './inventory-support/inventory-support.module';
 import { InventoryModule } from './inventory/inventory.module';
-import { ItemPricesModule } from './item-prices/item-prices.module';
+import { ItemPriceModule } from './item-price/item-price.module';
 import { FinancialTransactionModule } from './financial-transaction/financial-transaction.module';
 import { FinancialRequestStatusModule } from './financial-request-status/financial-request-status.module';
 import { RackModule } from './rack/rack.module';
@@ -47,6 +47,8 @@ import { DataloadersModule } from './dataloaders/dataloaders.module';
 import { DateScalarMode, NumberScalarMode } from "@nestjs/graphql";
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGaurd } from './auth/gaurds/accessToken.gaurd';
+import { HubModule } from './hub/hub.module';
+import { GeoLocation } from 'support/geolocation.type';
 
 @Module({
   imports: [
@@ -82,14 +84,14 @@ import { AccessTokenGaurd } from './auth/gaurds/accessToken.gaurd';
         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
           buildSchemaOptions: {
             numberScalarMode: 'integer',
-            dateScalarMode: 'timestamp'
+            dateScalarMode: 'timestamp',
           },
           context: () => ({
             loaders: dataloaderService.create(),
           }),
       }),
     }),
-    ItemModule, ItemPricesModule, 
+    ItemModule, ItemPriceModule, 
     InventoryModule, InventorySupportModule, 
     InventoryPricesModule, RackModule, 
     BallotModule, BoxModule, 
@@ -101,7 +103,7 @@ import { AccessTokenGaurd } from './auth/gaurds/accessToken.gaurd';
     RequestModule, FinancialAccountModule, ExpenseModule, 
     FinancialTransactionModule, FinancialRequestStatusModule, 
     AuthModule,
-    RoleModule, UserRoleModule, ListenersModule, DataloadersModule,
+    RoleModule, UserRoleModule, ListenersModule, DataloadersModule, HubModule,
     ],
   controllers: [AppController],
   providers: [AppService, DataloaderRegistryFactory, 

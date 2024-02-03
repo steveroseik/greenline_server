@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { Ballot } from "src/ballot/entities/ballot.entity";
 import { ItemInBox } from "src/item-in-box/entities/item-in-box.entity";
@@ -14,7 +15,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 @Entity("box", { schema: "greenline_db" })
 @ObjectType('box')
 export class Box {
-  @Column("int", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
 

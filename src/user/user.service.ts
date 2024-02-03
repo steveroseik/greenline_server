@@ -10,6 +10,12 @@ import { UserRoleService } from 'src/user-role/user-role.service';
 import { UserTokenResponse } from 'src/compoundEntities/userLoginResponse.entity';
 import { UserRole } from 'src/user-role/entities/user-role.entity';
 import { UserAndRoles } from 'src/compoundEntities/userAndRoles.entity';
+import { Roles } from 'src/auth/decorators/RolesDecorator';
+import { UserPageInput } from './dto/user-page.input';
+import { buildPaginator } from 'typeorm-cursor-pagination';
+import { UserPage } from './entities/userPage.entity';
+import { UpdateUserInfo } from './dto/update-info.input';
+import { UpdateUserTypeInput } from './dto/update-user-type.input';
 
 
 @Injectable()
@@ -24,15 +30,13 @@ export class UserService {
     try {
 
         createUserInput.id = genId();
-        createUserInput.createdAt = new Date();
-        createUserInput.lastModified = createUserInput.createdAt;
 
         const newUser = await this.userRepository.insert(createUserInput)
       
         return newUser.raw.affectedRows === 1;
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') {
-          throw new Error('User with that ID already exists.');
+          throw new Error('User already exist');
         } else {
           throw error;
         }
@@ -72,9 +76,35 @@ export class UserService {
     const resp = await this.userRepository.insert({refreshToken: token})
   }
 
-  findAll() {
-    //TODO: Exhaustive, paginate
-    return this.userRepository.find();
+  paginateUsers(input:UserPageInput): Promise<UserPage>{
+    
+    let query = this.userRepository.createQueryBuilder('user')
+
+    const paginator = buildPaginator({
+      entity: User,
+      paginationKeys: ['id'],
+      query: {
+        order: input.isAsc ? 'ASC' : "DESC",
+        limit: input.limit,
+        afterCursor: input.afterCursor,
+        beforeCursor: input.beforeCursor
+      }
+    })
+
+    if (input.roles.includes(Roles.admin)) {
+      // do nothing, get all
+    }else if (input.roles.includes(Roles.courierAdmin) || input.type == 'courier'){
+      query.where("user.type = 'courier'");
+    }else if (input.roles.includes(Roles.financeAdmin) || input.type == 'finance'){
+      query.where("user.type = 'finance'");
+    }else if (input.roles.includes(Roles.merchantAdmin) || input.type == 'merchant'){
+      query.where("user.type = 'merchant'");
+    }else if (input.roles.includes(Roles.inventoryAdmin) || input.type == 'inventory'){
+      query.where("user.type = 'inventory'");
+    }
+
+    return paginator.paginate(query);
+
   }
 
 
@@ -86,6 +116,13 @@ export class UserService {
     return false;
   }
 
+  async updateUserType(input:UpdateUserTypeInput): Promise<Boolean>{
+
+    const resp = await this.userRepository.update({id: input.id}, {type: input.type})
+
+    return resp.affected === 1;
+  }
+
   async findOne(id: string): Promise<User | null> {
     return await this.userRepository.findOne({where: {id}})
   }
@@ -94,8 +131,9 @@ export class UserService {
     return await this.userRepository.findOne({where: {email}})
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+  async updateMyInfo(input:UpdateUserInfo): Promise<Boolean> {
+    const resp = await this.userRepository.update(input.id, input);
+    return resp.affected === 1
   }
 
   remove(id: number) {

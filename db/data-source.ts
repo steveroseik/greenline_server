@@ -14,6 +14,7 @@ export const dataConfig:DataSourceOptions = {
     database: "greenline_db",
     entities: ["./dist/src/**/*.entity{.ts,.js}"],
     migrationsRun: true,
+    legacySpatialSupport: false,
     migrationsTransactionMode: "all",
     synchronize: false,
     migrations: ["./dist/db/migrations/**/*.js"],

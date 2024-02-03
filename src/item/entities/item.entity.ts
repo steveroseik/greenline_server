@@ -7,7 +7,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { Merchant } from "src/merchant/entities/merchant.entity";
-import { ItemPrices } from "src/item-prices/entities/item-prices.entity";
+import { ItemPrice } from "src/item-price/entities/item-prices.entity";
 import { ItemInBox } from "src/item-in-box/entities/item-in-box.entity";
 import { OrderItem } from "src/order-item/entities/order-item.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
@@ -56,13 +56,9 @@ export class Item {
   @Field(() => Merchant)
   merchant: Merchant;
 
-  @OneToMany(() => ItemPrices, (itemPrices) => itemPrices.item)
-  @Field(() => [ItemPrices])
-  itemPrices: ItemPrices[];
-
-  @OneToMany(() => ItemInBox, (itemInBox) => itemInBox.item)
-  @Field(() => [ItemInBox])
-  itemsInBox: ItemInBox[];
+  @OneToMany(() => ItemPrice, (itemPrices) => itemPrices.item)
+  @Field(() => [ItemPrice])
+  itemPrices: ItemPrice[];
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.item)
   @Field(() => [OrderItem])

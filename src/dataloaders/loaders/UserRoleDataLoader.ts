@@ -9,7 +9,6 @@ class UserRoleDataLoader {
       const userRoles = await service.findAllUserRoles(keys);
       const grouped = _.groupBy(userRoles, 'userId');
       const result = keys.map((key) => grouped.hasOwnProperty(key) ? grouped[key] : []);
-      console.log(result);
       return result;
     });
   }

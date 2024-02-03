@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
 import { Inventory } from "src/inventory/entities/inventory.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 
@@ -6,7 +6,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 @Entity("inventoryPrices", { schema: "greenline_db" })
 @ObjectType('inventoryPrices')
 export class InventoryPrices {
-  @Column("int", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
 

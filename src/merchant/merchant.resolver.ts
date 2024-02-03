@@ -13,6 +13,12 @@ export class MerchantResolver {
     return this.merchantService.create(createMerchantInput);
   }
 
+  @Mutation(() => Boolean)
+  async createFakeMerchant(): Promise<boolean>{
+
+    return await this.merchantService.createFakeMerchant();
+  }
+
   @Query(() => [Merchant], { name: 'merchant' })
   findAll() {
     return this.merchantService.findAll();

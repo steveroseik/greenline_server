@@ -1,5 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsAlpha, IsDate, IsInt, IsNumber, IsPhoneNumber } from 'class-validator';
+import { IsAlpha, IsDate, IsInt, IsNumber, IsPhoneNumber, IsString } from 'class-validator';
 
 @InputType()
 export class CreateUserInput {
@@ -20,18 +20,12 @@ export class CreateUserInput {
   @Field()
   phone: string;
 
-  @IsInt()
+  @IsString()
   @Field()
-  type: number
+  type: string
 
   @IsDate()
   @Field()
   birthdate: Date;
-
-  @Field({nullable: true})
-  createdAt?: Date
-
-  @Field({nullable: true})
-  lastModified?: Date
 
 }

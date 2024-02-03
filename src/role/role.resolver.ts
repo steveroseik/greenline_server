@@ -13,8 +13,8 @@ export class RoleResolver {
     return this.roleService.create(createRoleInput);
   }
 
-  @Query(() => [Role], { name: 'role' })
-  findAll() {
+  @Query(() => [Role])
+  findRoles() {
     return this.roleService.findAll();
   }
 

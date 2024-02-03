@@ -18,9 +18,17 @@ export class User {
   @Field()
   id: string;
 
-  @Column("int", { name: "type" })
+  @Column("varchar", { name: "type", length: 20 })
   @Field()
-  type: number;
+  type: string;
+
+  @Column("int", { name: "hubId" , nullable: true})
+  @Field({nullable: true})
+  hubId: number;
+
+  @Column("int", { name: "merchantId" , nullable: true})
+  @Field({ nullable: true})
+  merchantId: number;
 
   @Column("varchar", { name: "name", length: 255 })
   @Field()
@@ -38,10 +46,10 @@ export class User {
   @Field()
   birthdate: Date;
 
-
   @Column('varchar', { name: 'refreshToken', length: 64, nullable: true})
   @Field({nullable: true})
   refreshToken?: string;
+
 
   @Column("timestamp", { name: "createdAt" })
   @Field()
@@ -50,6 +58,10 @@ export class User {
   @Column("timestamp", { name: "lastModified"})
   @Field()
   lastModified: Date;
+
+  @Column("timestamp", { name: "deletedAt", nullable: true})
+  @Field({nullable: true})
+  deletedAt: Date;
 
   @OneToMany(() => UserAddress, (userAddress) => userAddress.user)
   @Field(() => [UserAddress])
@@ -91,8 +103,4 @@ export class User {
   @ManyToMany(() => Request, (request) => request.users)
   @Field(() => [Request])
   requestsReceived: Request[];
-
-  // @OneToMany(() => UserRole, (userRole) => userRole.user, {eager: false})
-  // @Field(() => [UserRole], {nullable: true})
-  // userRoles: UserRole[];
 }

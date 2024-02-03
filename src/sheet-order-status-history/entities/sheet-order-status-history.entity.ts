@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn,} from "typeorm";
 import { SheetOrder } from "src/sheet-order/entities/sheet-order.entity";
 import { User } from "src/user/entities/user.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
@@ -8,7 +8,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 @Entity("sheetOrderStatusHistory", { schema: "greenline_db" })
 @ObjectType('sheetOrderStatusHistory')
 export class SheetOrderStatusHistory {
-  @Column("int", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
 

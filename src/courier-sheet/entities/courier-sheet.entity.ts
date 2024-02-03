@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { SheetOrder } from "src/sheet-order/entities/sheet-order.entity";
 import { User } from "src/user/entities/user.entity";
@@ -14,7 +15,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 @Entity("courierSheet", { schema: "greenline_db" })
 @ObjectType('courierSheet')
 export class CourierSheet {
-  @Column("int", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
 

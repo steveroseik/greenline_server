@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { InventoryHistory } from "src/inventory-history/entities/inventory-history.entity";
 import { Item } from "src/item/entities/item.entity";
@@ -16,7 +17,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 @Entity("itemInBox", { schema: "greenline_db" })
 @ObjectType('itemInBox')
 export class ItemInBox {
-  @Column("int", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
 
@@ -36,6 +37,10 @@ export class ItemInBox {
   @Field()
   minCount: number;
 
+  @Column("int", { name: "inventoryId" })
+  @Field()
+  inventoryId:number
+
   @Column("timestamp", { name: "createdAt"})
   @Field()
   createdAt: Date;
@@ -51,18 +56,11 @@ export class ItemInBox {
   @Field(() => [InventoryHistory])
   inventoryHistory: InventoryHistory[];
 
-  @ManyToOne(() => Item, (item) => item.itemsInBox, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "itemSku", referencedColumnName: "sku" }])
-  @Field(() => Item)
-  item: Item;
-
   @ManyToOne(() => Box, (box) => box.itemsInBox, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
+  
   @JoinColumn([{ name: "boxId", referencedColumnName: "id" }])
   @Field(() => Box)
   box: Box;

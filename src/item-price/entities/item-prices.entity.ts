@@ -1,12 +1,12 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
 import { Item } from "src/item/entities/item.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 
 @Index("itemSku", ["itemSku"], {})
-@Entity("itemPrices", { schema: "greenline_db" })
-@ObjectType('itemPrices')
-export class ItemPrices {
-  @Column("int", { primary: true, name: "id" })
+@Entity("itemPrice", { schema: "greenline_db" })
+@ObjectType('itemPrice')
+export class ItemPrice {
+  @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
 
@@ -22,16 +22,16 @@ export class ItemPrices {
   @Field()
   price: number;
 
-  @Column("float", { name: "discount", precision: 12 })
-  @Field()
+  @Column("float", { name: "discount", precision: 12, nullable: true})
+  @Field({nullable: true})
   discount: number;
 
-  @Column("timestamp", { name: "startDiscount" })
-  @Field()
+  @Column("timestamp", { name: "startDiscount" , nullable: true})
+  @Field({nullable: true})
   startDiscount: Date;
 
-  @Column("timestamp", { name: "endDiscount" })
-  @Field()
+  @Column("timestamp", { name: "endDiscount", nullable: true })
+  @Field({nullable: true})
   endDiscount: Date;
 
   @ManyToOne(() => Item, (item) => item.itemPrices, {

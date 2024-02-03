@@ -1,7 +1,9 @@
 
 export type JwtPayload = {
-    email:string
     id:string
+    hubId: number, 
+    merchantId: number,
+    type: string,
     roles: number[]
 }
 

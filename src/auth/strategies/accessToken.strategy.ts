@@ -23,7 +23,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt'){
     }
 
     async validate(req: Request, payload:JwtPayload) {
-        console.log(req.get('authorization'));
+        req.user = payload;
         return payload;
     }
 }

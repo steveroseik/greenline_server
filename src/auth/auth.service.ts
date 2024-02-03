@@ -45,11 +45,12 @@ export class AuthService {
       const data = await this.userService.getUserWithRoles(decoded.uid);
 
       if (data.user === null) throw Error('invalid_user')
-      
-      console.log(this.configService.get('access_token_secret'));
+
       const accessToken = this.jwtService.sign({
         id: data.user.id,
-        email: data.user.email,
+        hubId: data.user.hubId,
+        type: data.user.type,
+        merchantId: data.user.merchantId,
         roles: data.roles.map((role) => role.roleId),
       },{expiresIn: '30m', secret: this.configService.get('access_token_secret')});
 

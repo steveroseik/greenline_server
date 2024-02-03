@@ -1,18 +1,19 @@
-import { Column, Entity, GeoJSON, OneToMany } from "typeorm";
+import { Column, Entity, GeoJSON, OneToMany, PrimaryGeneratedColumn, } from "typeorm";
 import { InventoryPrices } from "src/inventory-prices/entities/inventory-prices.entity";
 import { Rack } from "src/rack/entities/rack.entity";
 import { InventorySupport } from "src/inventory-support/entities/inventory-support.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { GeoLocation } from "support/geolocation.type";
 
 @Entity("inventory", { schema: "greenline_db" })
 @ObjectType('inventory')
 export class Inventory {
-  @Column("int", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
 
-  @Column("int", { name: "hubId" })
-  @Field()
+  @Column("int", { name: "hubId", nullable: true })
+  @Field({ nullable: true})
   hubId: number;
 
   @Column("varchar", { name: "name", length: 255 })
@@ -23,12 +24,14 @@ export class Inventory {
   @Field()
   module: number;
 
-  @Column("varchar", { name: "zone", length: 255 })
+  @Column("int", { name: "zoneId"})
   @Field()
-  zone: string;
+  zoneId: number;
 
-  @Field(() => String)
-  location: GeoJSON;
+  @Column({ type: "point",  
+  name: 'location',})
+  @Field(() => GeoLocation)
+  location: JSON;
 
   @Column("int", { name: "rentType" })
   @Field()
@@ -48,10 +51,6 @@ export class Inventory {
   )
   @Field(() => [InventoryPrices])
   inventoryPrices: InventoryPrices[];
-
-  @OneToMany(() => Rack, (rack) => rack.inventory)
-  @Field(() => [Rack])
-  racks: Rack[];
 
   @OneToMany(
     () => InventorySupport,

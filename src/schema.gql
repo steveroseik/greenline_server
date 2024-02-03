@@ -149,7 +149,9 @@ type request {
 
 type user {
   id: String!
-  type: Int!
+  type: String!
+  hubId: Int
+  merchantId: Int
   name: String!
   email: String!
   phone: String!
@@ -157,6 +159,7 @@ type user {
   refreshToken: String
   createdAt: Timestamp!
   lastModified: Timestamp!
+  deletedAt: Timestamp
   userAddresses: [userAddress!]!
   financialAccounts: [financialAccount!]!
   sheetOrderStatusHistories: [sheetOrderStatusHistory!]!
@@ -205,15 +208,30 @@ type merchant {
   orders: [order!]!
 }
 
-type itemPrices {
+type itemPrice {
   id: Int!
   itemSku: String!
   currency: String!
   price: Int!
-  discount: Int!
-  startDiscount: Timestamp!
-  endDiscount: Timestamp!
+  discount: Int
+  startDiscount: Timestamp
+  endDiscount: Timestamp
   item: item!
+}
+
+type item {
+  sku: String!
+  merchantSku: String!
+  merchantId: Int!
+  name: String!
+  description: String!
+  imageUrl: String!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+  merchant: merchant!
+  itemPrices: [itemPrice!]!
+  orderItems: [orderItem!]!
+  bundleCount: Int!
 }
 
 type inventoryHistory {
@@ -227,40 +245,6 @@ type inventoryHistory {
   itemInBox: itemInBox!
 }
 
-type inventoryPrices {
-  id: Int!
-  inventoryId: Int!
-  currency: String!
-  pricePerUnit: Int!
-  discount: Int!
-  startDiscount: Timestamp!
-  endDiscount: Timestamp!
-  inventory: inventory!
-}
-
-type inventorySupport {
-  id: Int!
-  inventoryId: Int!
-  governorateId: Int!
-  zoneId: Int!
-  inventory: inventory!
-}
-
-type inventory {
-  id: Int!
-  hubId: Int!
-  name: String!
-  module: Int!
-  zone: String!
-  location: String!
-  rentType: Int!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  inventoryPrices: [inventoryPrices!]!
-  racks: [rack!]!
-  inventorySupports: [inventorySupport!]!
-}
-
 type rack {
   id: Int!
   inventoryId: Int!
@@ -268,7 +252,6 @@ type rack {
   name: String!
   createdAt: Timestamp!
   lastModified: Timestamp!
-  inventory: inventory!
   ballots: [ballot!]!
 }
 
@@ -299,32 +282,31 @@ type itemInBox {
   boxId: Int!
   count: Int!
   minCount: Int!
+  inventoryId: Int!
   createdAt: Timestamp!
   lastModified: Timestamp!
   inventoryHistory: [inventoryHistory!]!
-  item: item!
   box: box!
+  item: item!
 }
 
-type item {
-  sku: String!
-  merchantSku: String!
-  merchantId: Int!
-  name: String!
-  description: String!
-  imageUrl: String!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  merchant: merchant!
-  itemPrices: [itemPrices!]!
-  itemsInBox: [itemInBox!]!
-  orderItems: [orderItem!]!
+type ItemPage {
+  data: [item!]!
+  cursor: GraphqlCursor!
 }
+
+"""Cursor scalar type for pagination"""
+scalar GraphqlCursor
 
 type UserRole {
   userId: String!
   roleId: Int!
   role: Role!
+}
+
+type UserPage {
+  cursor: GraphqlCursor!
+  data: [user!]!
 }
 
 type Role {
@@ -334,6 +316,44 @@ type Role {
   description: String!
   createdAt: Timestamp!
   lastModified: Timestamp!
+}
+
+type inventorySupport {
+  id: Int!
+  inventoryId: Int!
+  governorateId: Int!
+  zoneId: Int!
+  inventory: inventory!
+}
+
+type inventory {
+  id: Int!
+  hubId: Int
+  name: String!
+  module: Int!
+  zoneId: Int!
+  location: GeoLocation!
+  rentType: Int!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+  inventoryPrices: [inventoryPrices!]!
+  inventorySupports: [inventorySupport!]!
+  itemsInInventory: [itemInBox!]!
+  racks: [rack!]!
+}
+
+"""Geo location representation."""
+scalar GeoLocation
+
+type inventoryPrices {
+  id: Int!
+  inventoryId: Int!
+  currency: String!
+  pricePerUnit: Int!
+  discount: Int!
+  startDiscount: Timestamp!
+  endDiscount: Timestamp!
+  inventory: inventory!
 }
 
 type Listener {
@@ -357,27 +377,35 @@ type EmailValidityPayload {
   id: String
 }
 
+type Hub {
+  id: Int!
+  name: String!
+  governorateId: Int!
+  zoneId: Int!
+}
+
 type Query {
-  userRole: [UserRole!]!
+  findRoles: [Role!]!
   role(id: Int!): Role!
-  item(id: Int!): item!
-  itemPrices: [itemPrices!]!
-  itemPrice(id: Int!): itemPrices!
+  paginateItemsById(itemPageInput: PaginationInput): ItemPage!
+  findSingleItem(id: String!): item!
+  itemPrices: [itemPrice!]!
+  itemPrice(id: Int!): itemPrice!
+  itemInBox(id: Int!): itemInBox!
+  rack(id: Int!): rack!
+  findAllInventories: [inventory!]!
   inventory(id: Int!): inventory!
   inventorySupport(id: Int!): inventorySupport!
   inventoryPrices: [inventoryPrices!]!
   inventoryPrice(id: Int!): inventoryPrices!
-  rack(id: Int!): rack!
   ballot(id: Int!): ballot!
   box(id: Int!): box!
-  itemInBox(id: Int!): itemInBox!
   inventoryHistory(id: Int!): inventoryHistory!
   order(id: Int!): order!
   orderRelation(id: Int!): orderRelation!
   orderItem(id: Int!): orderItem!
   merchant(id: Int!): merchant!
-  findAllUsers: [user!]!
-  user(id: Int!): user!
+  paginateUsers(paginateUsersInput: PaginationInput!): UserPage!
   request(id: Int!): request!
   userAddress(id: Int!): userAddress!
   courierSheet(id: Int!): courierSheet!
@@ -393,22 +421,37 @@ type Query {
   sendToEvent: EventListenObject!
   listeners: [Listener!]!
   listener(id: Int!): Listener!
+  hub(id: Int!): Hub!
+}
+
+input PaginationInput {
+  isAsc: Boolean! = true
+  limit: Int! = 1
+  afterCursor: String
+  beforeCursor: String
 }
 
 type Mutation {
-  createUserRole(createUserRoleInput: CreateUserRoleInput!): UserRole!
-  updateUserRole(updateUserRoleInput: UpdateUserRoleInput!): UserRole!
   removeUserRole(id: Int!): UserRole!
+  updateUserRoles(input: UpdateUserRoleInput!): Boolean!
   createRole(createRoleInput: CreateRolesInput!): Role!
   updateRole(updateRoleInput: UpdateRoleInput!): Role!
   removeRole(id: Int!): Role!
   createItem(createItemInput: CreateItemInput!): item!
+  createFakeItem: Boolean!
   updateItem(updateItemInput: UpdateItemInput!): item!
   removeItem(id: Int!): item!
-  createItemPrice(createItemPriceInput: CreateItemPriceInput!): itemPrices!
-  updateItemPrice(updateItemPriceInput: UpdateItemPriceInput!): itemPrices!
-  removeItemPrice(id: Int!): itemPrices!
+  createItemPrice(createItemPriceInput: CreateItemPriceInput!): itemPrice!
+  updateItemPrice(updateItemPriceInput: UpdateItemPriceInput!): itemPrice!
+  removeItemPrice(id: Int!): itemPrice!
+  createItemInBox(createItemInBoxInput: CreateItemInBoxInput!): itemInBox!
+  updateItemInBox(updateItemInBoxInput: UpdateItemInBoxInput!): itemInBox!
+  removeItemInBox(id: Int!): itemInBox!
+  createRack(createRackInput: CreateRackInput!): rack!
+  updateRack(updateRackInput: UpdateRackInput!): rack!
+  removeRack(id: Int!): rack!
   createInventory(createInventoryInput: CreateInventoryInput!): inventory!
+  createFakeInventory: Boolean!
   updateInventory(updateInventoryInput: UpdateInventoryInput!): inventory!
   removeInventory(id: Int!): inventory!
   createInventorySupport(createInventorySupportInput: CreateInventorySupportInput!): inventorySupport!
@@ -417,18 +460,12 @@ type Mutation {
   createInventoryPrice(createInventoryPriceInput: CreateInventoryPriceInput!): inventoryPrices!
   updateInventoryPrice(updateInventoryPriceInput: UpdateInventoryPriceInput!): inventoryPrices!
   removeInventoryPrice(id: Int!): inventoryPrices!
-  createRack(createRackInput: CreateRackInput!): rack!
-  updateRack(updateRackInput: UpdateRackInput!): rack!
-  removeRack(id: Int!): rack!
   createBallot(createBallotInput: CreateBallotInput!): ballot!
   updateBallot(updateBallotInput: UpdateBallotInput!): ballot!
   removeBallot(id: Int!): ballot!
   createBox(createBoxInput: CreateBoxInput!): box!
   updateBox(updateBoxInput: UpdateBoxInput!): box!
   removeBox(id: Int!): box!
-  createItemInBox(createItemInBoxInput: CreateItemInBoxInput!): itemInBox!
-  updateItemInBox(updateItemInBoxInput: UpdateItemInBoxInput!): itemInBox!
-  removeItemInBox(id: Int!): itemInBox!
   createInventoryHistory(createInventoryHistoryInput: CreateInventoryHistoryInput!): inventoryHistory!
   updateInventoryHistory(updateInventoryHistoryInput: UpdateInventoryHistoryInput!): inventoryHistory!
   removeInventoryHistory(id: Int!): inventoryHistory!
@@ -442,10 +479,12 @@ type Mutation {
   updateOrderItem(updateOrderItemInput: UpdateOrderItemInput!): orderItem!
   removeOrderItem(id: Int!): orderItem!
   createMerchant(createMerchantInput: CreateMerchantInput!): merchant!
+  createFakeMerchant: Boolean!
   updateMerchant(updateMerchantInput: UpdateMerchantInput!): merchant!
   removeMerchant(id: Int!): merchant!
   createUser(createUserInput: CreateUserInput!): Boolean!
-  updateUser(updateUserInput: UpdateUserInput!): user!
+  updateUserType(updateInfo: UpdateUserTypeInput!): Boolean!
+  updateMyInfo(updateInfo: UpdateUserInput!): Boolean!
   removeUser(id: Int!): user!
   createRequest(createRequestInput: CreateRequestInput!): request!
   updateRequest(updateRequestInput: UpdateRequestInput!): request!
@@ -481,20 +520,16 @@ type Mutation {
   updateFinancialRequestStatus(updateFinancialRequestStatusInput: UpdateFinancialRequestStatusInput!): financalRequestStatus!
   removeFinancialRequestStatus(id: Int!): financalRequestStatus!
   requestToken(requestTokenInput: TokenRequestInput!): UserTokenResponse!
-  refreshToken(firebaseToken: String!): UserTokenResponse!
   updateListener(updateListenerInput: UpdateListenerInput!): Listener!
   removeListener(id: Int!): Listener!
-}
-
-input CreateUserRoleInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  createHub(createHubInput: CreateHubInput!): Hub!
+  updateHub(updateHubInput: UpdateHubInput!): Hub!
+  removeHub(id: Int!): Hub!
 }
 
 input UpdateUserRoleInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+  id: String!
+  roles: [Int!]!
 }
 
 input CreateRolesInput {
@@ -523,6 +558,28 @@ input CreateItemPriceInput {
 }
 
 input UpdateItemPriceInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateItemInBoxInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateItemInBoxInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateRackInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateRackInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
@@ -561,17 +618,6 @@ input UpdateInventoryPriceInput {
   id: Int!
 }
 
-input CreateRackInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateRackInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
 input CreateBallotInput {
   """Example field (placeholder)"""
   exampleField: Int!
@@ -589,17 +635,6 @@ input CreateBoxInput {
 }
 
 input UpdateBoxInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateItemInBoxInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateItemInBoxInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
@@ -650,13 +685,13 @@ input UpdateOrderItemInput {
 }
 
 input CreateMerchantInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  name: String!
+  includesVat: Boolean!
 }
 
 input UpdateMerchantInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  name: String
+  includesVat: Boolean
   id: Int!
 }
 
@@ -665,21 +700,21 @@ input CreateUserInput {
   name: String!
   email: String!
   phone: String!
-  type: Int!
+  type: String!
   birthdate: Timestamp!
-  createdAt: Timestamp
-  lastModified: Timestamp
+}
+
+input UpdateUserTypeInput {
+  id: String!
+  type: String!
 }
 
 input UpdateUserInput {
-  id: String!
   name: String
   email: String
   phone: String
-  type: Int
+  type: String
   birthdate: Timestamp
-  createdAt: Timestamp
-  lastModified: Timestamp
 }
 
 input CreateRequestInput {
@@ -809,6 +844,17 @@ input TokenRequestInput {
 }
 
 input UpdateListenerInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateHubInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateHubInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
