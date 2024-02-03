@@ -14,7 +14,7 @@ export class Initial1706102618190 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE \`inventoryHistory\` (\`id\` int NOT NULL, \`itemInBoxId\` int NOT NULL, \`description\` varchar(255) NOT NULL, \`type\` int NOT NULL, \`amount\` int NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, INDEX \`itemInBoxId\` (\`itemInBoxId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`inventoryPrices\` (\`id\` int NOT NULL, \`inventoryId\` int NOT NULL, \`currency\` varchar(255) NOT NULL, \`pricePerUnit\` float(12) NOT NULL, \`discount\` float(12) NOT NULL, \`startDiscount\` timestamp NOT NULL, \`endDiscount\` timestamp NOT NULL, INDEX \`inventoryId\` (\`inventoryId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`inventorySupport\` (\`id\` int NOT NULL, \`inventoryId\` int NOT NULL, \`governorateId\` int NOT NULL, \`zoneId\` int NOT NULL, INDEX \`inventoryId\` (\`inventoryId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
-        await queryRunner.query(`CREATE TABLE \`inventory\` (\`id\` int NOT NULL, \`hubId\` int NOT NULL, \`name\` varchar(255) NOT NULL, \`module\` int NOT NULL, \`zone\` varchar(255) NOT NULL, \`rentType\` int NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`inventory\` (\`id\` int NOT NULL, \`hubId\` int NOT NULL, \`name\` varchar(255) NOT NULL, \`module\` int NOT NULL, \`zone\` varchar(255) NOT NULL, \`rentType\` int NOT NULL, \`location\` POINT \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`rack\` (\`id\` int NOT NULL, \`inventoryId\` int NOT NULL, \`levels\` int NOT NULL, \`name\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, INDEX \`inventoryId\` (\`inventoryId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`ballot\` (\`id\` int NOT NULL, \`rackId\` int NOT NULL, \`level\` int NOT NULL, \`name\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, INDEX \`rackId\` (\`rackId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`box\` (\`id\` int NOT NULL, \`ballotId\` int NOT NULL, \`name\` varchar(255) NOT NULL, \`createdAt\` timestamp NOT NULL, \`lastModified\` timestamp NOT NULL, INDEX \`ballotId\` (\`ballotId\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
@@ -174,7 +174,6 @@ export class Initial1706102618190 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE \`financialRequestStatus\``);
         await queryRunner.query(`DROP INDEX \`orderId\` ON \`orderStatus\``);
         await queryRunner.query(`DROP TABLE \`orderStatus\``);
-        await queryRunner.query(`ALTER TABLE \'inventory\' DROP COLUMN location`);
     }
 
 }

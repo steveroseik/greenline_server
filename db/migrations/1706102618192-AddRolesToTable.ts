@@ -52,7 +52,7 @@ export class AddRolesToTable1706102618192 implements MigrationInterface {
       (43, 'accessUserManagement', 'management', 'Can access user management'),
       (44, 'addUser', 'management', 'Can add new user'),
       (45, 'editUser', 'management', 'Can edit users'),
-      (46, 'editUserRoles', 'management', 'Can edit user roles')
+      (46, 'editUserRoles', 'management', 'Can edit user roles'),
       (47, 'viewMerchantFinance', 'merchant', 'Can view merchant financial account details'),
       (48, 'addMerchantUser', 'merchant', 'Can add new merchant user'),
       (49, 'editMerchantUser', 'merchant', 'Can edit merchant users'),
