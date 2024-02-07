@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -49,6 +49,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGaurd } from './auth/gaurds/accessToken.gaurd';
 import { HubModule } from './hub/hub.module';
 import { GeoLocation } from 'support/geolocation.type';
+import express from 'express';
 
 @Module({
   imports: [

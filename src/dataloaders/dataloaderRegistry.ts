@@ -8,6 +8,7 @@ import { ItemInBoxService } from "src/item-in-box/item-in-box.service";
 import ItemInBoxInventoryLoader from "./loaders/ItemInBoxInventoryLoader";
 import { RackService } from "src/rack/rack.service";
 import RackInventoryLoader from "./loaders/RackInventoryLoader";
+import ItemInBoxCountLoader from "./loaders/ItemInBoxCountLoader";
 
 export class DataloaderRegistry {
   private cache: Record<string, any> = {};
@@ -43,6 +44,10 @@ export class DataloaderRegistry {
 
    public get ItemInBoxInventoryLoader() {
     return this.get('ItemInBoxInventoryLoader', () => ItemInBoxInventoryLoader.create(this.itemInBoxService));
+  }
+
+  public get ItemInBoxCountLoader() {
+    return this.get('ItemInBoxCountLoader', () => ItemInBoxCountLoader.create(this.itemInBoxService));
   }
 
   public get UserRoleDataLoader() {

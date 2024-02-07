@@ -23,7 +23,7 @@ export class Rack {
   @Field()
   inventoryId: number;
 
-  @Column("int", { name: "levels" })
+  @Column("int", { name: "levels", default: 1})
   @Field()
   levels: number;
 
@@ -31,15 +31,15 @@ export class Rack {
   @Field()
   name: string;
 
-  @Column("timestamp", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified" })
+  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   lastModified: Date;
 
-  
+
   @OneToMany(() => Ballot, (ballot) => ballot.rack)
   @Field(() => [Ballot])
   ballots: Ballot[];

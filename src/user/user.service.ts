@@ -4,7 +4,7 @@ import { UpdateUserInput } from './dto/update-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { genId } from 'support/random-uuid-generator';
+import { genId } from 'support/random-uuid.generator';
 import moment from 'moment';
 import { UserRoleService } from 'src/user-role/user-role.service';
 import { UserTokenResponse } from 'src/compoundEntities/userLoginResponse.entity';
@@ -16,6 +16,7 @@ import { buildPaginator } from 'typeorm-cursor-pagination';
 import { UserPage } from './entities/userPage.entity';
 import { UpdateUserInfo } from './dto/update-info.input';
 import { UpdateUserTypeInput } from './dto/update-user-type.input';
+import { faker } from '@faker-js/faker';
 
 
 @Injectable()
@@ -25,6 +26,28 @@ export class UserService {
   constructor(
     @InjectRepository(User) private userRepository:Repository<User>,
     private userRoleService:UserRoleService){};
+
+
+  genFakeType(): string{
+    const types = ['courier','merchant', 'finance', 'inventory'];
+    const rand = Math.floor(Math.random() * types.length)
+    return types[rand]
+  }
+
+  async createFake(count:number){
+
+    for (let i:number = 0; i < count; i++){
+      await this.userRepository.insert({
+        id: genId(),
+        name: faker.person.fullName(),
+        type: this.genFakeType(),
+        phone: faker.phone.number().substring(0, 15),
+        email: faker.internet.email(),
+        birthdate: faker.date.past()
+      })
+    }
+    return true;
+  }
 
   async create(createUserInput: CreateUserInput) {
     try {

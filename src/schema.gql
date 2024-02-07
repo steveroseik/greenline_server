@@ -32,7 +32,7 @@ type sheetOrder {
   id: Int!
   sheetId: Int!
   orderId: Int!
-  latestStatus: Int!
+  transactionId: Int!
   createdAt: Timestamp!
   sheet: courierSheet!
   order: order!
@@ -53,6 +53,10 @@ type orderItem {
   orderId: Int!
   itemSku: String!
   count: Int!
+  frozenPrice: String
+  frozenCurrency: String
+  partial: Boolean!
+  partialCount: Int!
   createdAt: Timestamp!
   lastModified: Timestamp!
   order: order!
@@ -71,11 +75,15 @@ type order {
   id: Int!
   otherId: Int!
   type: Int!
+  paymentType: Int!
   userId: String!
   merchantId: Int!
   userAddressId: Int!
   shippingPrice: Int!
   includesVat: Boolean!
+  canOpen: Boolean!
+  fragile: Boolean!
+  deliveryPart: Boolean!
   createdAt: Timestamp!
   lastModified: Timestamp!
   sheetOrders: [sheetOrder!]!
@@ -212,8 +220,8 @@ type itemPrice {
   id: Int!
   itemSku: String!
   currency: String!
-  price: Int!
-  discount: Int
+  price: String!
+  discount: String
   startDiscount: Timestamp
   endDiscount: Timestamp
   item: item!
@@ -224,6 +232,8 @@ type item {
   merchantSku: String!
   merchantId: Int!
   name: String!
+  color: String
+  size: String
   description: String!
   imageUrl: String!
   createdAt: Timestamp!
@@ -291,12 +301,17 @@ type itemInBox {
 }
 
 type ItemPage {
-  data: [item!]!
   cursor: GraphqlCursor!
+  data: [item!]!
 }
 
 """Cursor scalar type for pagination"""
 scalar GraphqlCursor
+
+type ItemInBoxPage {
+  cursor: GraphqlCursor!
+  data: [itemInBox!]!
+}
 
 type UserRole {
   userId: String!
@@ -338,8 +353,8 @@ type inventory {
   lastModified: Timestamp!
   inventoryPrices: [inventoryPrices!]!
   inventorySupports: [inventorySupport!]!
-  itemsInInventory: [itemInBox!]!
   racks: [rack!]!
+  itemsCount: Int!
 }
 
 """Geo location representation."""
@@ -349,10 +364,10 @@ type inventoryPrices {
   id: Int!
   inventoryId: Int!
   currency: String!
-  pricePerUnit: Int!
-  discount: Int!
-  startDiscount: Timestamp!
-  endDiscount: Timestamp!
+  price: String!
+  discount: String
+  startDiscount: Timestamp
+  endDiscount: Timestamp
   inventory: inventory!
 }
 
@@ -392,15 +407,17 @@ type Query {
   itemPrices: [itemPrice!]!
   itemPrice(id: Int!): itemPrice!
   itemInBox(id: Int!): itemInBox!
+  paginateItemInBox(input: ItemInBoxPageInput!): ItemInBoxPage!
+  testCount(inventoryIds: [Int!]!): String!
+  inventoryHistory(id: Int!): inventoryHistory!
   rack(id: Int!): rack!
-  findAllInventories: [inventory!]!
-  inventory(id: Int!): inventory!
-  inventorySupport(id: Int!): inventorySupport!
-  inventoryPrices: [inventoryPrices!]!
-  inventoryPrice(id: Int!): inventoryPrices!
   ballot(id: Int!): ballot!
   box(id: Int!): box!
-  inventoryHistory(id: Int!): inventoryHistory!
+  findAllInventories: [inventory!]!
+  findOneInventory(input: FindInventoryInput!): inventory!
+  inventoryPrices: [inventoryPrices!]!
+  inventoryPrice(id: Int!): inventoryPrices!
+  inventorySupport(id: Int!): inventorySupport!
   order(id: Int!): order!
   orderRelation(id: Int!): orderRelation!
   orderItem(id: Int!): orderItem!
@@ -431,44 +448,61 @@ input PaginationInput {
   beforeCursor: String
 }
 
+input ItemInBoxPageInput {
+  isAsc: Boolean! = true
+  limit: Int! = 1
+  afterCursor: String
+  beforeCursor: String
+  inventoryIds: [Int!]
+}
+
+input FindInventoryInput {
+  id: Int
+  hubId: Int
+}
+
 type Mutation {
   removeUserRole(id: Int!): UserRole!
   updateUserRoles(input: UpdateUserRoleInput!): Boolean!
+  updateUserRolesOptimized(input: UpdateUserRoleInputAdvanced!): Boolean!
   createRole(createRoleInput: CreateRolesInput!): Role!
   updateRole(updateRoleInput: UpdateRoleInput!): Role!
   removeRole(id: Int!): Role!
   createItem(createItemInput: CreateItemInput!): item!
-  createFakeItem: Boolean!
+  createFakeItem(count: Int! = 1): Boolean!
   updateItem(updateItemInput: UpdateItemInput!): item!
   removeItem(id: Int!): item!
   createItemPrice(createItemPriceInput: CreateItemPriceInput!): itemPrice!
   updateItemPrice(updateItemPriceInput: UpdateItemPriceInput!): itemPrice!
   removeItemPrice(id: Int!): itemPrice!
   createItemInBox(createItemInBoxInput: CreateItemInBoxInput!): itemInBox!
+  exportItem(input: ItemCountInput!): Boolean!
+  importNewItem(input: ImportItemInput!): Boolean!
+  importItem(input: ItemCountInput!): Boolean!
   updateItemInBox(updateItemInBoxInput: UpdateItemInBoxInput!): itemInBox!
   removeItemInBox(id: Int!): itemInBox!
+  createInventoryHistory(createInventoryHistoryInput: CreateInventoryHistoryInput!): inventoryHistory!
+  updateInventoryHistory(updateInventoryHistoryInput: UpdateInventoryHistoryInput!): inventoryHistory!
+  removeInventoryHistory(id: Int!): inventoryHistory!
   createRack(createRackInput: CreateRackInput!): rack!
   updateRack(updateRackInput: UpdateRackInput!): rack!
   removeRack(id: Int!): rack!
-  createInventory(createInventoryInput: CreateInventoryInput!): inventory!
-  createFakeInventory: Boolean!
-  updateInventory(updateInventoryInput: UpdateInventoryInput!): inventory!
-  removeInventory(id: Int!): inventory!
-  createInventorySupport(createInventorySupportInput: CreateInventorySupportInput!): inventorySupport!
-  updateInventorySupport(updateInventorySupportInput: UpdateInventorySupportInput!): inventorySupport!
-  removeInventorySupport(id: Int!): inventorySupport!
-  createInventoryPrice(createInventoryPriceInput: CreateInventoryPriceInput!): inventoryPrices!
-  updateInventoryPrice(updateInventoryPriceInput: UpdateInventoryPriceInput!): inventoryPrices!
-  removeInventoryPrice(id: Int!): inventoryPrices!
   createBallot(createBallotInput: CreateBallotInput!): ballot!
   updateBallot(updateBallotInput: UpdateBallotInput!): ballot!
   removeBallot(id: Int!): ballot!
   createBox(createBoxInput: CreateBoxInput!): box!
   updateBox(updateBoxInput: UpdateBoxInput!): box!
   removeBox(id: Int!): box!
-  createInventoryHistory(createInventoryHistoryInput: CreateInventoryHistoryInput!): inventoryHistory!
-  updateInventoryHistory(updateInventoryHistoryInput: UpdateInventoryHistoryInput!): inventoryHistory!
-  removeInventoryHistory(id: Int!): inventoryHistory!
+  createFakeInventory(count: Int! = 1): Boolean!
+  createInventory(input: CreateInventoryInput!): Boolean!
+  updateInventory(updateInventoryInput: UpdateInventoryInput!): inventory!
+  removeInventory(id: Int!): inventory!
+  createInventoryPrice(createInventoryPriceInput: CreateInventoryPriceInput!): inventoryPrices!
+  updateInventoryPrice(updateInventoryPriceInput: UpdateInventoryPriceInput!): inventoryPrices!
+  removeInventoryPrice(id: Int!): inventoryPrices!
+  createInventorySupport(createInventorySupportInput: CreateInventorySupportInput!): inventorySupport!
+  updateInventorySupport(updateInventorySupportInput: UpdateInventorySupportInput!): inventorySupport!
+  removeInventorySupport(id: Int!): inventorySupport!
   createOrder(createOrderInput: CreateOrderInput!): order!
   updateOrder(updateOrderInput: UpdateOrderInput!): order!
   removeOrder(id: Int!): order!
@@ -479,10 +513,11 @@ type Mutation {
   updateOrderItem(updateOrderItemInput: UpdateOrderItemInput!): orderItem!
   removeOrderItem(id: Int!): orderItem!
   createMerchant(createMerchantInput: CreateMerchantInput!): merchant!
-  createFakeMerchant: Boolean!
+  createFakeMerchant(count: Int! = 1): Boolean!
   updateMerchant(updateMerchantInput: UpdateMerchantInput!): merchant!
   removeMerchant(id: Int!): merchant!
   createUser(createUserInput: CreateUserInput!): Boolean!
+  createFakeUser(count: Int! = 1): Boolean!
   updateUserType(updateInfo: UpdateUserTypeInput!): Boolean!
   updateMyInfo(updateInfo: UpdateUserInput!): Boolean!
   removeUser(id: Int!): user!
@@ -529,6 +564,12 @@ type Mutation {
 
 input UpdateUserRoleInput {
   id: String!
+  rolesToRemove: [Int!]!
+  rolesToAdd: [Int!]!
+}
+
+input UpdateUserRoleInputAdvanced {
+  id: String!
   roles: [Int!]!
 }
 
@@ -542,13 +583,25 @@ input UpdateRoleInput {
 }
 
 input CreateItemInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  sku: String!
+  merchantSku: String
+  merchantId: Int!
+  name: String!
+  color: String
+  size: String
+  description: String!
+  imageUrl: String!
 }
 
 input UpdateItemInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  sku: String
+  merchantSku: String
+  merchantId: Int
+  name: String
+  color: String
+  size: String
+  description: String
+  imageUrl: String
   id: Int!
 }
 
@@ -568,53 +621,48 @@ input CreateItemInBoxInput {
   exampleField: Int!
 }
 
+input ItemCountInput {
+  id: Int!
+  count: Int!
+}
+
+input ImportItemInput {
+  itemSku: String!
+  inventoryId: Int!
+  boxId: Int!
+  count: Int!
+  minCount: Int!
+}
+
 input UpdateItemInBoxInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
 }
 
+input CreateInventoryHistoryInput {
+  itemInBoxId: Int!
+  description: String!
+  type: Int!
+  amount: Int!
+}
+
+input UpdateInventoryHistoryInput {
+  itemInBoxId: Int
+  description: String
+  type: Int
+  amount: Int
+  id: Int!
+}
+
 input CreateRackInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  inventoryId: Int!
+  name: String!
 }
 
 input UpdateRackInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateInventoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateInventoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateInventorySupportInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateInventorySupportInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateInventoryPriceInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateInventoryPriceInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  inventoryId: Int
+  name: String
   id: Int!
 }
 
@@ -640,14 +688,72 @@ input UpdateBoxInput {
   id: Int!
 }
 
-input CreateInventoryHistoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input CreateInventoryInput {
+  name: String!
+  rentType: Int!
+  zoneId: Int
+  hubId: Int
+  module: Int
+  location: GeoLocation
+  numberOfRacks: Int
+  rackLevel: Int
+  ballotPerRack: Int
+  boxPerBallot: Int
+  inventoryPrices: [AddInventoryPriceInput!]
 }
 
-input UpdateInventoryHistoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+input AddInventoryPriceInput {
+  currency: String!
+  pricePerUnit: Float!
+  discount: Float
+  startDiscount: Timestamp
+  endDiscount: Timestamp
+}
+
+input UpdateInventoryInput {
+  name: String
+  rentType: Int
+  zoneId: Int
+  hubId: Int
+  module: Int
+  location: GeoLocation
+  numberOfRacks: Int
+  rackLevel: Int
+  ballotPerRack: Int
+  boxPerBallot: Int
+  inventoryPrices: [AddInventoryPriceInput!]
+  id: Int!
+}
+
+input CreateInventoryPriceInput {
+  inventoryId: Int!
+  currency: String!
+  pricePerUnit: Float!
+  discount: Float
+  startDiscount: Timestamp
+  endDiscount: Timestamp
+}
+
+input UpdateInventoryPriceInput {
+  inventoryId: Int
+  currency: String
+  pricePerUnit: Float
+  discount: Float
+  startDiscount: Timestamp
+  endDiscount: Timestamp
+  id: Int!
+}
+
+input CreateInventorySupportInput {
+  inventoryId: String!
+  zoneId: Int!
+  governorateId: Int!
+}
+
+input UpdateInventorySupportInput {
+  inventoryId: String
+  zoneId: Int
+  governorateId: Int
   id: Int!
 }
 

@@ -6,6 +6,13 @@ import { UpdateItemInBoxInput } from './dto/update-item-in-box.input';
 import { ItemService } from 'src/item/item.service';
 import { Item } from 'src/item/entities/item.entity';
 import { DataloaderRegistry } from 'src/dataloaders/dataLoaderRegistry';
+import { ItemCountInput } from './dto/export-item.input';
+import { UseGuards } from '@nestjs/common';
+import { RolesGaurd } from 'src/auth/gaurds/Roles.gaurd';
+import { AllowedRoles, Roles } from 'src/auth/decorators/RolesDecorator';
+import { ImportItemInput } from './dto/import-item.input';
+import { ItemInBoxPageInput } from './dto/paginate-item-in-box.input';
+import { ItemInBoxPage } from './entities/item-in-box-page.entity';
 
 @Resolver(() => ItemInBox)
 export class ItemInBoxResolver {
@@ -22,6 +29,42 @@ export class ItemInBoxResolver {
     return this.itemInBoxService.findAll();
   }
 
+
+  @Query(() => ItemInBoxPage)
+  paginateItemInBox(@Args('input') input:ItemInBoxPageInput){
+
+    return this.itemInBoxService.paginateItemInBox(input);
+  }
+
+  @UseGuards(RolesGaurd)
+  @AllowedRoles(Roles.inventoryAdmin)
+  @Mutation(() => Boolean)
+  async exportItem(@Args('input') input:ItemCountInput){
+
+    return await this.itemInBoxService.exportItem(input);
+
+  }
+
+  @Query(() => String)
+  async testCount(@Args('inventoryIds', { type: () => [Int]} ) inventoryIds:number[]): Promise<string> {
+
+    const a = await this.itemInBoxService.findItemsCount(inventoryIds);
+    console.log(a);
+    return a.toString();
+  }
+
+  @Mutation(() => Boolean)
+  async importNewItem(@Args('input') input:ImportItemInput){
+
+    return await this.itemInBoxService.importNewItem(input);
+
+  }
+
+  @Mutation(() => Boolean)
+  async importItem(@Args('input') input:ItemCountInput){
+    return await this.itemInBoxService.importItem(input);
+  }
+  
   @Query(() => ItemInBox, { name: 'itemInBox' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.itemInBoxService.findOne(id);

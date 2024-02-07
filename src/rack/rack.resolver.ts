@@ -6,6 +6,8 @@ import { UpdateRackInput } from './dto/update-rack.input';
 
 @Resolver(() => Rack)
 export class RackResolver {
+
+  
   constructor(private readonly rackService: RackService) {}
 
   @Mutation(() => Rack)

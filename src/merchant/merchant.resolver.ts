@@ -3,6 +3,7 @@ import { MerchantService } from './merchant.service';
 import { Merchant } from './entities/merchant.entity';
 import { CreateMerchantInput } from './dto/create-merchant.input';
 import { UpdateMerchantInput } from './dto/update-merchant.input';
+import { Public } from 'src/auth/decorators/publicDecorator';
 
 @Resolver(() => Merchant)
 export class MerchantResolver {
@@ -13,10 +14,11 @@ export class MerchantResolver {
     return this.merchantService.create(createMerchantInput);
   }
 
+  @Public()
   @Mutation(() => Boolean)
-  async createFakeMerchant(): Promise<boolean>{
+  async createFakeMerchant(@Args('count', {defaultValue: 1}) count:number): Promise<boolean>{
 
-    return await this.merchantService.createFakeMerchant();
+    return await this.merchantService.createFakeMerchant(count);
   }
 
   @Query(() => [Merchant], { name: 'merchant' })

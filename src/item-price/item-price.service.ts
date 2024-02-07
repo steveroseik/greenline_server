@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateItemPriceInput } from './dto/create-item-price.input';
 import { UpdateItemPriceInput } from './dto/update-item-price.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ItemPrice } from './entities/item-prices.entity';
+import { ItemPrice } from './entities/item-price.entity';
 import { Repository } from 'typeorm';
 import { faker } from '@faker-js/faker/locale/af_ZA';
 

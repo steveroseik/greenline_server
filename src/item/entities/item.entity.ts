@@ -7,7 +7,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { Merchant } from "src/merchant/entities/merchant.entity";
-import { ItemPrice } from "src/item-price/entities/item-prices.entity";
+import { ItemPrice } from "src/item-price/entities/item-price.entity";
 import { ItemInBox } from "src/item-in-box/entities/item-in-box.entity";
 import { OrderItem } from "src/order-item/entities/order-item.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
@@ -32,6 +32,14 @@ export class Item {
   @Field()
   name: string;
 
+  @Column("varchar", { name: "color", length: 50, nullable: true})
+  @Field({ nullable: true })
+  color: string;
+
+  @Column("varchar", { name: "size", length: 15, nullable: true })
+  @Field({ nullable: true })
+  size: string;
+
   @Column("varchar", { name: "description", length: 255 })
   @Field()
   description: string;
@@ -40,11 +48,11 @@ export class Item {
   @Field()
   imageUrl: string;
 
-  @Column("timestamp", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified" })
+  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   lastModified: Date;
 

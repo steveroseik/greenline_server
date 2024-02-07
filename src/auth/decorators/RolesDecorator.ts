@@ -61,14 +61,12 @@ export enum Roles {
 
 export class DefinedRoles{
   static UserManagementRoles = [
-    Roles.admin, 
     Roles.courierAdmin, Roles.financeAdmin, 
     Roles.merchantAdmin, Roles.inventoryAdmin,
     Roles.editUser, Roles.editUserRoles
   ];
   
   static UserRoleEditors = [
-    Roles.admin,
     Roles.courierAdmin, Roles.financeAdmin, 
     Roles.merchantAdmin, Roles.inventoryAdmin,
     Roles.editUserRoles

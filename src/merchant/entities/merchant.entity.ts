@@ -20,11 +20,11 @@ export class Merchant {
   @Field()
   includesVat: boolean;
 
-  @Column("timestamp", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified" })
+  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   lastModified: Date;
 

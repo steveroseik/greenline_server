@@ -16,17 +16,16 @@ export class MerchantService {
     return 'This action adds a new merchant';
   }
 
-  async createFakeMerchant(): Promise<boolean>{
+  async createFakeMerchant(count:number): Promise<boolean>{
 
-    const merch:CreateMerchantInput = {
-      name: faker.internet.displayName(),
-      includesVat: Math.random() > 0.5 ? true : false
+    for (let i =0; i<count;i++){
+      const merch:CreateMerchantInput = {
+        name: faker.internet.displayName(),
+        includesVat: Math.random() > 0.5 ? true : false
+      }
+      const resp = await this.merchantRepo.insert(merch)
     }
-    const resp = await this.merchantRepo.insert(merch)
-    
-    if (resp.raw.affectedRows === 1) return true;
-
-    return false;
+    return true;
   }
 
   findAll() {

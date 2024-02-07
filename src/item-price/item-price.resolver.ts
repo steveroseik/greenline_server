@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { ItemPriceService } from './item-price.service';
-import { ItemPrice } from './entities/item-prices.entity';
+import { ItemPrice } from './entities/item-price.entity';
 import { CreateItemPriceInput } from './dto/create-item-price.input';
 import { UpdateItemPriceInput } from './dto/update-item-price.input';
 

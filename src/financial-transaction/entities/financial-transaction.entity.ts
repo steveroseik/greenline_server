@@ -54,7 +54,7 @@ export class FinancialTransaction {
   @Field()
   approvedById: string;
 
-  @Column("timestamp", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   createdAt: Date;
 

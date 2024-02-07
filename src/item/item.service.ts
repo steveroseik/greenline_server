@@ -21,23 +21,26 @@ export class ItemService {
     return 'This action adds a new item';
   }
 
-  async createFake(merchantId:number): Promise<boolean> {
+  async createFake(merchantId:number, count:number): Promise<boolean> {
 
-    const sku = faker.internet.userName({firstName: 'item', lastName: faker.string.alpha()});
-    const fakeItem = {
-      sku,
-      merchantSku: sku,
-      description: faker.commerce.productDescription(),
-      imageUrl: faker.image.url(),
-      merchantId,
-      name: faker.commerce.product(),
-    }
+    for (let i = 0; i< count; i++){
+      
+      const sku = faker.internet.userName({firstName: 'item', lastName: faker.string.alpha()});
+      const fakeItem = {
+        sku,
+        merchantSku: sku,
+        description: faker.commerce.productDescription(),
+        imageUrl: faker.image.url(),
+        merchantId,
+        name: faker.commerce.product(),
+      }
 
-    const resp = await this.itemRepo.insert(fakeItem);
-    if (resp.raw.affectedRows === 1){
-      return this.itemPriceService.createFakePrice(sku);
+      const resp = await this.itemRepo.insert(fakeItem);
+      if (resp.raw.affectedRows === 1){
+        this.itemPriceService.createFakePrice(sku);
+      }
     }
-    return false;
+    return true;
   }
 
   async paginateItemsById(itemPageInput:PaginationInput){
@@ -59,6 +62,11 @@ export class ItemService {
 
     return await nextPaginator.paginate(queryBuilder);
     
+  }
+
+
+  findAll(): Promise<Item[]>{
+    return this.itemRepo.find();
   }
 
   findAllInKeys(keys: readonly string[]) {

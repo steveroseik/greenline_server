@@ -12,7 +12,7 @@ export class FinancialRequestStatus {
   @Field()
   status: number;
 
-  @Column("timestamp", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   createdAt: Date;
 

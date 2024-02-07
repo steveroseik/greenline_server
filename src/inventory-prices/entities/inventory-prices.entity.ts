@@ -1,6 +1,9 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
 import { Inventory } from "src/inventory/entities/inventory.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { DecimalToString, DecimalTransformer } from "support/decimal.transformer";
+import { Transform } from "class-transformer";
+import Decimal from "decimal.js";
 
 @Index("inventoryId", ["inventoryId"], {})
 @Entity("inventoryPrices", { schema: "greenline_db" })
@@ -18,21 +21,23 @@ export class InventoryPrices {
   @Field()
   currency: string;
 
-  @Column("float", { name: "pricePerUnit", precision: 12 })
-  @Field()
-  pricePerUnit: number;
+  @Column("decimal", { name: "price", precision: 10, scale: 2, transformer: new DecimalTransformer()})
+  @Transform(() => DecimalToString(), { toPlainOnly: true })
+  @Field(() => String)
+  price: Decimal;
 
-  @Column("float", { name: "discount", precision: 12 })
-  @Field()
-  discount: number;
+  @Column("decimal", { name: "discount", precision: 10, scale: 2, nullable: true, transformer: new DecimalTransformer()})
+  @Transform(() => DecimalToString(), { toPlainOnly: true })
+  @Field(() => String, { nullable: true })
+  discount?: Decimal;
 
-  @Column("timestamp", { name: "startDiscount" })
-  @Field()
-  startDiscount: Date;
+  @Column("timestamp", { name: "startDiscount", nullable: true})
+  @Field({ nullable: true})
+  startDiscount?: Date;
 
-  @Column("timestamp", { name: "endDiscount" })
-  @Field()
-  endDiscount: Date;
+  @Column("timestamp", { name: "endDiscount", nullable: true })
+  @Field({ nullable: true})
+  endDiscount?: Date;
 
   @ManyToOne(() => Inventory, (inventory) => inventory.inventoryPrices, {
     onDelete: "RESTRICT",

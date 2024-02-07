@@ -16,20 +16,20 @@ export class Inventory {
   @Field({ nullable: true})
   hubId: number;
 
-  @Column("varchar", { name: "name", length: 255 })
+  @Column("varchar", { name: "name", length: 255})
   @Field()
   name: string;
 
-  @Column("int", { name: "module" })
+  @Column("int", { name: "module", default: 0})
   @Field()
   module: number;
 
-  @Column("int", { name: "zoneId"})
+  @Column("int", { name: "zoneId", nullable: true })
   @Field()
   zoneId: number;
 
   @Column({ type: "point",  
-  name: 'location',})
+  name: 'location', nullable: true})
   @Field(() => GeoLocation)
   location: JSON;
 
@@ -37,11 +37,11 @@ export class Inventory {
   @Field()
   rentType: number;
 
-  @Column("timestamp", { name: "createdAt" })
+  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified" })
+  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   lastModified: Date;
 

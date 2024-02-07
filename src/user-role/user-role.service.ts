@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateUserRoleInput } from './dto/update-user-role.input';
+import { UpdateUserRoleInputAdvanced } from './dto/update-user-role-advanced.input';
 import { UserRole } from './entities/user-role.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Repository } from 'typeorm';
 import { UpdateUserTypeInput } from 'src/user/dto/update-user-type.input';
+import { UpdateUserInput } from 'src/user/dto/update-user.input';
+import { UpdateUserRoleInput } from './dto/update-user-role.input.';
 
 @Injectable()
 export class UserRoleService {
@@ -28,9 +30,39 @@ export class UserRoleService {
     return `This action returns all userRole`;
   }
 
+  async updateUserRoles(input:UpdateUserRoleInput): Promise<Boolean>{
 
-  async updateUserRolesOptimized(input:UpdateUserRoleInput): Promise<boolean> {
+    let success = false;
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    
+    try {
+      // Delete existing roles
+      if (input.rolesToRemove.length > 0) {
+        await queryRunner.manager.delete(UserRole, { userId: input.id, roleId: In(input.rolesToRemove)});
+      }
+      // Create new roles
+      if (input.rolesToAdd.length > 0) {
+        const newRoles = input.rolesToAdd.map(roleId => ({ userId: input.id, roleId }));
+        await queryRunner.manager.insert(UserRole, newRoles);
+      }
+      await queryRunner.commitTransaction();
+      success = true; // Indicate success
+    } catch (error) {
+      console.error('Error updating user roles:', error);
+      await queryRunner.rollbackTransaction();
+    }finally{
+      await queryRunner.release();
+      return success;
+    }
+    
+  }
 
+
+  async updateUserRolesOptimized(input:UpdateUserRoleInputAdvanced): Promise<boolean> {
+
+    let success = false;
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -47,20 +79,20 @@ export class UserRoleService {
           // Create new roles
           if (rolesToAdd.length > 0) {
             const newRoles = rolesToAdd.map(roleId => ({ userId: input.id, roleId }));
-            await queryRunner.manager.save(newRoles);
+            await queryRunner.manager.insert(UserRole, newRoles);
           }
 
           // Delete existing roles
           if (rolesToRemove.length > 0) {
-            await queryRunner.manager.delete(UserRole, { where: { userId: input.id, roleId: In(rolesToRemove) } });
+            await queryRunner.manager.delete(UserRole, { userId: input.id, roleId: In(rolesToRemove)});
           }
-        return true; // Indicate success
+        success = true; // Indicate success
       } catch (error) {
         console.error('Error updating user roles:', error);
         await queryRunner.rollbackTransaction();
-        return false;
       }finally{
         await queryRunner.release();
+        return success;
       }
     }
 

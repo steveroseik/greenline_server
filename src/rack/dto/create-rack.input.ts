@@ -2,6 +2,11 @@ import { InputType, Int, Field } from '@nestjs/graphql';
 
 @InputType()
 export class CreateRackInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+  
+  
+  @Field()
+  inventoryId: number
+
+  @Field()
+  name:string
 }

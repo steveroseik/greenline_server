@@ -34,6 +34,10 @@ export class Order {
   @Field()
   type: number;
 
+  @Column("int", { name: "paymentType" })
+  @Field()
+  paymentType: number;
+
   @Column("varchar", { name: "userId" })
   @Field()
   userId: string;
@@ -54,11 +58,23 @@ export class Order {
   @Field()
   includesVat: boolean;
 
-  @Column("timestamp", { name: "createdAt" })
+  @Column("boolean", { name: "canOpen", default: false})
+  @Field()
+  canOpen: boolean
+
+  @Column("boolean", { name: "fragile", default: false})
+  @Field()
+  fragile: boolean
+
+  @Column("boolean", { name: "deliveryPart", default: false})
+  @Field()
+  deliveryPart: boolean
+
+  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified" })
+  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   lastModified: Date;
 

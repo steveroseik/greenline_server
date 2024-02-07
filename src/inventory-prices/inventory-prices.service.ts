@@ -1,11 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { CreateInventoryPriceInput } from './dto/create-inventory-price.input';
 import { UpdateInventoryPriceInput } from './dto/update-inventory-price.input';
+import { InjectRepository } from '@nestjs/typeorm';
+import { InventoryPrices } from './entities/inventory-prices.entity';
+import { QueryRunner, Repository } from 'typeorm';
+import { AddInventoryPriceInput } from './dto/add-inventory-price.input';
 
 @Injectable()
 export class InventoryPricesService {
+
+
+  constructor(@InjectRepository(InventoryPrices) private readonly inventoryPricesRepo:Repository<InventoryPrices>){}
+
+
+
   create(createInventoryPriceInput: CreateInventoryPriceInput) {
     return 'This action adds a new inventoryPrice';
+  }
+
+  async createFromInventory(inventoryId: number, 
+    queryRunner:QueryRunner, input:AddInventoryPriceInput[]): Promise<boolean>{
+    
+    let success:boolean = true;
+    for (let i = 0; i < input.length; i++){
+       const res = await queryRunner.manager.insert(InventoryPrices, {
+        inventoryId,
+        ...input[i]
+      });
+      if (res.raw.affectedRows !== 1){
+        success = false;
+        break;
+      }
+    }
+    return success;
   }
 
   findAll() {

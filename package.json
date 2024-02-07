@@ -22,7 +22,9 @@
     "migration:generate": "npm run typeorm -- -d ./db/data-source.ts migration:generate",
     "migration:create": "npm run typeorm -- migration:create",
     "migration:run": "npm run typeorm -- -d ./db/data-source.ts migration:run",
-    "migration:revert": "npm run typeorm -- migration:revert"
+    "migration:revert": "npm run typeorm -- migration:revert",
+    "seed": "node dist/seeder",
+    "seed:refresh": "node dist/seeder --refresh"
   },
   "dependencies": {
     "@apollo/server": "^4.9.5",
@@ -62,7 +64,7 @@
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
-    "@types/express": "^4.17.17",
+    "@types/express": "^4.17.21",
     "@types/jest": "^29.5.2",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.3.1",

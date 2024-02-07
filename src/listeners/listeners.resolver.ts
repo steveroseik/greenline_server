@@ -4,9 +4,10 @@ import { Listener } from './entities/listener.entity';
 import { CreateListenerInput } from './dto/create-listener.input';
 import { UpdateListenerInput } from './dto/update-listener.input';
 import { PubSub } from 'graphql-subscriptions';
-import { genId } from '../../support/random-uuid-generator';
+import { genId } from '../../support/random-uuid.generator';
 import { EventListenObject } from './types/eventListenObject.type';
 import { GraphQLBoolean } from 'graphql';
+import { Public } from 'src/auth/decorators/publicDecorator';
 
 @Resolver(() => Listener)
 export class ListenersResolver {
@@ -29,6 +30,9 @@ export class ListenersResolver {
     // return this.listenersService.create(createListenerInput);
   }
 
+
+
+  @Public()
   @Subscription(() => EventListenObject,
   {resolve: (payload) => payload})
   listenToEvent(){

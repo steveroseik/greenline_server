@@ -4,9 +4,10 @@ import { Item } from './entities/item.entity';
 import { CreateItemInput } from './dto/create-item.input';
 import { UpdateItemInput } from './dto/update-item.input';
 import { ItemInBoxService } from 'src/item-in-box/item-in-box.service';
-import { buildPaginator } from 'typeorm-cursor-pagination';
 import { ItemPage } from './entities/itemPage.entity';
 import { PaginationInput } from 'support/pagination.input';
+import { count } from 'console';
+import { Public } from 'src/auth/decorators/publicDecorator';
 
 @Resolver(() => Item)
 export class ItemResolver {
@@ -18,10 +19,11 @@ export class ItemResolver {
     return this.itemService.create(createItemInput);
   }
 
+  @Public()
   @Mutation(() => Boolean)
-  async createFakeItem(): Promise<boolean>{
+  async createFakeItem(@Args('count', { defaultValue: 1 }) count:number): Promise<boolean>{
 
-    return this.itemService.createFake(1);
+    return this.itemService.createFake(1, count);
   }
 
   @Query (() => ItemPage)

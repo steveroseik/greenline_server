@@ -30,6 +30,13 @@ export class UserResolver {
     return this.userService.create(createUserInput);
   }
 
+  @Public()
+  @Mutation(() => Boolean)
+  createFakeUser(@Args('count', {defaultValue: 1 }) count: number){
+
+    return this.userService.createFake(count);
+  }
+
 
   @UseGuards(RolesGaurd)
   @AllowedRoles(...DefinedRoles.UserManagementRoles)

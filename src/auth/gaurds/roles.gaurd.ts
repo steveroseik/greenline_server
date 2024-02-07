@@ -4,6 +4,7 @@ import { GqlExecutionContext } from "@nestjs/graphql";
 import { AuthGuard } from "@nestjs/passport";
 import { Observable } from "rxjs";
 import { JwtPayload } from "../types/jwtPayload.type";
+import { Roles } from "../decorators/RolesDecorator";
 
 
 @Injectable()
@@ -45,6 +46,6 @@ export class RolesGaurd implements CanActivate{
         const roles = user.roles;
 
         // admin can access all roles;
-        return this.validateRoles(roles, [1, ...allowedRoles]);
+        return this.validateRoles(roles, [Roles.admin, ...allowedRoles]);
     }
 }

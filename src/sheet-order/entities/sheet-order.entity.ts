@@ -29,11 +29,11 @@ export class SheetOrder {
   @Field()
   orderId: number;
 
-  @Column("int", { name: "latestStatus" })
+  @Column("int", { name: "transactionId" })
   @Field()
-  latestStatus: number;
+  transactionId: number;
 
-  @Column("datetime", { name: "createdAt" })
+  @Column("datetime", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   createdAt: Date;
 
