@@ -9,6 +9,15 @@ import ItemInBoxInventoryLoader from "./loaders/ItemInBoxInventoryLoader";
 import { RackService } from "src/rack/rack.service";
 import RackInventoryLoader from "./loaders/RackInventoryLoader";
 import ItemInBoxCountLoader from "./loaders/ItemInBoxCountLoader";
+import OrderItemsLoader from "./loaders/OrderItemsLoader";
+import { OrderItemService } from "src/order-item/order-item.service";
+import { ItemPriceService } from "src/item-price/item-price.service";
+import ItemPricesDataLoader from "./loaders/itemPricesDataLoader";
+import ItemInBoxSkuLoader from "./loaders/ItemInBoxSkuLoader";
+import SheetOrdersDataLoader from "./loaders/sheetOrdersDataLoader";
+import { SheetOrderService } from "src/sheet-order/sheet-order.service";
+import { OrderService } from "src/order/order.service";
+import OrdersDataLoader from "./loaders/OrdersDataLoader";
 
 export class DataloaderRegistry {
   private cache: Record<string, any> = {};
@@ -18,7 +27,12 @@ export class DataloaderRegistry {
     private readonly roleService: RoleService,
     private readonly itemService: ItemService,
     private readonly itemInBoxService:ItemInBoxService,
-    private readonly rackService:RackService) {}
+    private readonly rackService:RackService,
+    private readonly orderItemService:OrderItemService,
+    private readonly itemPriceService:ItemPriceService,
+    private readonly sheetOrderService:SheetOrderService,
+    private readonly orderService:OrderService
+    ) {}
 
   /**
    * Fetches a memoized service based on a string key, or invokes fallback to create one.
@@ -50,11 +64,31 @@ export class DataloaderRegistry {
     return this.get('ItemInBoxCountLoader', () => ItemInBoxCountLoader.create(this.itemInBoxService));
   }
 
+  public get ItemInBoxSkuLoader() {
+    return this.get('ItemInBoxSkuLoader', () => ItemInBoxSkuLoader.create(this.itemInBoxService));
+  }
+
   public get UserRoleDataLoader() {
     return this.get('UserRoleDataLoader', () => UserRoleDataLoader.create(this.userRoleService));
   }
 
   public get RoleDataLoader() {
     return this.get('RoleDataLoader', () => RoleDataLoader.create(this.roleService))
+  }
+
+  public get OrderItemsDataLoader(){
+    return this.get('OrderItemsDataLoader', () => OrderItemsLoader.create(this.orderItemService))
+  }
+
+  public get ItemPricesDataLoader(){
+    return this.get('ItemPricesDataLoader', () => ItemPricesDataLoader.create(this.itemPriceService))
+  }
+
+  public get SheetOrdersDataLoader(){
+    return this.get('SheetOrdersDataLoader', () => SheetOrdersDataLoader.create(this.sheetOrderService))
+  }
+  
+  public get OrdersDataLoader(){
+    return this.get('OrdersDataLoader', () => OrdersDataLoader.create(this.orderService))
   }
 }

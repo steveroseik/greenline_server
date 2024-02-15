@@ -6,6 +6,7 @@ import { UpdateInventoryHistoryInput } from './dto/update-inventory-history.inpu
 
 @Resolver(() => InventoryHistory)
 export class InventoryHistoryResolver {
+  
   constructor(private readonly inventoryHistoryService: InventoryHistoryService) {}
 
   @Mutation(() => InventoryHistory)

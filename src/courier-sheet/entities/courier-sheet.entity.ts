@@ -10,11 +10,13 @@ import {
 import { SheetOrder } from "src/sheet-order/entities/sheet-order.entity";
 import { User } from "src/user/entities/user.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { CourierSheetStatus } from "support/enums";
 
 @Index("userId", ["userId"], {})
-@Entity("courierSheet", { schema: "greenline_db" })
+@Entity("courier-sheet", { schema: "greenline_db" })
 @ObjectType('courierSheet')
 export class CourierSheet {
+
   @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
@@ -23,9 +25,9 @@ export class CourierSheet {
   @Field()
   userId: string;
 
-  @Column("int", { name: "status" })
-  @Field()
-  status: number;
+  @Column("enum", { name: "status", enum:CourierSheetStatus, default: CourierSheetStatus.inProgress })
+  @Field(() => CourierSheetStatus)
+  status: CourierSheetStatus;
 
   @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
@@ -34,16 +36,8 @@ export class CourierSheet {
   @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   lastModified: Date;
-
+  
   @OneToMany(() => SheetOrder, (sheetOrder) => sheetOrder.sheet)
   @Field(() => [SheetOrder])
   sheetOrders: SheetOrder[];
-
-  @ManyToOne(() => User, (user) => user.courierSheets, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "userId", referencedColumnName: "id" }])
-  @Field(() => User)
-  user: User;
 }

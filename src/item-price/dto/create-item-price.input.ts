@@ -1,7 +1,21 @@
-import { InputType, Int, Field } from '@nestjs/graphql';
+import { InputType, Int, Field, Float } from '@nestjs/graphql';
+import { Double } from 'typeorm';
 
 @InputType()
 export class CreateItemPriceInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+    
+    @Field({ nullable: true, defaultValue: "EGP"})
+    currency:string
+
+    @Field(() => Float)
+    price:number
+
+    @Field(() => Float, { nullable:  true})
+    discount?: number
+
+    @Field({ nullable:  true})
+    startDiscount?: Date
+
+    @Field({ nullable:  true})
+    endDiscount?: Date
 }

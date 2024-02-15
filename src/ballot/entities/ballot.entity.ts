@@ -18,6 +18,10 @@ export class Ballot {
   @Field()
   id: number;
 
+  @Column("int", { name: "merchantId", nullable: true})
+  @Field({ nullable: true })
+  merchantId?: number;
+
   @Column("int", { name: "rackId" })
   @Field()
   rackId: number;
@@ -37,16 +41,5 @@ export class Ballot {
   @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   lastModified: Date;
-
-  @OneToMany(() => Box, (box) => box.ballot)
-  @Field(() => [Box])
-  boxes: Box[];
-
-  @ManyToOne(() => Rack, (rack) => rack.ballots, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "rackId", referencedColumnName: "id" }])
-  @Field(() => Rack)
-  rack: Rack;
+  
 }

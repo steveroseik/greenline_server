@@ -1,5 +1,5 @@
 import { Column, Entity, GeoJSON, OneToMany, PrimaryGeneratedColumn, } from "typeorm";
-import { InventoryPrices } from "src/inventory-prices/entities/inventory-prices.entity";
+import { InventoryPrice } from "src/inventory-prices/entities/inventory-price.entity";
 import { Rack } from "src/rack/entities/rack.entity";
 import { InventorySupport } from "src/inventory-support/entities/inventory-support.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
@@ -46,11 +46,11 @@ export class Inventory {
   lastModified: Date;
 
   @OneToMany(
-    () => InventoryPrices,
+    () => InventoryPrice,
     (inventoryPrices) => inventoryPrices.inventory
   )
-  @Field(() => [InventoryPrices])
-  inventoryPrices: InventoryPrices[];
+  @Field(() => [InventoryPrice])
+  inventoryPrices: InventoryPrice[];
 
   @OneToMany(
     () => InventorySupport,

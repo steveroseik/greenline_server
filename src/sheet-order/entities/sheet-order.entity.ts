@@ -8,15 +8,15 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { CourierSheet } from "src/courier-sheet/entities/courier-sheet.entity";
-import { Order } from "src/order/entities/order.entity";
-import { SheetOrderStatusHistory } from "src/sheet-order-status-history/entities/sheet-order-status-history.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { OrderStatusEnum } from "support/enums";
 
 @Index("sheetId", ["sheetId"], {})
 @Index("orderId", ["orderId"], {})
-@Entity("sheetOrder", { schema: "greenline_db" })
+@Entity("sheet-order", { schema: "greenline_db" })
 @ObjectType('sheetOrder')
 export class SheetOrder {
+
   @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
@@ -29,9 +29,17 @@ export class SheetOrder {
   @Field()
   orderId: number;
 
-  @Column("int", { name: "transactionId" })
+  @Column("boolean", { name: "adminPass", default: false })
   @Field()
-  transactionId: number;
+  adminPass:boolean
+
+  @Column("boolean", { name: "financePass", default: false })
+  @Field()
+  financePass:boolean
+
+  @Column("int", { name: "transactionId", nullable: true})
+  @Field()
+  transactionId?: number;
 
   @Column("datetime", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
@@ -41,22 +49,22 @@ export class SheetOrder {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
-  @JoinColumn([{ name: "sheetId", referencedColumnName: "id" }])
+
   @Field(() => CourierSheet)
   sheet: CourierSheet;
 
-  @ManyToOne(() => Order, (order) => order.sheetOrders, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "orderId", referencedColumnName: "id" }])
-  @Field(() => Order)
-  order: Order;
+  // @ManyToOne(() => Order, (order) => order.sheetOrders, {
+  //   onDelete: "RESTRICT",
+  //   onUpdate: "RESTRICT",
+  // })
+  // @JoinColumn([{ name: "orderId", referencedColumnName: "id" }])
+  // @Field(() => Order)
+  // order: Order;
 
-  @OneToMany(
-    () => SheetOrderStatusHistory,
-    (sheetOrderStatusHistory) => sheetOrderStatusHistory.sheetOrder
-  )
-  @Field(() => [SheetOrderStatusHistory])
-  sheetOrderStatusHistory: SheetOrderStatusHistory[];
+  // @OneToMany(
+  //   () => SheetOrderStatusHistory,
+  //   (sheetOrderStatusHistory) => sheetOrderStatusHistory.sheetOrder
+  // )
+  // @Field(() => [SheetOrderStatusHistory])
+  // sheetOrderStatusHistory: SheetOrderStatusHistory[];
 }

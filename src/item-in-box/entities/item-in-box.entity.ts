@@ -14,12 +14,21 @@ import { Field, ObjectType } from "@nestjs/graphql";
 
 @Index("itemSku", ["itemSku"], {})
 @Index("boxId", ["boxId"], {})
-@Entity("itemInBox", { schema: "greenline_db" })
+@Entity("item-in-box", { schema: "greenline_db" })
 @ObjectType('itemInBox')
 export class ItemInBox {
+
   @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
+
+  @Column("int", { name: "inventoryId" })
+  @Field()
+  inventoryId:number
+
+  @Column("int", { name: "merchantId", nullable: true})
+  @Field({ nullable: true })
+  merchantId?: number;
 
   @Column("varchar", { name: "itemSku", length: 255 })
   @Field()
@@ -37,10 +46,6 @@ export class ItemInBox {
   @Field()
   minCount: number;
 
-  @Column("int", { name: "inventoryId" })
-  @Field()
-  inventoryId:number
-
   @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   createdAt: Date;
@@ -49,19 +54,4 @@ export class ItemInBox {
   @Field()
   lastModified: Date;
 
-  @OneToMany(
-    () => InventoryHistory,
-    (inventoryHistory) => inventoryHistory.itemInBox
-  )
-  @Field(() => [InventoryHistory])
-  inventoryHistory: InventoryHistory[];
-
-  @ManyToOne(() => Box, (box) => box.itemsInBox, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  
-  @JoinColumn([{ name: "boxId", referencedColumnName: "id" }])
-  @Field(() => Box)
-  box: Box;
 }

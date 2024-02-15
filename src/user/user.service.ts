@@ -17,6 +17,7 @@ import { UserPage } from './entities/userPage.entity';
 import { UpdateUserInfo } from './dto/update-info.input';
 import { UpdateUserTypeInput } from './dto/update-user-type.input';
 import { faker } from '@faker-js/faker';
+import { UserType } from 'support/enums';
 
 
 @Injectable()
@@ -40,7 +41,7 @@ export class UserService {
       await this.userRepository.insert({
         id: genId(),
         name: faker.person.fullName(),
-        type: this.genFakeType(),
+        type: Object.values(UserType)[(Math.random() * Object.values(UserType).length)],
         phone: faker.phone.number().substring(0, 15),
         email: faker.internet.email(),
         birthdate: faker.date.past()

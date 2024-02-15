@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Inventory } from './entities/inventory.entity';
 import { DataSource, Repository } from 'typeorm';
 import { RackService } from 'src/rack/rack.service';
-import { InventoryPricesService } from 'src/inventory-prices/inventory-prices.service';
+import { InventoryPricesService } from 'src/inventory-prices/inventory-price.service';
 import { FindInventoryInput } from './dto/find-one-inventory.input';
 import { ForbiddenError } from '@nestjs/apollo';
 

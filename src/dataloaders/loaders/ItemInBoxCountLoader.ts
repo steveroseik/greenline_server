@@ -5,9 +5,10 @@ var _ = require('lodash');
 
 class ItemInBoxCountLoader {
    public static create(service: ItemInBoxService) {
-      return new DataLoader<number, number> (async (keys: readonly number[]) => {
+      return new DataLoader<{sku: string, inventoryId: number}, number> (async (keys: readonly {sku: string, inventoryId: number}[]) => {
       const items = await service.findItemsCount(keys);
-      const result =  keys.map((key) => items.find(item => item.inventoryId == key)['itemCount']?? 0);
+      console.log(items);
+      const result =  keys.map((key) => items.find(item => item.itemSku == key.sku)['total_count']?? 0);
       return result;
     });
   }

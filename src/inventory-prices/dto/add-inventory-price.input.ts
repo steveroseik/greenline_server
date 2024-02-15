@@ -1,4 +1,5 @@
 import { Field, Float, InputType } from "@nestjs/graphql";
+import { CreateItemPriceInput } from "src/item-price/dto/create-item-price.input";
 import { Double } from "typeorm";
 
 @InputType()
@@ -18,6 +19,5 @@ export class AddInventoryPriceInput {
 
     @Field({ nullable:  true})
     endDiscount?: Date
-
 
 }

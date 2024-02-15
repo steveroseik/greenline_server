@@ -8,7 +8,8 @@ import { ItemPriceModule } from 'src/item-price/item-price.module';
 import { ItemInBoxModule } from 'src/item-in-box/item-in-box.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Item]), ItemPriceModule, forwardRef(() => ItemInBoxModule)],
+  imports: [TypeOrmModule.forFeature([Item]), 
+  ItemPriceModule, forwardRef(() => ItemInBoxModule)],
   providers: [ItemResolver, ItemService],
   exports: [ItemService]
 })

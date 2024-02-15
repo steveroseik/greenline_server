@@ -6,9 +6,10 @@ import { DecimalToString, DecimalTransformer } from "support/decimal.transformer
 import Decimal from "decimal.js";
 
 @Index("itemSku", ["itemSku"], {})
-@Entity("itemPrice", { schema: "greenline_db" })
+@Entity("item-price", { schema: "greenline_db" })
 @ObjectType('itemPrice')
 export class ItemPrice {
+
   @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
@@ -38,12 +39,4 @@ export class ItemPrice {
   @Column("timestamp", { name: "endDiscount", nullable: true })
   @Field({nullable: true})
   endDiscount?: Date;
-
-  @ManyToOne(() => Item, (item) => item.itemPrices, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "itemSku", referencedColumnName: "sku" }])
-  @Field(() => Item)
-  item: Item;
 }

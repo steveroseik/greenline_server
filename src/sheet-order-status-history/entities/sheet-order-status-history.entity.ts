@@ -2,10 +2,11 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn,} 
 import { SheetOrder } from "src/sheet-order/entities/sheet-order.entity";
 import { User } from "src/user/entities/user.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { OrderStatusEnum, SheetOrderStatus } from "support/enums";
 
 @Index("sheetOrderId", ["sheetOrderId"], {})
 @Index("userId", ["userId"], {})
-@Entity("sheetOrderStatusHistory", { schema: "greenline_db" })
+@Entity("sheet-order-status-history", { schema: "greenline_db" })
 @ObjectType('sheetOrderStatusHistory')
 export class SheetOrderStatusHistory {
   @PrimaryGeneratedColumn({ name: "id" })
@@ -16,9 +17,9 @@ export class SheetOrderStatusHistory {
   @Field()
   sheetOrderId: number;
 
-  @Column("int", { name: "status" })
-  @Field()
-  status: number;
+  @Column("enum", { name: "status", enum: SheetOrderStatus })
+  @Field(() => SheetOrderStatus)
+  status:SheetOrderStatus
 
   @Column("varchar", { name: "description", length: 255 })
   @Field()
@@ -32,20 +33,5 @@ export class SheetOrderStatusHistory {
   @Field()
   createdAt: Date;
 
-  @ManyToOne(
-    () => SheetOrder,
-    (sheetOrder) => sheetOrder.sheetOrderStatusHistory,
-    { onDelete: "RESTRICT", onUpdate: "RESTRICT" }
-  )
-  @JoinColumn([{ name: "sheetOrderId", referencedColumnName: "id" }])
-  @Field(() => SheetOrder)
-  sheetOrder: SheetOrder;
-
-  @ManyToOne(() => User, (user) => user.sheetOrderStatusHistories, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "userId", referencedColumnName: "id" }])
-  @Field(() => User)
-  user: User;
+  
 }

@@ -1,6 +1,10 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
 import { FinancialAccount } from "src/financial-account/entities/financial-account.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
+import { DecimalToString, DecimalTransformer } from "support/decimal.transformer";
+import Decimal from "decimal.js";
+import { ExpenseType } from "support/enums";
 
 @Index("fromAccountId", ["fromAccountId"], {})
 @Entity("expense", { schema: "greenline_db" })
@@ -10,17 +14,19 @@ export class Expense {
   @Field()
   id: number;
 
-  @Column("varchar", { name: "type", length: 255 })
-  @Field()
-  type: string;
+  @Column("enum", { name: "type", enum:ExpenseType, default: ExpenseType.miscellaneous })
+  @Field(() => ExpenseType)
+  type: ExpenseType;
 
   @Column("int", { name: "fromAccountId"})
   @Field()
   fromAccountId: number;
 
-  @Column("float", { name: "amount", precision: 12 })
-  @Field()
-  amount: number;
+  
+  @Column("decimal", { name: "amount", precision: 10, scale: 2, transformer: new DecimalTransformer()})
+  @Transform(() => DecimalToString(), { toPlainOnly: true })
+  @Field(() => String, { nullable: true })
+  amount: Decimal;
 
   @Column("varchar", { name: "receipt", length: 255 })
   @Field()
@@ -34,12 +40,4 @@ export class Expense {
   @Field()
   createdAt: Date;
 
-  @ManyToOne(
-    () => FinancialAccount,
-    (financialAccount) => financialAccount.expenses,
-    { onDelete: "RESTRICT", onUpdate: "RESTRICT" }
-  )
-  @JoinColumn([{ name: "fromAccountId", referencedColumnName: "id" }])
-  @Field(() => FinancialAccount)
-  fromAccount: FinancialAccount;
 }

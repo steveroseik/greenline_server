@@ -19,6 +19,11 @@ export class Rack {
   @Field()
   id: number;
 
+
+  @Column("int", { name: "merchantId", nullable: true})
+  @Field({ nullable: true })
+  merchantId?: number;
+
   @Column("int", { name: "inventoryId" })
   @Field()
   inventoryId: number;
@@ -39,8 +44,4 @@ export class Rack {
   @Field()
   lastModified: Date;
 
-
-  @OneToMany(() => Ballot, (ballot) => ballot.rack)
-  @Field(() => [Ballot])
-  ballots: Ballot[];
 }

@@ -3,7 +3,7 @@ import { CreateItemInBoxInput } from './dto/create-item-in-box.input';
 import { UpdateItemInBoxInput } from './dto/update-item-in-box.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ItemInBox } from './entities/item-in-box.entity';
-import { In, Repository } from 'typeorm';
+import { In, MoreThan, Repository } from 'typeorm';
 import { ItemCountInput } from './dto/export-item.input';
 import { InventoryHistoryService } from 'src/inventory-history/inventory-history.service';
 import { ImportItemInput } from './dto/import-item.input';
@@ -62,17 +62,27 @@ export class ItemInBoxService {
     return await this.itemInBoxRepo.find({where: {inventoryId: In(inventoryIds)}})
   }
 
-  async findItemsCount(inventoryIds: readonly number[]): Promise<any[]>{
+   async findFromSkus(itemSkus: readonly string[]): Promise<ItemInBox[]>{
+    return await this.itemInBoxRepo.find({where: {itemSku: In(itemSkus), count: MoreThan(0)}})
+  }
+
+  async findItemsCount(keys: readonly {sku: string, inventoryId: number}[]): Promise<any[]>{
+
+    let skus = keys.map((key) => (`'${key.sku}'`));
+
+    skus = [...new Set(skus)]
+
     const query = `
       SELECT
-        inventoryId,
-        COUNT(*) as itemCount
+          itemSku,
+          inventoryId,
+          SUM(count) AS total_count
       FROM
-        itemInBox
+          itemInBox
       WHERE
-        inventoryId IN (${inventoryIds.join(',')})
+          itemSku in (${skus.join(',')}) AND inventoryId = ${keys[0].inventoryId} AND count > 0
       GROUP BY
-        inventoryId
+          itemSku, inventoryId;
     `;
     return this.itemInBoxRepo.query(query);
 

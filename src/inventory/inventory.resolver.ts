@@ -67,11 +67,6 @@ export class InventoryResolver {
   @ResolveField(() => [Rack])
   async racks(@Parent() inventory:Inventory, @Context() { loaders } : { loaders:DataloaderRegistry}){
     return loaders.RackInventoryLoader.load(inventory.id);
-  }
-
-  @ResolveField(() => Int)
-  itemsCount(@Parent() inventory: Inventory, @Context() { loaders } : { loaders:DataloaderRegistry}){
-
-    return loaders.ItemInBoxCountLoader.load(inventory.id);
+    
   }
 }

@@ -1,5 +1,6 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { IsAlpha, IsDate, IsInt, IsNumber, IsPhoneNumber, IsString } from 'class-validator';
+import { IsAlpha, IsDate, IsEnum, IsInt, IsNumber, IsPhoneNumber, IsString, isEnum } from 'class-validator';
+import { UserType } from 'support/enums';
 
 @InputType()
 export class CreateUserInput {
@@ -20,9 +21,9 @@ export class CreateUserInput {
   @Field()
   phone: string;
 
-  @IsString()
-  @Field()
-  type: string
+  @IsEnum(() => UserType )
+  @Field(() => UserType)
+  type: UserType
 
   @IsDate()
   @Field()

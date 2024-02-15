@@ -3,7 +3,7 @@ import { Inventory } from "src/inventory/entities/inventory.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 
 @Index("inventoryId", ["inventoryId"], {})
-@Entity("inventorySupport", { schema: "greenline_db" })
+@Entity("inventory-support", { schema: "greenline_db" })
 @ObjectType('inventorySupport')
 export class InventorySupport {
   @PrimaryGeneratedColumn({ name: "id" })

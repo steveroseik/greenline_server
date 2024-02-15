@@ -12,7 +12,7 @@ import { Order } from "src/order/entities/order.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 
 @Index("userId", ["userId"], {})
-@Entity("userAddress", { schema: "greenline_db" })
+@Entity("user-address", { schema: "greenline_db" })
 @ObjectType('userAddress')
 export class UserAddress {
   @PrimaryGeneratedColumn({ name: "id" })
@@ -42,16 +42,4 @@ export class UserAddress {
   @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   lastModified: Date;
-
-  @ManyToOne(() => User, (user) => user.userAddresses, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "userId", referencedColumnName: "id" }])
-  @Field(() => User)
-  user: User;
-
-  @OneToMany(() => Order, (order) => order.userAddress)
-  @Field(() => [Order])
-  orders: Order[];
 }

@@ -17,7 +17,7 @@ import { MerchantModule } from './merchant/merchant.module';
 import { OrderRelationModule } from './order-relation/order-relation.module';
 import { InventoryHistoryModule } from './inventory-history/inventory-history.module';
 import { ItemInBoxModule } from './item-in-box/item-in-box.module';
-import { InventoryPricesModule } from './inventory-prices/inventory-prices.module';
+import { InventoryPricesModule } from './inventory-prices/inventory-price.module';
 import { InventorySupportModule } from './inventory-support/inventory-support.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { ItemPriceModule } from './item-price/item-price.module';
@@ -39,7 +39,6 @@ import typeorm from "../db/data-source";
 import { AuthModule } from './auth/auth.module';
 
 // import  { dataConfig } from "../db/data-source";
-import { dataConfig } from 'ormconfig';
 import { DataloaderRegistryFactory } from './dataloaders/dataloaderRegistryFactory';
 import { UserRoleService } from './user-role/user-role.service';
 import { DataloadersModule } from './dataloaders/dataloaders.module';
@@ -50,6 +49,7 @@ import { AccessTokenGaurd } from './auth/gaurds/accessToken.gaurd';
 import { HubModule } from './hub/hub.module';
 import { GeoLocation } from 'support/geolocation.type';
 import express from 'express';
+import config from 'ormconfig';
 
 @Module({
   imports: [
@@ -58,6 +58,7 @@ import express from 'express';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => (configService.get('typeorm')),
     }),
+    // TypeOrmModule.forRoot(config),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeorm]

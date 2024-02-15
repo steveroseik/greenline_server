@@ -1,8 +1,10 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent, Context } from '@nestjs/graphql';
 import { SheetOrderService } from './sheet-order.service';
 import { SheetOrder } from './entities/sheet-order.entity';
 import { CreateSheetOrderInput } from './dto/create-sheet-order.input';
 import { UpdateSheetOrderInput } from './dto/update-sheet-order.input';
+import { DataloaderRegistry } from 'src/dataloaders/dataLoaderRegistry';
+import { Order } from 'src/order/entities/order.entity';
 
 @Resolver(() => SheetOrder)
 export class SheetOrderResolver {
@@ -31,5 +33,12 @@ export class SheetOrderResolver {
   @Mutation(() => SheetOrder)
   removeSheetOrder(@Args('id', { type: () => Int }) id: number) {
     return this.sheetOrderService.remove(id);
+  }
+
+  @ResolveField(() => Order)
+  info(@Parent() sheetOrder:SheetOrder,
+  @Context() { loaders } : { loaders:DataloaderRegistry }){
+    
+    return loaders.OrdersDataLoader.load(sheetOrder.orderId);
   }
 }

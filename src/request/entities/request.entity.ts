@@ -12,6 +12,7 @@ import {
 import { RequestStatusHistory } from "src/request-status-history/entities/request-status-history.entity";
 import { User } from "src/user/entities/user.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { RequestType } from "support/enums";
 
 @Index("fromId", ["fromId"], {})
 @Entity("request", { schema: "greenline_db" })
@@ -21,9 +22,9 @@ export class Request {
   @Field()
   id: number;
 
-  @Column("int", { name: "type" })
-  @Field()
-  type: number;
+  @Column("enum", { name: "type", enum: RequestType, default: RequestType.notification })
+  @Field(() => RequestType)
+  type: RequestType
 
   @Column("int", { name: "priority" })
   @Field()
@@ -37,6 +38,10 @@ export class Request {
   @Field()
   description: string;
 
+  @Column("varchar", { name: "extraData", nullable: true, length: 255})
+  @Field()
+  extraData: string
+
   @Column("int", { name: "status" })
   @Field()
   status: number;
@@ -49,28 +54,4 @@ export class Request {
   @Field()
   lastModified: Date;
 
-  @OneToMany(
-    () => RequestStatusHistory,
-    (requestStatusHistory) => requestStatusHistory.request
-  )
-  @Field(() => [RequestStatusHistory])
-  requestStatusHistory: RequestStatusHistory[];
-
-  @ManyToOne(() => User, (user) => user.requestsSent, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "fromId", referencedColumnName: "id" }])
-  @Field(() => User)
-  from: User;
-
-  @ManyToMany(() => User, (user) => user.requestsReceived)
-  @JoinTable({
-    name: "requestTo",
-    joinColumns: [{ name: "requestId", referencedColumnName: "id" }],
-    inverseJoinColumns: [{ name: "toId", referencedColumnName: "id" }],
-    schema: "greenline_db",
-  })
-  @Field(() => [User])
-  users: User[];
 }

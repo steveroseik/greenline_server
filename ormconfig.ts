@@ -3,20 +3,20 @@ import { MysqlConnectionOptions } from "typeorm/driver/mysql/MysqlConnectionOpti
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-export const dataConfig:MysqlConnectionOptions = {
+const config:MysqlConnectionOptions = {
+
     type: "mysql",
     host: "localhost",
     port: 3306,
-    username: "root",
+    username: "user",
     password: process.env.local_password,
     database: "greenline_db",
     entities: ["./dist/**/*.entity{.ts,.js}"],
-    migrationsRun: true,
-    migrations: ['./dist/db/migrations/*{.ts,.js}'],
     //TODO: REMOVE IN PRODUCTION
     synchronize: true,
-    // don't
-    logging: true
+    logging: true,
 }
+
+ export default config;
 
 //  export default data;

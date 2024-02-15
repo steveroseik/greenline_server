@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateInventoryPriceInput } from './dto/create-inventory-price.input';
 import { UpdateInventoryPriceInput } from './dto/update-inventory-price.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { InventoryPrices } from './entities/inventory-prices.entity';
+import { InventoryPrice } from './entities/inventory-price.entity';
 import { QueryRunner, Repository } from 'typeorm';
 import { AddInventoryPriceInput } from './dto/add-inventory-price.input';
 
@@ -10,7 +10,7 @@ import { AddInventoryPriceInput } from './dto/add-inventory-price.input';
 export class InventoryPricesService {
 
 
-  constructor(@InjectRepository(InventoryPrices) private readonly inventoryPricesRepo:Repository<InventoryPrices>){}
+  constructor(@InjectRepository(InventoryPrice) private readonly inventoryPricesRepo:Repository<InventoryPrice>){}
 
 
 
@@ -23,7 +23,7 @@ export class InventoryPricesService {
     
     let success:boolean = true;
     for (let i = 0; i < input.length; i++){
-       const res = await queryRunner.manager.insert(InventoryPrices, {
+       const res = await queryRunner.manager.insert(InventoryPrice, {
         inventoryId,
         ...input[i]
       });

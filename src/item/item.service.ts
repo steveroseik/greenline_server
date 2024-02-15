@@ -2,23 +2,47 @@ import { Injectable } from '@nestjs/common';
 import { CreateItemInput } from './dto/create-item.input';
 import { UpdateItemInput } from './dto/update-item.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Item } from './entities/item.entity';
 import { faker } from '@faker-js/faker';
 import { ItemPriceService } from 'src/item-price/item-price.service';
 import { buildPaginator } from 'typeorm-cursor-pagination';
 import { PaginationInput } from 'support/pagination.input';
+import { ItemInBox } from 'src/item-in-box/entities/item-in-box.entity';
+import { paginateItemsInput } from './dto/paginate-items.input';
 
 @Injectable()
 export class ItemService {
 
   constructor(
     @InjectRepository(Item) private readonly itemRepo:Repository<Item>,
-    private itemPriceService:ItemPriceService){}
+    private itemPriceService:ItemPriceService,
+    private dataSource:DataSource){}
 
 
-  create(createItemInput: CreateItemInput) {
-    return 'This action adds a new item';
+  async create({sku, merchantSku, merchantId, name, size, color, description, imageUrl, itemPrices }: CreateItemInput) {
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const result = await queryRunner.manager.insert(Item, {
+      sku,
+      merchantSku,
+      merchantId,
+      name,
+      size,
+      color,
+      description, 
+      imageUrl
+    })
+    if (result.raw.affectedRows === 1){
+      
+      const items = itemPrices.map((item) => ({...item, itemSku: sku}))
+
+      const res = await queryRunner.manager.insert(ItemInBox, items)
+    }
   }
 
   async createFake(merchantId:number, count:number): Promise<boolean> {
@@ -43,12 +67,15 @@ export class ItemService {
     return true;
   }
 
-  async paginateItemsById(itemPageInput:PaginationInput){
+  async paginateItemsById(itemPageInput:paginateItemsInput){
 
     let queryBuilder = this.itemRepo
     .createQueryBuilder('item')
 
-
+    if (itemPageInput.merchantId !== undefined){
+      queryBuilder = queryBuilder.where({merchantId: itemPageInput.merchantId})
+    }
+    
     const nextPaginator = buildPaginator({
       entity: Item,
       paginationKeys: ['sku'],

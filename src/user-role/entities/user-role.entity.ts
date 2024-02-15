@@ -6,7 +6,7 @@ import { PrimaryColumn, Entity, JoinColumn, Index, ManyToOne} from 'typeorm';
 
 @Index("userId", ["userId"], {})
 @ObjectType()
-@Entity("userRole", { schema: "greenline_db" })
+@Entity("user-role", { schema: "greenline_db" })
 export class UserRole {
 
 

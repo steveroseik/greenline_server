@@ -1,7 +1,51 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+import { Transform } from 'class-transformer';
+import Decimal from 'decimal.js';
+import { OrderItemInput } from 'src/order-item/dto/order-item.input';
+import { DecimalToString } from 'support/decimal.transformer';
+import { OrderType } from 'support/enums';
 
 @InputType()
 export class CreateOrderInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number;
+ 
+  
+  @Field({ nullable: true })
+  otherId?: number;
+
+  @Field(() => OrderType, { nullable: true, defaultValue: OrderType.delivery })
+  type: OrderType;
+
+  @Field()
+  paymentType: number;
+
+  @Field()
+  userId: string;
+
+  @Field()
+  merchantId: number;
+
+  @Field()
+  userAddressId: number;
+
+  @Field(() => String)
+  @Transform(() => DecimalToString(), { toPlainOnly: true })
+  shippingPrice: Decimal;
+
+  @Field({ nullable: true, defaultValue: true })
+  includesVat: boolean;
+
+  @Field({ nullable: true, defaultValue: false })
+  canOpen: boolean
+
+  @Field({ nullable: true, defaultValue: false })
+  fragile: boolean
+
+  @Field({ nullable: true, defaultValue: false })
+  deliveryPart: boolean
+
+
+  @Field(() => [OrderItemInput])
+  orderItems: OrderItemInput[]
+  
+
 }

@@ -1,9 +1,11 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
 import { Request } from "src/request/entities/request.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { OrderStatus } from "src/order-status/entities/order-status.entity";
+import { RequestStatus } from "support/enums";
 
 @Index("requestId", ["requestId"], {})
-@Entity("requestStatusHistory", { schema: "greenline_db" })
+@Entity("request-status-history", { schema: "greenline_db" })
 @ObjectType('requestStatusHistory')
 export class RequestStatusHistory {
   @PrimaryGeneratedColumn({ name: "id" })
@@ -14,9 +16,9 @@ export class RequestStatusHistory {
   @Field()
   requestId: number;
 
-  @Column("int", { name: "status" })
-  @Field()
-  status: number;
+  @Column("enum", { name: "status", enum: RequestStatus })
+  @Field(() => RequestStatus)
+  status:RequestStatus
 
   //TODO:: missing user information, add if needed
   @Column("int", { name: "userId" })
@@ -26,14 +28,6 @@ export class RequestStatusHistory {
   @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   createdAt: Date;
-
-  @ManyToOne(() => Request, (request) => request.requestStatusHistory, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "requestId", referencedColumnName: "id" }])
-  @Field(() => Request)
-  request: Request;
 
   
 }

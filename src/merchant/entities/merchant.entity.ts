@@ -28,18 +28,5 @@ export class Merchant {
   @Field()
   lastModified: Date;
 
-  @OneToMany(() => Item, (item) => item.merchant)
-  @Field(() => [Item])
-  items: Item[];
 
-  @OneToMany(
-    () => FinancialAccount,
-    (financialAccount) => financialAccount.merchant
-  )
-  @Field(() => [FinancialAccount])
-  financialAccounts: FinancialAccount[];
-
-  @OneToMany(() => Order, (order) => order.merchant)
-  @Field(() => [Order])
-  orders: Order[];
 }

@@ -2,219 +2,25 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type courierSheet {
-  id: Int!
-  userId: String!
-  status: Int!
+type item {
+  sku: String!
+  merchantSku: String!
+  merchantId: Int!
+  name: String!
+  color: String
+  colorHex: String
+  size: String
+  description: String!
+  imageUrl: String!
   createdAt: Timestamp!
   lastModified: Timestamp!
-  sheetOrders: [sheetOrder!]!
-  user: user!
+  prices(currency: String!): [itemPrice!]!
 }
 
 """
 `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
 scalar Timestamp
-
-type sheetOrderStatusHistory {
-  id: Int!
-  sheetOrderId: Int!
-  status: Int!
-  description: String!
-  userId: String!
-  createdAt: Timestamp!
-  sheetOrder: sheetOrder!
-  user: user!
-}
-
-type sheetOrder {
-  id: Int!
-  sheetId: Int!
-  orderId: Int!
-  transactionId: Int!
-  createdAt: Timestamp!
-  sheet: courierSheet!
-  order: order!
-  sheetOrderStatusHistory: [sheetOrderStatusHistory!]!
-}
-
-type orderStatus {
-  id: Int!
-  orderId: Int!
-  status: Int!
-  description: String!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  order: order!
-}
-
-type orderItem {
-  orderId: Int!
-  itemSku: String!
-  count: Int!
-  frozenPrice: String
-  frozenCurrency: String
-  partial: Boolean!
-  partialCount: Int!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  order: order!
-  item: item!
-}
-
-type orderRelation {
-  firstOrderId: Int!
-  secondOrderId: Int!
-  createdAt: Timestamp!
-  firstOrder: order!
-  secondOrder: order!
-}
-
-type order {
-  id: Int!
-  otherId: Int!
-  type: Int!
-  paymentType: Int!
-  userId: String!
-  merchantId: Int!
-  userAddressId: Int!
-  shippingPrice: Int!
-  includesVat: Boolean!
-  canOpen: Boolean!
-  fragile: Boolean!
-  deliveryPart: Boolean!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  sheetOrders: [sheetOrder!]!
-  orderStatuses: [orderStatus!]!
-  orderItems: [orderItem!]!
-  user: user!
-  merchant: merchant!
-  userAddress: userAddress!
-  orderRelations: [orderRelation!]!
-  orderRelations2: [orderRelation!]!
-}
-
-type userAddress {
-  id: Int!
-  userId: String!
-  countryId: Int!
-  cityId: Int!
-  details: String!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  user: user!
-  orders: [order!]!
-}
-
-type financalRequestStatus {
-  requestId: Int!
-  status: Int!
-  createdAt: Timestamp!
-  request: financialTransaction!
-}
-
-type financialTransaction {
-  id: Int!
-  type: Int!
-  description: String!
-  fromAccountId: String!
-  toAccountId: String!
-  amount: Int!
-  receipt: String!
-  latestStatus: Int!
-  approvedById: String!
-  createdAt: Timestamp!
-  fromAccount: financialAccount!
-  toAccount: financialAccount!
-  approvedBy: user!
-  financialRequestStatus: financalRequestStatus!
-}
-
-type requestStatusHistory {
-  id: Int!
-  requestId: Int!
-  status: Int!
-  userId: Int!
-  createdAt: Timestamp!
-  request: request!
-}
-
-type request {
-  id: Int!
-  type: Int!
-  priority: Int!
-  fromId: String!
-  description: String!
-  status: Int!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  requestStatusHistory: [requestStatusHistory!]!
-  from: user!
-  users: [user!]!
-}
-
-type user {
-  id: String!
-  type: String!
-  hubId: Int
-  merchantId: Int
-  name: String!
-  email: String!
-  phone: String!
-  birthdate: Timestamp!
-  refreshToken: String
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  deletedAt: Timestamp
-  userAddresses: [userAddress!]!
-  financialAccounts: [financialAccount!]!
-  sheetOrderStatusHistories: [sheetOrderStatusHistory!]!
-  financialTransactions: [financialTransaction!]!
-  requestsSent: [request!]!
-  courierSheets: [courierSheet!]!
-  orders: [order!]!
-  requestsReceived: [request!]!
-  userRoles: [UserRole!]
-}
-
-type expense {
-  id: Int!
-  type: String!
-  fromAccountId: Int!
-  amount: Int!
-  receipt: String!
-  comment: String!
-  createdAt: Timestamp!
-  fromAccount: financialAccount!
-}
-
-type financialAccount {
-  id: Int!
-  name: String!
-  userId: String!
-  merchantId: Int!
-  balance: Int!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  user: user!
-  merchant: merchant!
-  transactionsSent: [financialTransaction!]!
-  transactionsReceived: [financialTransaction!]!
-  expenses: [expense!]!
-}
-
-type merchant {
-  id: Int!
-  name: String!
-  includesVat: Boolean!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  items: [item!]!
-  financialAccounts: [financialAccount!]!
-  orders: [order!]!
-}
 
 type itemPrice {
   id: Int!
@@ -224,24 +30,20 @@ type itemPrice {
   discount: String
   startDiscount: Timestamp
   endDiscount: Timestamp
-  item: item!
 }
 
-type item {
-  sku: String!
-  merchantSku: String!
-  merchantId: Int!
-  name: String!
-  color: String
-  size: String
-  description: String!
-  imageUrl: String!
+type itemInBox {
+  id: Int!
+  inventoryId: Int!
+  merchantId: Int
+  itemSku: String!
+  boxId: Int!
+  count: Int!
+  minCount: Int!
   createdAt: Timestamp!
   lastModified: Timestamp!
-  merchant: merchant!
-  itemPrices: [itemPrice!]!
-  orderItems: [orderItem!]!
-  bundleCount: Int!
+  totalCount: Int!
+  item: item!
 }
 
 type inventoryHistory {
@@ -252,52 +54,6 @@ type inventoryHistory {
   amount: Int!
   createdAt: Timestamp!
   lastModified: Timestamp!
-  itemInBox: itemInBox!
-}
-
-type rack {
-  id: Int!
-  inventoryId: Int!
-  levels: Int!
-  name: String!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  ballots: [ballot!]!
-}
-
-type ballot {
-  id: Int!
-  rackId: Int!
-  level: Int!
-  name: String!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  boxes: [box!]!
-  rack: rack!
-}
-
-type box {
-  id: Int!
-  ballotId: Int!
-  name: String!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  ballot: ballot!
-  itemsInBox: [itemInBox!]!
-}
-
-type itemInBox {
-  id: Int!
-  itemSku: String!
-  boxId: Int!
-  count: Int!
-  minCount: Int!
-  inventoryId: Int!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  inventoryHistory: [inventoryHistory!]!
-  box: box!
-  item: item!
 }
 
 type ItemPage {
@@ -311,6 +67,123 @@ scalar GraphqlCursor
 type ItemInBoxPage {
   cursor: GraphqlCursor!
   data: [itemInBox!]!
+}
+
+type order {
+  id: Int!
+  otherId: Int
+  type: OrderType!
+  paymentType: Int!
+  userId: String!
+  merchantId: Int!
+  userAddressId: Int!
+  shippingPrice: String
+  includesVat: Boolean!
+  canOpen: Boolean!
+  fragile: Boolean!
+  deliveryPart: Boolean!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+  items: [orderItem!]!
+}
+
+enum OrderType {
+  delivery
+  exchange
+  refund
+  freeDelivery
+  gift
+  freeOfCharge
+}
+
+type orderItem {
+  orderId: Int!
+  itemSku: String!
+  count: Int!
+  frozenPrice: String!
+  frozenCurrency: String!
+  partial: Boolean!
+  partialCount: Int!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+  order: order!
+  info: item!
+  inventory: [itemInBox!]!
+}
+
+type financialAccount {
+  id: Int!
+  name: String!
+  userId: String!
+  merchantId: Int!
+  balance: String
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+}
+
+type request {
+  id: Int!
+  type: RequestType!
+  priority: Int!
+  fromId: String!
+  description: String!
+  extraData: String!
+  status: Int!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+}
+
+enum RequestType {
+  notification
+  confirmation
+  authorization
+  subscription
+  verification
+  reminder
+  invitation
+  passwordReset
+  accountUpdate
+  transactionUpdate
+  policyUpdate
+  announcement
+  feedback
+  support
+  marketing
+  survey
+  report
+  inquiry
+  appointment
+  request
+  orderProblem
+  paymentReminder
+  invoice
+  other
+}
+
+type user {
+  id: String!
+  type: UserType!
+  hubId: Int
+  merchantId: Int
+  name: String!
+  email: String!
+  phone: String!
+  birthdate: Timestamp!
+  refreshToken: String
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+  deletedAt: Timestamp
+  userRoles: [UserRole!]
+}
+
+enum UserType {
+  admin
+  finance
+  inventory
+  merchant
+  courier
+  customer
+  customerService
 }
 
 type UserRole {
@@ -333,6 +206,118 @@ type Role {
   lastModified: Timestamp!
 }
 
+type requestStatusHistory {
+  id: Int!
+  requestId: Int!
+  status: RequestStatus!
+  userId: Int!
+  createdAt: Timestamp!
+}
+
+enum RequestStatus {
+  sent
+  pending
+  read
+  rejected
+  accepted
+  expired
+}
+
+type orderStatus {
+  id: Int!
+  orderId: Int!
+  status: OrderStatusEnum!
+  description: String!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+}
+
+enum OrderStatusEnum {
+  idle
+  shippedFromCourier
+  transferring
+  assignedToCourier
+  outForDelivery
+  delivered
+  partiallyDelivered
+  failedDeliveryAttempt
+  postponed
+}
+
+type courierSheet {
+  id: Int!
+  userId: String!
+  status: CourierSheetStatus!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+  sheetOrders: [sheetOrder!]!
+  orders: [sheetOrder!]!
+}
+
+enum CourierSheetStatus {
+  inProgress
+  waitingForAdmin
+  waitingForFinance
+  complete
+}
+
+type sheetOrder {
+  id: Int!
+  sheetId: Int!
+  orderId: Int!
+  adminPass: Boolean!
+  financePass: Boolean!
+  transactionId: Int!
+  createdAt: Timestamp!
+  sheet: courierSheet!
+  info: order!
+}
+
+type sheetOrderStatusHistory {
+  id: Int!
+  sheetOrderId: Int!
+  status: SheetOrderStatus!
+  description: String!
+  userId: String!
+  createdAt: Timestamp!
+}
+
+enum SheetOrderStatus {
+  adminApproved
+  adminRejected
+  financeAccepted
+  financeRejected
+}
+
+type CourierSheetPage {
+  cursor: GraphqlCursor!
+  data: [courierSheet!]!
+}
+
+type userAddress {
+  id: Int!
+  userId: String!
+  countryId: Int!
+  cityId: Int!
+  details: String!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+}
+
+type merchant {
+  id: Int!
+  name: String!
+  includesVat: Boolean!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+}
+
+type orderRelation {
+  firstOrderId: Int!
+  secondOrderId: Int!
+  createdAt: Timestamp!
+}
+
 type inventorySupport {
   id: Int!
   inventoryId: Int!
@@ -351,24 +336,151 @@ type inventory {
   rentType: Int!
   createdAt: Timestamp!
   lastModified: Timestamp!
-  inventoryPrices: [inventoryPrices!]!
+  inventoryPrices: [inventoryPrice!]!
   inventorySupports: [inventorySupport!]!
   racks: [rack!]!
-  itemsCount: Int!
 }
 
 """Geo location representation."""
 scalar GeoLocation
 
-type inventoryPrices {
+type inventoryPrice {
   id: Int!
   inventoryId: Int!
   currency: String!
-  price: String!
+  pricePerUnit: String!
   discount: String
   startDiscount: Timestamp
   endDiscount: Timestamp
   inventory: inventory!
+}
+
+type rack {
+  id: Int!
+  merchantId: Int
+  inventoryId: Int!
+  levels: Int!
+  name: String!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+}
+
+type ballot {
+  id: Int!
+  merchantId: Int
+  rackId: Int!
+  level: Int!
+  name: String!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+}
+
+type box {
+  id: Int!
+  merchantId: Int
+  ballotId: Int!
+  name: String!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+}
+
+type financialTransaction {
+  id: Int!
+  type: TransactionType!
+  description: String!
+  fromAccountId: String!
+  toAccountId: String!
+  amount: String
+  receipt: String!
+  latestStatus: Int!
+  approvedById: String!
+  createdAt: Timestamp!
+}
+
+enum TransactionType {
+  deposit
+  withdrawal
+  transfer
+  refund
+  adjustment
+  interest
+  donation
+  conversion
+  reward
+  subscription
+  rent
+  payment
+  other
+}
+
+type financalRequestStatus {
+  requestId: Int!
+  status: TransactionStatus!
+  createdAt: Timestamp!
+}
+
+enum TransactionStatus {
+  pendingSender
+  pendingReceiver
+  processingBySender
+  processingByReceiver
+  rejectedBySender
+  rejectedByReceiver
+  cancelledBySender
+  completed
+  failed
+}
+
+type OrderPage {
+  cursor: GraphqlCursor!
+  data: [order!]!
+}
+
+type expense {
+  id: Int!
+  type: ExpenseType!
+  fromAccountId: Int!
+  amount: String
+  receipt: String!
+  comment: String!
+  createdAt: Timestamp!
+}
+
+enum ExpenseType {
+  salary
+  rent
+  utilities
+  officeSupplies
+  vehicleMaintenance
+  fuel
+  insurance
+  equipmentPurchase
+  marketing
+  softwareSubscriptions
+  legalFees
+  training
+  taxes
+  loanRepayments
+  interest
+  officeRent
+  warehouseRent
+  travelExpenses
+  professionalServices
+  maintenance
+  securityServices
+  packagingMaterials
+  cleaningServices
+  wasteDisposal
+  officeEquipment
+  internetServices
+  telecommunication
+  officeFurniture
+  membershipFees
+  professionalDevelopment
+  vehicleLease
+  advertising
+  deliveryExpenses
+  miscellaneous
 }
 
 type Listener {
@@ -402,32 +514,33 @@ type Hub {
 type Query {
   findRoles: [Role!]!
   role(id: Int!): Role!
-  paginateItemsById(itemPageInput: PaginationInput): ItemPage!
+  paginateItemsById(itemPageInput: paginateItemsInput): ItemPage!
   findSingleItem(id: String!): item!
   itemPrices: [itemPrice!]!
   itemPrice(id: Int!): itemPrice!
   itemInBox(id: Int!): itemInBox!
   paginateItemInBox(input: ItemInBoxPageInput!): ItemInBoxPage!
-  testCount(inventoryIds: [Int!]!): String!
   inventoryHistory(id: Int!): inventoryHistory!
   rack(id: Int!): rack!
   ballot(id: Int!): ballot!
   box(id: Int!): box!
+  orderItem(id: Int!): orderItem!
+  sheetOrder(id: Int!): sheetOrder!
+  paginateOrders(input: PaginateOrdersInput!): OrderPage!
+  order(id: Int!): order!
   findAllInventories: [inventory!]!
   findOneInventory(input: FindInventoryInput!): inventory!
-  inventoryPrices: [inventoryPrices!]!
-  inventoryPrice(id: Int!): inventoryPrices!
+  inventoryPrices: [inventoryPrice!]!
+  inventoryPrice(id: Int!): inventoryPrice!
   inventorySupport(id: Int!): inventorySupport!
-  order(id: Int!): order!
   orderRelation(id: Int!): orderRelation!
-  orderItem(id: Int!): orderItem!
   merchant(id: Int!): merchant!
   paginateUsers(paginateUsersInput: PaginationInput!): UserPage!
   request(id: Int!): request!
   userAddress(id: Int!): userAddress!
-  courierSheet(id: Int!): courierSheet!
+  findAllCourierSheets: [courierSheet!]!
+  paginateCourierSheets(input: PaginateCourierSheetInput!): CourierSheetPage!
   sheetOrderStatusHistory(id: Int!): sheetOrderStatusHistory!
-  sheetOrder(id: Int!): sheetOrder!
   orderStatus(id: Int!): orderStatus!
   requestStatusHistory(id: Int!): requestStatusHistory!
   financialAccount(id: Int!): financialAccount!
@@ -441,11 +554,12 @@ type Query {
   hub(id: Int!): Hub!
 }
 
-input PaginationInput {
+input paginateItemsInput {
   isAsc: Boolean! = true
   limit: Int! = 1
   afterCursor: String
   beforeCursor: String
+  merchantId: Int
 }
 
 input ItemInBoxPageInput {
@@ -456,9 +570,31 @@ input ItemInBoxPageInput {
   inventoryIds: [Int!]
 }
 
+input PaginateOrdersInput {
+  isAsc: Boolean! = true
+  limit: Int! = 1
+  afterCursor: String
+  beforeCursor: String
+  merchantId: Int
+}
+
 input FindInventoryInput {
   id: Int
   hubId: Int
+}
+
+input PaginationInput {
+  isAsc: Boolean! = true
+  limit: Int! = 1
+  afterCursor: String
+  beforeCursor: String
+}
+
+input PaginateCourierSheetInput {
+  isAsc: Boolean! = true
+  limit: Int! = 1
+  afterCursor: String
+  beforeCursor: String
 }
 
 type Mutation {
@@ -468,7 +604,7 @@ type Mutation {
   createRole(createRoleInput: CreateRolesInput!): Role!
   updateRole(updateRoleInput: UpdateRoleInput!): Role!
   removeRole(id: Int!): Role!
-  createItem(createItemInput: CreateItemInput!): item!
+  createItem(createItemInput: CreateItemInput!): Int!
   createFakeItem(count: Int! = 1): Boolean!
   updateItem(updateItemInput: UpdateItemInput!): item!
   removeItem(id: Int!): item!
@@ -493,25 +629,28 @@ type Mutation {
   createBox(createBoxInput: CreateBoxInput!): box!
   updateBox(updateBoxInput: UpdateBoxInput!): box!
   removeBox(id: Int!): box!
+  createOrderItem(createOrderItemInput: CreateOrderItemInput!): orderItem!
+  updateOrderItem(updateOrderItemInput: UpdateOrderItemInput!): orderItem!
+  removeOrderItem(id: Int!): orderItem!
+  createSheetOrder(createSheetOrderInput: CreateSheetOrderInput!): sheetOrder!
+  updateSheetOrder(updateSheetOrderInput: UpdateSheetOrderInput!): sheetOrder!
+  removeSheetOrder(id: Int!): sheetOrder!
+  createOrder(input: CreateOrderInput!): Boolean!
+  updateOrder(updateOrderInput: UpdateOrderInput!): order!
+  removeOrder(id: Int!): order!
   createFakeInventory(count: Int! = 1): Boolean!
   createInventory(input: CreateInventoryInput!): Boolean!
   updateInventory(updateInventoryInput: UpdateInventoryInput!): inventory!
   removeInventory(id: Int!): inventory!
-  createInventoryPrice(createInventoryPriceInput: CreateInventoryPriceInput!): inventoryPrices!
-  updateInventoryPrice(updateInventoryPriceInput: UpdateInventoryPriceInput!): inventoryPrices!
-  removeInventoryPrice(id: Int!): inventoryPrices!
+  createInventoryPrice(createInventoryPriceInput: CreateInventoryPriceInput!): inventoryPrice!
+  updateInventoryPrice(updateInventoryPriceInput: UpdateInventoryPriceInput!): inventoryPrice!
+  removeInventoryPrice(id: Int!): inventoryPrice!
   createInventorySupport(createInventorySupportInput: CreateInventorySupportInput!): inventorySupport!
   updateInventorySupport(updateInventorySupportInput: UpdateInventorySupportInput!): inventorySupport!
   removeInventorySupport(id: Int!): inventorySupport!
-  createOrder(createOrderInput: CreateOrderInput!): order!
-  updateOrder(updateOrderInput: UpdateOrderInput!): order!
-  removeOrder(id: Int!): order!
   createOrderRelation(createOrderRelationInput: CreateOrderRelationInput!): orderRelation!
   updateOrderRelation(updateOrderRelationInput: UpdateOrderRelationInput!): orderRelation!
   removeOrderRelation(id: Int!): orderRelation!
-  createOrderItem(createOrderItemInput: CreateOrderItemInput!): orderItem!
-  updateOrderItem(updateOrderItemInput: UpdateOrderItemInput!): orderItem!
-  removeOrderItem(id: Int!): orderItem!
   createMerchant(createMerchantInput: CreateMerchantInput!): merchant!
   createFakeMerchant(count: Int! = 1): Boolean!
   updateMerchant(updateMerchantInput: UpdateMerchantInput!): merchant!
@@ -527,15 +666,12 @@ type Mutation {
   createUserAddress(createUserAddressInput: CreateUserAddressInput!): userAddress!
   updateUserAddress(updateUserAddressInput: UpdateUserAddressInput!): userAddress!
   removeUserAddress(id: Int!): userAddress!
-  createCourierSheet(createCourierSheetInput: CreateCourierSheetInput!): courierSheet!
+  createCourierSheet(input: CreateCourierSheetInput!): Boolean!
   updateCourierSheet(updateCourierSheetInput: UpdateCourierSheetInput!): courierSheet!
   removeCourierSheet(id: Int!): courierSheet!
   createSheetOrderStatusHistory(createSheetOrderStatusHistoryInput: CreateSheetOrderStatusHistoryInput!): sheetOrderStatusHistory!
   updateSheetOrderStatusHistory(updateSheetOrderStatusHistoryInput: UpdateSheetOrderStatusHistoryInput!): sheetOrderStatusHistory!
   removeSheetOrderStatusHistory(id: Int!): sheetOrderStatusHistory!
-  createSheetOrder(createSheetOrderInput: CreateSheetOrderInput!): sheetOrder!
-  updateSheetOrder(updateSheetOrderInput: UpdateSheetOrderInput!): sheetOrder!
-  removeSheetOrder(id: Int!): sheetOrder!
   createOrderStatus(createOrderStatusInput: CreateOrderStatusInput!): orderStatus!
   updateOrderStatus(updateOrderStatusInput: UpdateOrderStatusInput!): orderStatus!
   removeOrderStatus(id: Int!): orderStatus!
@@ -585,12 +721,21 @@ input UpdateRoleInput {
 input CreateItemInput {
   sku: String!
   merchantSku: String
-  merchantId: Int!
+  merchantId: Int
   name: String!
   color: String
   size: String
   description: String!
   imageUrl: String!
+  itemPrices: [CreateItemPriceInput!]!
+}
+
+input CreateItemPriceInput {
+  currency: String = "EGP"
+  price: Float!
+  discount: Float
+  startDiscount: Timestamp
+  endDiscount: Timestamp
 }
 
 input UpdateItemInput {
@@ -602,17 +747,16 @@ input UpdateItemInput {
   size: String
   description: String
   imageUrl: String
+  itemPrices: [CreateItemPriceInput!]
   id: Int!
 }
 
-input CreateItemPriceInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
 input UpdateItemPriceInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  currency: String = "EGP"
+  price: Float
+  discount: Float
+  startDiscount: Timestamp
+  endDiscount: Timestamp
   id: Int!
 }
 
@@ -688,6 +832,66 @@ input UpdateBoxInput {
   id: Int!
 }
 
+input CreateOrderItemInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateOrderItemInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateSheetOrderInput {
+  sheetId: Int
+  orderId: Int!
+}
+
+input UpdateSheetOrderInput {
+  sheetId: Int
+  orderId: Int
+  id: Int!
+}
+
+input CreateOrderInput {
+  otherId: Int
+  type: OrderType = delivery
+  paymentType: Int!
+  userId: String!
+  merchantId: Int!
+  userAddressId: Int!
+  shippingPrice: String!
+  includesVat: Boolean = true
+  canOpen: Boolean = false
+  fragile: Boolean = false
+  deliveryPart: Boolean = false
+  orderItems: [OrderItemInput!]!
+}
+
+input OrderItemInput {
+  itemSku: String!
+  frozenPrice: String!
+  frozenCurrency: String!
+  count: Int!
+}
+
+input UpdateOrderInput {
+  otherId: Int
+  type: OrderType = delivery
+  paymentType: Int
+  userId: String
+  merchantId: Int
+  userAddressId: Int
+  shippingPrice: String
+  includesVat: Boolean = true
+  canOpen: Boolean = false
+  fragile: Boolean = false
+  deliveryPart: Boolean = false
+  orderItems: [OrderItemInput!]
+  id: Int!
+}
+
 input CreateInventoryInput {
   name: String!
   rentType: Int!
@@ -757,34 +961,12 @@ input UpdateInventorySupportInput {
   id: Int!
 }
 
-input CreateOrderInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateOrderInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
 input CreateOrderRelationInput {
   """Example field (placeholder)"""
   exampleField: Int!
 }
 
 input UpdateOrderRelationInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateOrderItemInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateOrderItemInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
@@ -806,20 +988,20 @@ input CreateUserInput {
   name: String!
   email: String!
   phone: String!
-  type: String!
+  type: UserType!
   birthdate: Timestamp!
 }
 
 input UpdateUserTypeInput {
   id: String!
-  type: String!
+  type: UserType!
 }
 
 input UpdateUserInput {
   name: String
   email: String
   phone: String
-  type: String
+  type: UserType
   birthdate: Timestamp
 }
 
@@ -846,13 +1028,13 @@ input UpdateUserAddressInput {
 }
 
 input CreateCourierSheetInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  userId: String!
+  orderIds: [Int!]!
 }
 
 input UpdateCourierSheetInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  userId: String
+  orderIds: [Int!]
   id: Int!
 }
 
@@ -862,17 +1044,6 @@ input CreateSheetOrderStatusHistoryInput {
 }
 
 input UpdateSheetOrderStatusHistoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateSheetOrderInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateSheetOrderInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!

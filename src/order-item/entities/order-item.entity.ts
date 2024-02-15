@@ -1,13 +1,14 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 import { Order } from "src/order/entities/order.entity";
 import { Item } from "src/item/entities/item.entity";
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Context, Field, ObjectType, Parent, ResolveField } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 import { DecimalToString, DecimalTransformer } from "support/decimal.transformer";
 import Decimal from "decimal.js";
+import { DataloaderRegistry } from "src/dataloaders/dataLoaderRegistry";
 
 @Index("itemSku", ["itemSku"], {})
-@Entity("orderItem", { schema: "greenline_db" })
+@Entity("order-item", { schema: "greenline_db" })
 @ObjectType('orderItem')
 export class OrderItem {
   @Column("int", { primary: true, name: "orderId" })
@@ -22,16 +23,14 @@ export class OrderItem {
   @Field()
   count: number;
 
-
-  @Column("decimal", { name: "frozenPrice", precision: 10, scale: 2, nullable: true, transformer: new DecimalTransformer()})
+  @Column("decimal", { name: "frozenPrice", precision: 10, scale: 2, transformer: new DecimalTransformer()})
   @Transform(() => DecimalToString(), { toPlainOnly: true })
-  @Field(() => String, { nullable: true })
-  frozenPrice?: Decimal;
+  @Field(() => String)
+  frozenPrice: Decimal;
 
-  @Column("varchar", { name: "frozenCurrency", length: 10, nullable: true })
-  @Field({ nullable: true })
-  frozenCurrency?: string;
-
+  @Column("varchar", { name: "frozenCurrency", length: 10 })
+  @Field()
+  frozenCurrency: string;
 
   @Column('boolean', { name: "partial", default: false})
   @Field()
@@ -49,20 +48,14 @@ export class OrderItem {
   @Field()
   lastModified: Date;
 
-  @ManyToOne(() => Order, (order) => order.orderItems, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
   @JoinColumn([{ name: "orderId", referencedColumnName: "id" }])
   @Field(() => Order)
   order: Order;
 
-  @ManyToOne(() => Item, (item) => item.orderItems, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  
-  @JoinColumn([{ name: "itemSku", referencedColumnName: "sku" }])
-  @Field(() => Item)
-  item: Item;
+  @ResolveField(() => Item)
+  item(@Parent() orderItem:OrderItem, @Context() { loaders } : { loaders:DataloaderRegistry} ){
+    
+    return loaders.ItemDataLoader.load(orderItem.itemSku);
+
+  }
 }

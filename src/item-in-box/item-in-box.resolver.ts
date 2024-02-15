@@ -45,19 +45,18 @@ export class ItemInBoxResolver {
 
   }
 
-  @Query(() => String)
-  async testCount(@Args('inventoryIds', { type: () => [Int]} ) inventoryIds:number[]): Promise<string> {
-
-    const a = await this.itemInBoxService.findItemsCount(inventoryIds);
-    console.log(a);
-    return a.toString();
-  }
 
   @Mutation(() => Boolean)
   async importNewItem(@Args('input') input:ImportItemInput){
 
     return await this.itemInBoxService.importNewItem(input);
 
+  }
+
+  @ResolveField(() => Int)
+  totalCount(@Parent() item:ItemInBox,
+  @Context() { loaders } : { loaders: DataloaderRegistry }) {
+    return loaders.ItemInBoxCountLoader.load({sku: item.itemSku, inventoryId: item.inventoryId});
   }
 
   @Mutation(() => Boolean)

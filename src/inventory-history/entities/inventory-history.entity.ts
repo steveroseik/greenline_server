@@ -3,7 +3,7 @@ import { ItemInBox } from "src/item-in-box/entities/item-in-box.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 
 @Index("itemInBoxId", ["itemInBoxId"], {})
-@Entity("inventoryHistory", { schema: "greenline_db" })
+@Entity("inventory-history", { schema: "greenline_db" })
 @ObjectType('inventoryHistory')
 export class InventoryHistory {
   @PrimaryGeneratedColumn({ name: "id" })
@@ -33,12 +33,4 @@ export class InventoryHistory {
   @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   lastModified: Date;
-
-  @ManyToOne(() => ItemInBox, (itemInBox) => itemInBox.inventoryHistory, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "itemInBoxId", referencedColumnName: "id" }])
-  @Field(() => ItemInBox)
-  itemInBox: ItemInBox;
 }

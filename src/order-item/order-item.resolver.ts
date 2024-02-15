@@ -1,8 +1,11 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent, Context } from '@nestjs/graphql';
 import { OrderItemService } from './order-item.service';
 import { OrderItem } from './entities/order-item.entity';
 import { CreateOrderItemInput } from './dto/create-order-item.input';
 import { UpdateOrderItemInput } from './dto/update-order-item.input';
+import { DataloaderRegistry } from 'src/dataloaders/dataLoaderRegistry';
+import { Item } from 'src/item/entities/item.entity';
+import { ItemInBox } from 'src/item-in-box/entities/item-in-box.entity';
 
 @Resolver(() => OrderItem)
 export class OrderItemResolver {
@@ -31,5 +34,21 @@ export class OrderItemResolver {
   @Mutation(() => OrderItem)
   removeOrderItem(@Args('id', { type: () => Int }) id: number) {
     return this.orderItemService.remove(id);
+  }
+
+  @ResolveField(() => Item)
+  info(@Parent() orderItem:OrderItem, 
+  @Context() { loaders } : { loaders : DataloaderRegistry} ){
+
+    return loaders.ItemDataLoader.load(orderItem.itemSku);
+
+  }
+
+  @ResolveField(() => [ItemInBox])
+  inventory(@Parent() orderItem:OrderItem, 
+  @Context() { loaders } : { loaders : DataloaderRegistry} ){
+
+    return loaders.ItemInBoxSkuLoader.load(orderItem.itemSku);
+
   }
 }

@@ -1,4 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+import { CreateItemPriceInput } from 'src/item-price/dto/create-item-price.input';
 
 @InputType()
 export class CreateItemInput {
@@ -8,8 +9,8 @@ export class CreateItemInput {
   @Field({ nullable: true})
   merchantSku?: string;
 
-  @Field()
-  merchantId: number;
+  @Field({ nullable: true })
+  merchantId?: number;
 
   @Field()
   name: string;
@@ -25,4 +26,8 @@ export class CreateItemInput {
 
   @Field()
   imageUrl: string;
+
+  @Field(() => [CreateItemPriceInput])
+  itemPrices: CreateItemPriceInput[]
+  
 }

@@ -36,6 +36,10 @@ export class Item {
   @Field({ nullable: true })
   color: string;
 
+  @Column("varchar", { name: "colorCode", length: 50, nullable: true})
+  @Field({ nullable: true })
+  colorHex: string;
+
   @Column("varchar", { name: "size", length: 15, nullable: true })
   @Field({ nullable: true })
   size: string;
@@ -55,20 +59,4 @@ export class Item {
   @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   lastModified: Date;
-
-  @ManyToOne(() => Merchant, (merchant) => merchant.items, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "merchantId", referencedColumnName: "id" }])
-  @Field(() => Merchant)
-  merchant: Merchant;
-
-  @OneToMany(() => ItemPrice, (itemPrices) => itemPrices.item)
-  @Field(() => [ItemPrice])
-  itemPrices: ItemPrice[];
-
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.item)
-  @Field(() => [OrderItem])
-  orderItems: OrderItem[];
 }

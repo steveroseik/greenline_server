@@ -1,5 +1,6 @@
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
-import { IsAlpha, IsDate, IsPhoneNumber, IsString } from 'class-validator';
+import { IsAlpha, IsDate, IsEnum, IsPhoneNumber, IsString } from 'class-validator';
+import { UserType } from 'support/enums';
 @InputType()
 export class UpdateUserInput{
   
@@ -15,9 +16,9 @@ export class UpdateUserInput{
   @Field({ nullable: true })
   phone?: string;
 
-  @IsString()
-  @Field({ nullable: true })
-  type?: string
+  @IsEnum(() => UserType)
+  @Field(() => UserType, { nullable: true })
+  type?: UserType
 
   @IsDate()
   @Field({ nullable: true })

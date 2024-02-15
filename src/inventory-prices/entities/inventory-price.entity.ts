@@ -6,9 +6,9 @@ import { Transform } from "class-transformer";
 import Decimal from "decimal.js";
 
 @Index("inventoryId", ["inventoryId"], {})
-@Entity("inventoryPrices", { schema: "greenline_db" })
-@ObjectType('inventoryPrices')
-export class InventoryPrices {
+@Entity("inventory-price", { schema: "greenline_db" })
+@ObjectType('inventoryPrice')
+export class InventoryPrice {
   @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
@@ -21,10 +21,10 @@ export class InventoryPrices {
   @Field()
   currency: string;
 
-  @Column("decimal", { name: "price", precision: 10, scale: 2, transformer: new DecimalTransformer()})
+  @Column("decimal", { name: "pricePerUnit", precision: 10, scale: 2, transformer: new DecimalTransformer()})
   @Transform(() => DecimalToString(), { toPlainOnly: true })
   @Field(() => String)
-  price: Decimal;
+  pricePerUnit: Decimal;
 
   @Column("decimal", { name: "discount", precision: 10, scale: 2, nullable: true, transformer: new DecimalTransformer()})
   @Transform(() => DecimalToString(), { toPlainOnly: true })

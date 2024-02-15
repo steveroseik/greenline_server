@@ -12,7 +12,7 @@ export const dataConfig:DataSourceOptions = {
     username: "user",
     password: process.env.local_password,
     database: "greenline_db",
-    entities: ["./dist/src/**/*.entity{.ts,.js}"],
+    entities: ["./dist/src/**/*.entity.js"],
     migrationsRun: true,
     legacySpatialSupport: false,
     migrationsTransactionMode: "all",

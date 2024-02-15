@@ -1,9 +1,10 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
 import { Order } from "src/order/entities/order.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { OrderStatusEnum } from "support/enums";
 
 @Index("orderId", ["orderId"], {})
-@Entity("orderStatus", { schema: "greenline_db" })
+@Entity("order-status", { schema: "greenline_db" })
 @ObjectType('orderStatus')
 export class OrderStatus {
   @PrimaryGeneratedColumn({ name: "id" })
@@ -14,9 +15,9 @@ export class OrderStatus {
   @Field()
   orderId: number;
 
-  @Column("int", { name: "status" })
-  @Field()
-  status: number;
+  @Column("enum", { name: "status", enum: OrderStatusEnum, default: OrderStatusEnum.idle })
+  @Field(() => OrderStatusEnum)
+  status:OrderStatusEnum
 
   @Column("varchar", { name: "description", length: 255 })
   @Field()
@@ -29,12 +30,4 @@ export class OrderStatus {
   @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
   @Field()
   lastModified: Date;
-
-  @ManyToOne(() => Order, (order) => order.orderStatuses, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "orderId", referencedColumnName: "id" }])
-  @Field(() => Order)
-  order: Order;
 }
