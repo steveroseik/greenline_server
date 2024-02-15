@@ -8,7 +8,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 import { DecimalToString, DecimalTransformer } from "support/decimal.transformer";
 import Decimal from "decimal.js";
-import { OrderType } from "support/enums";
+import { OrderType, PaymentType } from "support/enums";
 
 @Index("userId", ["userId"], {})
 @Index("merchantId", ["merchantId"], {})
@@ -29,9 +29,9 @@ export class Order {
   @Field(() => OrderType)
   type:OrderType
 
-  @Column("int", { name: "paymentType" })
-  @Field()
-  paymentType: number;
+  @Column("enum", { name: "paymentType", enum: PaymentType, default: PaymentType.cash })
+  @Field(() => PaymentType)
+  paymentType:PaymentType
 
   @Column("varchar", { name: "userId" })
   @Field()

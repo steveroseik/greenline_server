@@ -174,7 +174,17 @@ registerEnumType(OrderType, {
     name: 'OrderType',
   });
 
-export enum RequestStatus{
+export enum PaymentType {
+    cash = "cash",
+    card = "card",
+    free = "free",
+}
+
+registerEnumType(PaymentType, {
+    name: 'PaymentType',
+  });
+
+  export enum RequestStatus{
 
     sent = "sent",
     pending = "pending",

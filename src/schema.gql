@@ -73,7 +73,7 @@ type order {
   id: Int!
   otherId: Int
   type: OrderType!
-  paymentType: Int!
+  paymentType: PaymentType!
   userId: String!
   merchantId: Int!
   userAddressId: Int!
@@ -94,6 +94,12 @@ enum OrderType {
   freeDelivery
   gift
   freeOfCharge
+}
+
+enum PaymentType {
+  cash
+  card
+  free
 }
 
 type orderItem {
@@ -857,7 +863,7 @@ input UpdateSheetOrderInput {
 input CreateOrderInput {
   otherId: Int
   type: OrderType = delivery
-  paymentType: Int!
+  paymentType: PaymentType = cash
   userId: String!
   merchantId: Int!
   userAddressId: Int!
@@ -879,7 +885,7 @@ input OrderItemInput {
 input UpdateOrderInput {
   otherId: Int
   type: OrderType = delivery
-  paymentType: Int
+  paymentType: PaymentType = cash
   userId: String
   merchantId: Int
   userAddressId: Int

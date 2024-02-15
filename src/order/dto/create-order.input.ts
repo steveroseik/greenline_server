@@ -3,7 +3,7 @@ import { Transform } from 'class-transformer';
 import Decimal from 'decimal.js';
 import { OrderItemInput } from 'src/order-item/dto/order-item.input';
 import { DecimalToString } from 'support/decimal.transformer';
-import { OrderType } from 'support/enums';
+import { OrderType, PaymentType } from 'support/enums';
 
 @InputType()
 export class CreateOrderInput {
@@ -15,8 +15,8 @@ export class CreateOrderInput {
   @Field(() => OrderType, { nullable: true, defaultValue: OrderType.delivery })
   type: OrderType;
 
-  @Field()
-  paymentType: number;
+  @Field(() => PaymentType, { nullable: true, defaultValue: PaymentType.cash })
+  paymentType?: PaymentType;
 
   @Field()
   userId: string;
