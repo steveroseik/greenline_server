@@ -48,6 +48,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGaurd } from './auth/gaurds/accessToken.gaurd';
 import { HubModule } from './hub/hub.module';
 import { GeoLocation } from 'support/geolocation.type';
+import { ItemPriceListModule } from './item-price-list/item-price-list.module';
 import express from 'express';
 import config from 'ormconfig';
 
@@ -105,7 +106,7 @@ import config from 'ormconfig';
     RequestModule, FinancialAccountModule, ExpenseModule, 
     FinancialTransactionModule, FinancialRequestStatusModule, 
     AuthModule,
-    RoleModule, UserRoleModule, ListenersModule, DataloadersModule, HubModule,
+    RoleModule, UserRoleModule, ListenersModule, DataloadersModule, HubModule, ItemPriceListModule,
     ],
   controllers: [AppController],
   providers: [AppService, DataloaderRegistryFactory, 

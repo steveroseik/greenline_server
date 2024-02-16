@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent, Context } from '@nestjs/graphql';
 import { ItemService } from './item.service';
 import { Item } from './entities/item.entity';
-import { CreateItemInput } from './dto/create-item.input';
+import { CreateMultipleItems } from './dto/create-multiple-item.input';
 import { UpdateItemInput } from './dto/update-item.input';
 import { ItemInBoxService } from 'src/item-in-box/item-in-box.service';
 import { ItemPage } from './entities/itemPage.entity';
@@ -14,19 +14,22 @@ import { ForbiddenError } from '@nestjs/apollo';
 import { paginateItemsInput } from './dto/paginate-items.input';
 import { ItemPrice } from 'src/item-price/entities/item-price.entity';
 import { DataloaderRegistry } from 'src/dataloaders/dataLoaderRegistry';
+import { ItemPriceList } from 'src/item-price-list/entities/item-price-list.entity';
 
 @Resolver(() => Item)
 export class ItemResolver {
   constructor(private readonly itemService: ItemService,
   private itemInBoxService:ItemInBoxService) {}
 
-  @Mutation(() => Int)
-  createItem(@Args('createItemInput') createItemInput: CreateItemInput,
+  @Mutation(() => Boolean)
+  createMultipleItems(@Args('input', { type: () => [CreateMultipleItems] }) createItemInput: CreateMultipleItems[],
   @CurrentUser("merchantId") merchantId:number) {
-    if (merchantId === undefined){
-      return new ForbiddenError('cannot continue');
-    }
-    createItemInput.merchantId = merchantId;
+    // if (merchantId === undefined || merchantId === null){
+    //   return Error('cannot continue');
+    // }
+    createItemInput.forEach((inp) => inp.merchantId = 23);
+    
+    console.log(merchantId);
     return this.itemService.create(createItemInput);
   }
 
@@ -59,11 +62,11 @@ export class ItemResolver {
     return this.itemService.remove(id);
   }
 
-  @ResolveField(() => [ItemPrice])
+  @ResolveField(() => [ItemPriceList])
   prices(
     @Args('currency') currency:string,
     @Parent() item:Item, @Context() { loaders } : { loaders:DataloaderRegistry }){
 
-    return loaders.ItemPricesDataLoader.load({key: item.sku, currency: currency});
+    return loaders.ItemPriceListsDataLoader.load({key: item.sku, currency: currency});
   }
 }

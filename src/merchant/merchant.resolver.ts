@@ -9,9 +9,9 @@ import { Public } from 'src/auth/decorators/publicDecorator';
 export class MerchantResolver {
   constructor(private readonly merchantService: MerchantService) {}
 
-  @Mutation(() => Merchant)
-  createMerchant(@Args('createMerchantInput') createMerchantInput: CreateMerchantInput) {
-    return this.merchantService.create(createMerchantInput);
+  @Mutation(() => String, { nullable: true })
+  createMerchant(@Args('input') input: CreateMerchantInput) {
+    return this.merchantService.create(input);
   }
 
   @Public()

@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn} from "typeorm";
 import { FinancialAccount } from "src/financial-account/entities/financial-account.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
@@ -36,7 +36,7 @@ export class Expense {
   @Field()
   comment: string;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 

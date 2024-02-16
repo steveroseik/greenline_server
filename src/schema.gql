@@ -14,7 +14,7 @@ type item {
   imageUrl: String!
   createdAt: Timestamp!
   lastModified: Timestamp!
-  prices(currency: String!): [itemPrice!]!
+  prices(currency: String!): [ItemPriceList!]!
 }
 
 """
@@ -24,8 +24,6 @@ scalar Timestamp
 
 type itemPrice {
   id: Int!
-  itemSku: String!
-  currency: String!
   price: String!
   discount: String
   startDiscount: Timestamp
@@ -50,10 +48,16 @@ type inventoryHistory {
   id: Int!
   itemInBoxId: Int!
   description: String!
-  type: Int!
+  type: InventoryItemHistory!
   amount: Int!
   createdAt: Timestamp!
   lastModified: Timestamp!
+}
+
+enum InventoryItemHistory {
+  firstImport
+  import
+  export
 }
 
 type ItemPage {
@@ -63,6 +67,13 @@ type ItemPage {
 
 """Cursor scalar type for pagination"""
 scalar GraphqlCursor
+
+type ItemPriceList {
+  itemSku: String!
+  itemPriceId: Int!
+  currency: String!
+  info: [itemPrice!]!
+}
 
 type ItemInBoxPage {
   cursor: GraphqlCursor!
@@ -85,6 +96,7 @@ type order {
   createdAt: Timestamp!
   lastModified: Timestamp!
   items: [orderItem!]!
+  history: [orderStatus!]!
 }
 
 enum OrderType {
@@ -108,6 +120,9 @@ type orderItem {
   count: Int!
   frozenPrice: String!
   frozenCurrency: String!
+  frozenColorHex: String!
+  frozenSize: String!
+  frozenName: String!
   partial: Boolean!
   partialCount: Int!
   createdAt: Timestamp!
@@ -120,11 +135,20 @@ type orderItem {
 type financialAccount {
   id: Int!
   name: String!
-  userId: String!
-  merchantId: Int!
+  type: FinancialAccountType!
+  userId: String
+  merchantId: Int
   balance: String
   createdAt: Timestamp!
   lastModified: Timestamp!
+}
+
+enum FinancialAccountType {
+  hub
+  user
+  merchant
+  bank
+  department
 }
 
 type request {
@@ -134,7 +158,7 @@ type request {
   fromId: String!
   description: String!
   extraData: String!
-  status: Int!
+  status: RequestStatus!
   createdAt: Timestamp!
   lastModified: Timestamp!
 }
@@ -166,6 +190,15 @@ enum RequestType {
   other
 }
 
+enum RequestStatus {
+  sent
+  pending
+  read
+  rejected
+  accepted
+  expired
+}
+
 type user {
   id: String!
   type: UserType!
@@ -180,6 +213,7 @@ type user {
   lastModified: Timestamp!
   deletedAt: Timestamp
   userRoles: [UserRole!]
+  addresses: [userAddress!]!
 }
 
 enum UserType {
@@ -203,6 +237,16 @@ type UserPage {
   data: [user!]!
 }
 
+type userAddress {
+  id: Int!
+  userId: String!
+  countryId: Int!
+  cityId: Int!
+  details: String!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+}
+
 type Role {
   id: Int!
   name: String!
@@ -218,15 +262,6 @@ type requestStatusHistory {
   status: RequestStatus!
   userId: Int!
   createdAt: Timestamp!
-}
-
-enum RequestStatus {
-  sent
-  pending
-  read
-  rejected
-  accepted
-  expired
 }
 
 type orderStatus {
@@ -275,6 +310,7 @@ type sheetOrder {
   financePass: Boolean!
   transactionId: Int!
   createdAt: Timestamp!
+  lastModified: Timestamp!
   sheet: courierSheet!
   info: order!
 }
@@ -289,7 +325,7 @@ type sheetOrderStatusHistory {
 }
 
 enum SheetOrderStatus {
-  adminApproved
+  adminAccepted
   adminRejected
   financeAccepted
   financeRejected
@@ -298,16 +334,6 @@ enum SheetOrderStatus {
 type CourierSheetPage {
   cursor: GraphqlCursor!
   data: [courierSheet!]!
-}
-
-type userAddress {
-  id: Int!
-  userId: String!
-  countryId: Int!
-  cityId: Int!
-  details: String!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
 }
 
 type merchant {
@@ -339,7 +365,7 @@ type inventory {
   module: Int!
   zoneId: Int!
   location: GeoLocation!
-  rentType: Int!
+  rentType: InventoryRentType!
   createdAt: Timestamp!
   lastModified: Timestamp!
   inventoryPrices: [inventoryPrice!]!
@@ -349,6 +375,15 @@ type inventory {
 
 """Geo location representation."""
 scalar GeoLocation
+
+enum InventoryRentType {
+  item
+  box
+  ballot
+  rack
+  inventory
+  meter
+}
 
 type inventoryPrice {
   id: Int!
@@ -398,7 +433,7 @@ type financialTransaction {
   toAccountId: String!
   amount: String
   receipt: String!
-  latestStatus: Int!
+  status: TransactionStatus!
   approvedById: String!
   createdAt: Timestamp!
 }
@@ -419,12 +454,6 @@ enum TransactionType {
   other
 }
 
-type financalRequestStatus {
-  requestId: Int!
-  status: TransactionStatus!
-  createdAt: Timestamp!
-}
-
 enum TransactionStatus {
   pendingSender
   pendingReceiver
@@ -435,6 +464,17 @@ enum TransactionStatus {
   cancelledBySender
   completed
   failed
+}
+
+type FinancialTransactionPage {
+  cursor: GraphqlCursor!
+  data: [financialTransaction!]!
+}
+
+type financalRequestStatus {
+  requestId: Int!
+  status: TransactionStatus!
+  createdAt: Timestamp!
 }
 
 type OrderPage {
@@ -534,6 +574,9 @@ type Query {
   sheetOrder(id: Int!): sheetOrder!
   paginateOrders(input: PaginateOrdersInput!): OrderPage!
   order(id: Int!): order!
+  userAddress(id: Int!): userAddress!
+  orderStatus(id: Int!): orderStatus!
+  itemPriceList(id: Int!): ItemPriceList!
   findAllInventories: [inventory!]!
   findOneInventory(input: FindInventoryInput!): inventory!
   inventoryPrices: [inventoryPrice!]!
@@ -541,16 +584,15 @@ type Query {
   inventorySupport(id: Int!): inventorySupport!
   orderRelation(id: Int!): orderRelation!
   merchant(id: Int!): merchant!
+  financialAccount(id: Int!): financialAccount!
   paginateUsers(paginateUsersInput: PaginationInput!): UserPage!
   request(id: Int!): request!
-  userAddress(id: Int!): userAddress!
   findAllCourierSheets: [courierSheet!]!
   paginateCourierSheets(input: PaginateCourierSheetInput!): CourierSheetPage!
   sheetOrderStatusHistory(id: Int!): sheetOrderStatusHistory!
-  orderStatus(id: Int!): orderStatus!
   requestStatusHistory(id: Int!): requestStatusHistory!
-  financialAccount(id: Int!): financialAccount!
   expense(id: Int!): expense!
+  paginateFinancialTransaction(input: FinancialTransactionPaginationInput!): [FinancialTransactionPage!]!
   financialTransaction(id: Int!): financialTransaction!
   financialRequestStatus(id: Int!): financalRequestStatus!
   isValidEmail(email: String!): EmailValidityPayload!
@@ -603,6 +645,18 @@ input PaginateCourierSheetInput {
   beforeCursor: String
 }
 
+input FinancialTransactionPaginationInput {
+  isAsc: Boolean! = true
+  limit: Int! = 1
+  afterCursor: String
+  beforeCursor: String
+  fromAccountId: Int
+  toAccountId: Int
+  type: String
+  status: String
+  byId: Boolean = true
+}
+
 type Mutation {
   removeUserRole(id: Int!): UserRole!
   updateUserRoles(input: UpdateUserRoleInput!): Boolean!
@@ -610,7 +664,7 @@ type Mutation {
   createRole(createRoleInput: CreateRolesInput!): Role!
   updateRole(updateRoleInput: UpdateRoleInput!): Role!
   removeRole(id: Int!): Role!
-  createItem(createItemInput: CreateItemInput!): Int!
+  createMultipleItems(input: [CreateMultipleItems!]!): Boolean!
   createFakeItem(count: Int! = 1): Boolean!
   updateItem(updateItemInput: UpdateItemInput!): item!
   removeItem(id: Int!): item!
@@ -639,11 +693,20 @@ type Mutation {
   updateOrderItem(updateOrderItemInput: UpdateOrderItemInput!): orderItem!
   removeOrderItem(id: Int!): orderItem!
   createSheetOrder(createSheetOrderInput: CreateSheetOrderInput!): sheetOrder!
-  updateSheetOrder(updateSheetOrderInput: UpdateSheetOrderInput!): sheetOrder!
+  updateSheetOrders(input: UpdateSheetOrdersInput!): [sheetOrder!]!
   removeSheetOrder(id: Int!): sheetOrder!
   createOrder(input: CreateOrderInput!): Boolean!
   updateOrder(updateOrderInput: UpdateOrderInput!): order!
   removeOrder(id: Int!): order!
+  createUserAddress(createUserAddressInput: CreateUserAddressInput!): userAddress!
+  updateUserAddress(updateUserAddressInput: UpdateUserAddressInput!): userAddress!
+  removeUserAddress(id: Int!): userAddress!
+  createOrderStatus(createOrderStatusInput: CreateOrderStatusInput!): orderStatus!
+  updateOrderStatus(updateOrderStatusInput: UpdateOrderStatusInput!): orderStatus!
+  removeOrderStatus(id: Int!): orderStatus!
+  createItemPriceList(createItemPriceListInput: CreateItemPriceListInput!): ItemPriceList!
+  updateItemPriceList(updateItemPriceListInput: UpdateItemPriceListInput!): ItemPriceList!
+  removeItemPriceList(id: Int!): ItemPriceList!
   createFakeInventory(count: Int! = 1): Boolean!
   createInventory(input: CreateInventoryInput!): Boolean!
   updateInventory(updateInventoryInput: UpdateInventoryInput!): inventory!
@@ -657,10 +720,13 @@ type Mutation {
   createOrderRelation(createOrderRelationInput: CreateOrderRelationInput!): orderRelation!
   updateOrderRelation(updateOrderRelationInput: UpdateOrderRelationInput!): orderRelation!
   removeOrderRelation(id: Int!): orderRelation!
-  createMerchant(createMerchantInput: CreateMerchantInput!): merchant!
+  createMerchant(input: CreateMerchantInput!): String
   createFakeMerchant(count: Int! = 1): Boolean!
   updateMerchant(updateMerchantInput: UpdateMerchantInput!): merchant!
   removeMerchant(id: Int!): merchant!
+  createFinancialAccount(input: CreateFinancialAccountInput!): financialAccount!
+  updateFinancialAccount(updateFinancialAccountInput: UpdateFinancialAccountInput!): financialAccount!
+  removeFinancialAccount(id: Int!): financialAccount!
   createUser(createUserInput: CreateUserInput!): Boolean!
   createFakeUser(count: Int! = 1): Boolean!
   updateUserType(updateInfo: UpdateUserTypeInput!): Boolean!
@@ -669,24 +735,15 @@ type Mutation {
   createRequest(createRequestInput: CreateRequestInput!): request!
   updateRequest(updateRequestInput: UpdateRequestInput!): request!
   removeRequest(id: Int!): request!
-  createUserAddress(createUserAddressInput: CreateUserAddressInput!): userAddress!
-  updateUserAddress(updateUserAddressInput: UpdateUserAddressInput!): userAddress!
-  removeUserAddress(id: Int!): userAddress!
   createCourierSheet(input: CreateCourierSheetInput!): Boolean!
   updateCourierSheet(updateCourierSheetInput: UpdateCourierSheetInput!): courierSheet!
   removeCourierSheet(id: Int!): courierSheet!
   createSheetOrderStatusHistory(createSheetOrderStatusHistoryInput: CreateSheetOrderStatusHistoryInput!): sheetOrderStatusHistory!
   updateSheetOrderStatusHistory(updateSheetOrderStatusHistoryInput: UpdateSheetOrderStatusHistoryInput!): sheetOrderStatusHistory!
   removeSheetOrderStatusHistory(id: Int!): sheetOrderStatusHistory!
-  createOrderStatus(createOrderStatusInput: CreateOrderStatusInput!): orderStatus!
-  updateOrderStatus(updateOrderStatusInput: UpdateOrderStatusInput!): orderStatus!
-  removeOrderStatus(id: Int!): orderStatus!
   createRequestStatusHistory(createRequestStatusHistoryInput: CreateRequestStatusHistoryInput!): requestStatusHistory!
   updateRequestStatusHistory(updateRequestStatusHistoryInput: UpdateRequestStatusHistoryInput!): requestStatusHistory!
   removeRequestStatusHistory(id: Int!): requestStatusHistory!
-  createFinancialAccount(createFinancialAccountInput: CreateFinancialAccountInput!): financialAccount!
-  updateFinancialAccount(updateFinancialAccountInput: UpdateFinancialAccountInput!): financialAccount!
-  removeFinancialAccount(id: Int!): financialAccount!
   createExpense(createExpenseInput: CreateExpenseInput!): expense!
   updateExpense(updateExpenseInput: UpdateExpenseInput!): expense!
   removeExpense(id: Int!): expense!
@@ -724,15 +781,14 @@ input UpdateRoleInput {
   id: Int!
 }
 
-input CreateItemInput {
-  sku: String!
-  merchantSku: String
+input CreateMultipleItems {
   merchantId: Int
   name: String!
-  color: String
-  size: String
-  description: String!
-  imageUrl: String!
+  colors: [String!]
+  colorsHex: [String!]
+  sizes: [String!]
+  description: String
+  imageUrls: [String!]!
   itemPrices: [CreateItemPriceInput!]!
 }
 
@@ -745,14 +801,13 @@ input CreateItemPriceInput {
 }
 
 input UpdateItemInput {
-  sku: String
-  merchantSku: String
   merchantId: Int
   name: String
-  color: String
-  size: String
+  colors: [String!]
+  colorsHex: [String!]
+  sizes: [String!]
   description: String
-  imageUrl: String
+  imageUrls: [String!]
   itemPrices: [CreateItemPriceInput!]
   id: Int!
 }
@@ -793,14 +848,14 @@ input UpdateItemInBoxInput {
 input CreateInventoryHistoryInput {
   itemInBoxId: Int!
   description: String!
-  type: Int!
+  type: InventoryItemHistory!
   amount: Int!
 }
 
 input UpdateInventoryHistoryInput {
   itemInBoxId: Int
   description: String
-  type: Int
+  type: InventoryItemHistory
   amount: Int
   id: Int!
 }
@@ -854,10 +909,10 @@ input CreateSheetOrderInput {
   orderId: Int!
 }
 
-input UpdateSheetOrderInput {
-  sheetId: Int
-  orderId: Int
-  id: Int!
+input UpdateSheetOrdersInput {
+  sheetOrderIds: [Int!]!
+  status: SheetOrderStatus!
+  description: String
 }
 
 input CreateOrderInput {
@@ -898,9 +953,42 @@ input UpdateOrderInput {
   id: Int!
 }
 
+input CreateUserAddressInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateUserAddressInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateOrderStatusInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateOrderStatusInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateItemPriceListInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateItemPriceListInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
 input CreateInventoryInput {
   name: String!
-  rentType: Int!
+  rentType: InventoryRentType!
   zoneId: Int
   hubId: Int
   module: Int
@@ -922,7 +1010,7 @@ input AddInventoryPriceInput {
 
 input UpdateInventoryInput {
   name: String
-  rentType: Int
+  rentType: InventoryRentType
   zoneId: Int
   hubId: Int
   module: Int
@@ -981,11 +1069,30 @@ input UpdateOrderRelationInput {
 input CreateMerchantInput {
   name: String!
   includesVat: Boolean!
+  withoutFinancialAccount: Boolean = false
 }
 
 input UpdateMerchantInput {
   name: String
   includesVat: Boolean
+  withoutFinancialAccount: Boolean = false
+  id: Int!
+}
+
+input CreateFinancialAccountInput {
+  name: String!
+  type: FinancialAccountType!
+  userId: String
+  merchantId: Int
+  balance: String = "0"
+}
+
+input UpdateFinancialAccountInput {
+  name: String
+  type: FinancialAccountType
+  userId: String
+  merchantId: Int
+  balance: String = "0"
   id: Int!
 }
 
@@ -1022,17 +1129,6 @@ input UpdateRequestInput {
   id: Int!
 }
 
-input CreateUserAddressInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateUserAddressInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
 input CreateCourierSheetInput {
   userId: String!
   orderIds: [Int!]!
@@ -1055,34 +1151,12 @@ input UpdateSheetOrderStatusHistoryInput {
   id: Int!
 }
 
-input CreateOrderStatusInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateOrderStatusInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
 input CreateRequestStatusHistoryInput {
   """Example field (placeholder)"""
   exampleField: Int!
 }
 
 input UpdateRequestStatusHistoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
-input CreateFinancialAccountInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateFinancialAccountInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!

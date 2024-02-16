@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, CreateDateColumn } from "typeorm";
 import { FinancialTransaction } from "src/financial-transaction/entities/financial-transaction.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { TransactionStatus } from "support/enums";
@@ -15,7 +15,7 @@ export class FinancialRequestStatus {
   @Field(() => TransactionStatus)
   status: TransactionStatus;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 

@@ -2,10 +2,9 @@ import {
   Column,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  CreateDateColumn
 } from "typeorm";
 import { User } from "src/user/entities/user.entity";
 import { Merchant } from "src/merchant/entities/merchant.entity";
@@ -14,6 +13,7 @@ import { Expense } from "src/expense/entities/expense.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { DecimalToString, DecimalTransformer } from "support/decimal.transformer";
 import { Transform } from "class-transformer";
+import { FinancialAccountType } from "support/enums";
 
 @Index("userId", ["userId"], {})
 @Index("merchantId", ["merchantId"], {})
@@ -30,25 +30,29 @@ export class FinancialAccount {
   @Field()
   name: string;
 
-  @Column("varchar", { name: "userId" })
-  @Field()
-  userId: string;
+  @Column("enum", { name: "type", enum: FinancialAccountType })
+  @Field(() => FinancialAccountType)
+  type:FinancialAccountType
 
-  @Column("int", { name: "merchantId" })
-  @Field()
-  merchantId: number;
+  @Column("varchar", { name: "userId", nullable: true })
+  @Field({ nullable: true })
+  userId?: string;
+
+  @Column("int", { name: "merchantId", nullable: true })
+  @Field({ nullable: true })
+  merchantId?: number;
 
   
-  @Column("decimal", { name: "balance", precision: 10, scale: 2, transformer: new DecimalTransformer()})
+  @Column("decimal", { name: "balance", precision: 10, scale: 2, transformer: new DecimalTransformer(), default: 0})
   @Transform(() => DecimalToString(), { toPlainOnly: true })
   @Field(() => String, { nullable: true })
   balance: number;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 

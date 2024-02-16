@@ -54,7 +54,7 @@ export class InventoryService {
       return success;
     }catch (e){
       console.log(e);
-      queryRunner.rollbackTransaction();
+      await queryRunner.rollbackTransaction();
     }finally{
       console.log('releasing');
       queryRunner.release();

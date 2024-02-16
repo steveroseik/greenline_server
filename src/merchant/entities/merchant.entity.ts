@@ -1,4 +1,5 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn,
+  CreateDateColumn } from "typeorm";
 import { Item } from "src/item/entities/item.entity";
 import { FinancialAccount } from "src/financial-account/entities/financial-account.entity";
 import { Order } from "src/order/entities/order.entity";
@@ -20,11 +21,11 @@ export class Merchant {
   @Field()
   includesVat: boolean;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 

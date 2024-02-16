@@ -18,7 +18,7 @@ export class OrderService {
     private dataSource:DataSource){}
 
 
-  async create(input:CreateOrderInput) {
+  async create(input:CreateOrderInput): Promise<number | null> {
     
     const queryRunner = this.dataSource.createQueryRunner()
 
@@ -50,7 +50,7 @@ export class OrderService {
 
         if (ordersResult.raw.affectedRows === 1){
           await queryRunner.commitTransaction();
-          return true;
+          return result.raw.insertId;
         }
       }
 
@@ -68,6 +68,13 @@ export class OrderService {
   async paginateOrders(input:PaginateOrdersInput){
 
     let queryBuilder = this.orderRepo.createQueryBuilder('order');
+
+    let whereSet = false;
+
+    if (input.merchantId !== null){
+      whereSet = true;
+      queryBuilder = queryBuilder.where({merchantId: input.merchantId})
+    }
 
     const paginator = buildPaginator({
       entity: Order,

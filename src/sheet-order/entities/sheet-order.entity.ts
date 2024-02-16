@@ -1,11 +1,13 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { CourierSheet } from "src/courier-sheet/entities/courier-sheet.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
@@ -41,9 +43,13 @@ export class SheetOrder {
   @Field()
   transactionId?: number;
 
-  @Column("datetime", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+  @CreateDateColumn({ name: "createdAt" })
   @Field()
   createdAt: Date;
+
+  @UpdateDateColumn({ name: "lastModified" })
+  @Field()
+  lastModified: Date;
 
   @ManyToOne(() => CourierSheet, (courierSheet) => courierSheet.sheetOrders, {
     onDelete: "RESTRICT",

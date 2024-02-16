@@ -5,6 +5,8 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  UpdateDateColumn,
+  CreateDateColumn
 } from "typeorm";
 import { Merchant } from "src/merchant/entities/merchant.entity";
 import { ItemPrice } from "src/item-price/entities/item-price.entity";
@@ -34,17 +36,17 @@ export class Item {
 
   @Column("varchar", { name: "color", length: 50, nullable: true})
   @Field({ nullable: true })
-  color: string;
+  color?: string;
 
   @Column("varchar", { name: "colorCode", length: 50, nullable: true})
   @Field({ nullable: true })
-  colorHex: string;
+  colorHex?: string;
 
   @Column("varchar", { name: "size", length: 15, nullable: true })
   @Field({ nullable: true })
-  size: string;
+  size?: string;
 
-  @Column("varchar", { name: "description", length: 255 })
+  @Column("varchar", { name: "description", length: 255, default: ""})
   @Field()
   description: string;
 
@@ -52,11 +54,11 @@ export class Item {
   @Field()
   imageUrl: string;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+  @UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 }

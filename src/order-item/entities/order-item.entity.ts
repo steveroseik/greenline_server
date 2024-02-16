@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, UpdateDateColumn } from "typeorm";
 import { Order } from "src/order/entities/order.entity";
 import { Item } from "src/item/entities/item.entity";
 import { Context, Field, ObjectType, Parent, ResolveField } from "@nestjs/graphql";
@@ -32,6 +32,18 @@ export class OrderItem {
   @Field()
   frozenCurrency: string;
 
+  @Column("varchar", { name: "frozenColorHex", length: 50 })
+  @Field()
+  frozenColorHex: string;
+
+  @Column("varchar", { name: "frozenSize", length: 10 })
+  @Field()
+  frozenSize: string;
+
+  @Column("varchar", { name: "frozenName", length: 10 })
+  @Field()
+  frozenName: string;
+
   @Column('boolean', { name: "partial", default: false})
   @Field()
   partial:boolean
@@ -40,11 +52,11 @@ export class OrderItem {
   @Field()
   partialCount: number;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+  @UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 
@@ -53,7 +65,7 @@ export class OrderItem {
   order: Order;
 
   @ResolveField(() => Item)
-  item(@Parent() orderItem:OrderItem, @Context() { loaders } : { loaders:DataloaderRegistry} ){
+  info(@Parent() orderItem:OrderItem, @Context() { loaders } : { loaders:DataloaderRegistry} ){
     
     return loaders.ItemDataLoader.load(orderItem.itemSku);
 

@@ -6,6 +6,8 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  CreateDateColumn
 } from "typeorm";
 import { SheetOrder } from "src/sheet-order/entities/sheet-order.entity";
 import { User } from "src/user/entities/user.entity";
@@ -29,11 +31,11 @@ export class CourierSheet {
   @Field(() => CourierSheetStatus)
   status: CourierSheetStatus;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
   

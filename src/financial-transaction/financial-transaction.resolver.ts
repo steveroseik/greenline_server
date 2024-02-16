@@ -3,6 +3,8 @@ import { FinancialTransactionService } from './financial-transaction.service';
 import { FinancialTransaction } from './entities/financial-transaction.entity';
 import { CreateFinancialTransactionInput } from './dto/create-financial-transaction.input';
 import { UpdateFinancialTransactionInput } from './dto/update-financial-transaction.input';
+import { FinancialTransactionPaginationInput } from './dto/financial-transaction-pagination.input';
+import { FinancialTransactionPage } from './entities/financial-transaction-page';
 
 @Resolver(() => FinancialTransaction)
 export class FinancialTransactionResolver {
@@ -13,9 +15,11 @@ export class FinancialTransactionResolver {
     return this.financialTransactionService.create(createFinancialTransactionInput);
   }
 
-  @Query(() => [FinancialTransaction], { name: 'financialTransaction' })
-  findAll() {
-    return this.financialTransactionService.findAll();
+  
+  @Query(() => [FinancialTransactionPage])
+  paginateFinancialTransaction(@Args('input') input:FinancialTransactionPaginationInput){
+
+    return this.financialTransactionService.paginate(input);
   }
 
   @Query(() => FinancialTransaction, { name: 'financialTransaction' })

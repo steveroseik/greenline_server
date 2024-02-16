@@ -8,11 +8,13 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  CreateDateColumn
 } from "typeorm";
 import { RequestStatusHistory } from "src/request-status-history/entities/request-status-history.entity";
 import { User } from "src/user/entities/user.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
-import { RequestType } from "support/enums";
+import { RequestStatus, RequestType } from "support/enums";
 
 @Index("fromId", ["fromId"], {})
 @Entity("request", { schema: "greenline_db" })
@@ -42,15 +44,15 @@ export class Request {
   @Field()
   extraData: string
 
-  @Column("int", { name: "status" })
-  @Field()
-  status: number;
+  @Column("enum", { name: "status", enum: RequestStatus })
+  @Field(() => RequestStatus)
+  status:RequestStatus
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+  @UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 

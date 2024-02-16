@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { UserRole } from 'src/user-role/entities/user-role.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity("role", { schema: "greenline_db" })
 @ObjectType()
@@ -22,11 +22,11 @@ export class Role {
   @Field()
   description: string
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 

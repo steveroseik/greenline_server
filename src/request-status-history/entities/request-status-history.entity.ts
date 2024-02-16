@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
 import { Request } from "src/request/entities/request.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { OrderStatus } from "src/order-status/entities/order-status.entity";
@@ -25,7 +25,7 @@ export class RequestStatusHistory {
   @Field()
   userId: number;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 

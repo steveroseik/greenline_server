@@ -6,9 +6,9 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  CreateDateColumn
 } from "typeorm";
-import { Box } from "src/box/entities/box.entity";
-import { Rack } from "src/rack/entities/rack.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 @Index("rackId", ["rackId"], {})
 @Entity("ballot", { schema: "greenline_db" })
@@ -34,12 +34,12 @@ export class Ballot {
   @Field()
   name: string;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
-  
+
 }

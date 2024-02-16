@@ -6,6 +6,8 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  CreateDateColumn
 } from "typeorm";
 import { Ballot } from "src/ballot/entities/ballot.entity";
 import { ItemInBox } from "src/item-in-box/entities/item-in-box.entity";
@@ -31,11 +33,11 @@ export class Box {
   @Field()
   name: string;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 }

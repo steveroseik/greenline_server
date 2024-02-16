@@ -1,4 +1,5 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+import { InventoryItemHistory } from 'support/enums';
 
 @InputType()
 export class CreateInventoryHistoryInput {
@@ -12,8 +13,8 @@ export class CreateInventoryHistoryInput {
   description: string;
 
 
-  @Field()
-  type: number;
+  @Field(() =>  InventoryItemHistory)
+  type: InventoryItemHistory;
 
 
   @Field()

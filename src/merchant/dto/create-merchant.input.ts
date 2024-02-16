@@ -8,4 +8,7 @@ export class CreateMerchantInput {
 
   @Field()
   includesVat: boolean
+
+  @Field({ nullable: true, defaultValue: false })
+  withoutFinancialAccount?:boolean
 }

@@ -10,6 +10,7 @@ import { ImportItemInput } from './dto/import-item.input';
 import { ItemInBoxPageInput } from './dto/paginate-item-in-box.input';
 import { buildPaginator } from 'typeorm-cursor-pagination';
 import { ItemInBoxPage } from './entities/item-in-box-page.entity';
+import { InventoryItemHistory } from 'support/enums';
 
 @Injectable()
 export class ItemInBoxService {
@@ -106,7 +107,7 @@ export class ItemInBoxService {
       return this.inventoryHistoryService.createHistory({
         itemInBoxId: input.id,
         description: `${input.count} item(s) exported out of Inventory`,
-        type: 1,
+        type: InventoryItemHistory.export,
         amount: input.count
       });
     }
@@ -122,7 +123,7 @@ export class ItemInBoxService {
       return this.inventoryHistoryService.createHistory({
         itemInBoxId: input.id,
         description: `${input.count} item(s) imported into the inventory.`,
-        type: 1,
+        type: InventoryItemHistory.import,
         amount: input.count
       });
     }
@@ -138,7 +139,7 @@ export class ItemInBoxService {
       return this.inventoryHistoryService.createHistory({
         itemInBoxId: result.raw.insertId,
         description: `${input.count} item(s) imported into BoxId:${input.boxId}`,
-        type: 0,
+        type: InventoryItemHistory.firstImport,
         amount: input.count
       });
     }

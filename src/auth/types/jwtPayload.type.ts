@@ -1,9 +1,10 @@
+import { UserType } from "support/enums"
 
 export type JwtPayload = {
     id:string
     hubId: number, 
     merchantId: number,
-    type: string,
+    type: UserType,
     roles: number[]
 }
 

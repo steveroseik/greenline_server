@@ -9,8 +9,8 @@ export class FinancialAccountResolver {
   constructor(private readonly financialAccountService: FinancialAccountService) {}
 
   @Mutation(() => FinancialAccount)
-  createFinancialAccount(@Args('createFinancialAccountInput') createFinancialAccountInput: CreateFinancialAccountInput) {
-    return this.financialAccountService.create(createFinancialAccountInput);
+  createFinancialAccount(@Args('input') input: CreateFinancialAccountInput) {
+    return this.financialAccountService.create(input);
   }
 
   @Query(() => [FinancialAccount], { name: 'financialAccount' })

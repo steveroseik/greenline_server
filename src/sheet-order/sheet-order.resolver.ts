@@ -2,9 +2,10 @@ import { Resolver, Query, Mutation, Args, Int, ResolveField, Parent, Context } f
 import { SheetOrderService } from './sheet-order.service';
 import { SheetOrder } from './entities/sheet-order.entity';
 import { CreateSheetOrderInput } from './dto/create-sheet-order.input';
-import { UpdateSheetOrderInput } from './dto/update-sheet-order.input';
 import { DataloaderRegistry } from 'src/dataloaders/dataLoaderRegistry';
 import { Order } from 'src/order/entities/order.entity';
+import { UpdateSheetOrdersInput } from './dto/update-sheet-orders.input';
+import { CurrentUser } from 'src/auth/decorators/currentUserDecorator';
 
 @Resolver(() => SheetOrder)
 export class SheetOrderResolver {
@@ -15,19 +16,17 @@ export class SheetOrderResolver {
     return this.sheetOrderService.create(createSheetOrderInput);
   }
 
-  @Query(() => [SheetOrder], { name: 'sheetOrder' })
-  findAll() {
-    return this.sheetOrderService.findAll();
+
+  @Mutation(() => [SheetOrder])
+  updateSheetOrders(@Args('input') input:UpdateSheetOrdersInput,
+  @CurrentUser('id') userId:string ){
+
+    return this.sheetOrderService.update(input, userId);
   }
 
   @Query(() => SheetOrder, { name: 'sheetOrder' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.sheetOrderService.findOne(id);
-  }
-
-  @Mutation(() => SheetOrder)
-  updateSheetOrder(@Args('updateSheetOrderInput') updateSheetOrderInput: UpdateSheetOrderInput) {
-    return this.sheetOrderService.update(updateSheetOrderInput.id, updateSheetOrderInput);
   }
 
   @Mutation(() => SheetOrder)

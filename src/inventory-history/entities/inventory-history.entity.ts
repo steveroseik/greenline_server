@@ -1,6 +1,8 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn,} from "typeorm";
+import { Column, Entity, Index, 
+  PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn} from "typeorm";
 import { ItemInBox } from "src/item-in-box/entities/item-in-box.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { InventoryItemHistory } from "support/enums";
 
 @Index("itemInBoxId", ["itemInBoxId"], {})
 @Entity("inventory-history", { schema: "greenline_db" })
@@ -18,19 +20,19 @@ export class InventoryHistory {
   @Field()
   description: string;
 
-  @Column("int", { name: "type" })
-  @Field()
-  type: number ;
+  @Column("enum", { name: "type", enum: InventoryItemHistory })
+  @Field(() => InventoryItemHistory)
+  type: InventoryItemHistory;
 
   @Column("int", { name: "amount" })
   @Field()
   amount: number;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 }

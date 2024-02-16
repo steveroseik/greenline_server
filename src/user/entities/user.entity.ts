@@ -1,4 +1,6 @@
-import { Column, Entity, ManyToMany, OneToMany } from "typeorm";
+import { Column, Entity,
+UpdateDateColumn,
+  CreateDateColumn } from "typeorm";
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import { UserType } from "support/enums";
 
@@ -44,11 +46,11 @@ export class User {
   refreshToken?: string;
 
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 

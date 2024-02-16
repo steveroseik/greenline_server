@@ -5,15 +5,30 @@ import { faker } from '@faker-js/faker';
 import { Merchant } from './entities/merchant.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { FinancialAccountService } from 'src/financial-account/financial-account.service';
 
 @Injectable()
 export class MerchantService {
   
 
-  constructor(@InjectRepository(Merchant) private readonly merchantRepo:Repository<Merchant>){}
+  constructor(
+    @InjectRepository(Merchant) private readonly merchantRepo:Repository<Merchant>,
+    private financialAccountService:FinancialAccountService){}
 
-  create(createMerchantInput: CreateMerchantInput) {
-    return 'This action adds a new merchant';
+  async create(input: CreateMerchantInput): Promise<number | null>{
+    const result = await this.merchantRepo.insert(input);
+
+    if (result.raw.affectedRows === 1) {
+      if (input.withoutFinancialAccount === false) return result.raw.insertId;
+
+      const finAcc = await this.financialAccountService.createForMerchant(result.raw.insertId, input.name);
+
+      if (finAcc === true ) return result.raw.insertId;
+
+    }
+
+    throw Error('failed to create merchant');
+    
   }
 
   async createFakeMerchant(count:number): Promise<boolean>{

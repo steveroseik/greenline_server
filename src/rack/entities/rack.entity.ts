@@ -1,11 +1,13 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Inventory } from "src/inventory/entities/inventory.entity";
 import { Ballot } from "src/ballot/entities/ballot.entity";
@@ -36,11 +38,11 @@ export class Rack {
   @Field()
   name: string;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 

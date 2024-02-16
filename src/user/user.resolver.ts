@@ -16,6 +16,7 @@ import { UserPage } from './entities/userPage.entity';
 import { UseGuards } from '@nestjs/common';
 import { RolesGaurd } from 'src/auth/gaurds/Roles.gaurd';
 import { UpdateUserTypeInput } from './dto/update-user-type.input';
+import { UserAddress } from 'src/user-address/entities/user-address.entity';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -37,15 +38,14 @@ export class UserResolver {
     return this.userService.createFake(count);
   }
 
-
   @UseGuards(RolesGaurd)
-  @AllowedRoles(...DefinedRoles.UserManagementRoles)
+  @AllowedRoles(...DefinedRoles.UserManagementRoles, Roles.addOrder)
   @Query(() => UserPage)
   paginateUsers(@Args('paginateUsersInput') input:PaginationInput, 
   @CurrentUser("roles") roles:number[],
   @CurrentUser("type") type:string){
 
-    return this.userService.paginateUsers({...input, roles, type})
+    return this.userService.paginateUsers({ ...input, roles, type })
   }
 
 
@@ -74,5 +74,11 @@ export class UserResolver {
   userRoles(@Parent() user:User, @Context() { loaders }: { loaders: DataloaderRegistry}): Promise<UserRole[]>{
     return loaders.UserRoleDataLoader.load(user.id);
     //this.roleService.findOne(userRole.roleId);
+  }
+
+  @ResolveField(() => [UserAddress])
+  addresses(@Parent() user:User, 
+  @Context() { loaders } : { loaders : DataloaderRegistry }){
+    return loaders.UserAddressesDataLoader.load(user.id);
   }
 }

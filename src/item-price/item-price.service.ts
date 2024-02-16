@@ -29,21 +29,13 @@ export class ItemPriceService {
     return resp.raw.affectedRows === 1
   }
 
-  async findItemPrices(keys: readonly {key: string, currency: string}[]){
-
-    let itemKeys = keys.map((key) => key.key);
-    itemKeys = [...new Set(itemKeys)]
-
-    return this.itemPriceRepo.find({
-      where: {
-        itemSku: In(itemKeys), 
-        currency: keys[0].currency
-      }
-    })
-  }
-
   findAll() {
     return `This action returns all itemPrices`;
+  }
+
+  findItemsById(keys: readonly number[]){
+
+    return this.itemPriceRepo.find({where: {id: In(keys)}})
   }
 
   findOne(id: number) {

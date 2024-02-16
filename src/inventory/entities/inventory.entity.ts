@@ -1,9 +1,10 @@
-import { Column, Entity, GeoJSON, OneToMany, PrimaryGeneratedColumn, } from "typeorm";
+import { Column, CreateDateColumn, Entity, GeoJSON, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn, } from "typeorm";
 import { InventoryPrice } from "src/inventory-prices/entities/inventory-price.entity";
 import { Rack } from "src/rack/entities/rack.entity";
 import { InventorySupport } from "src/inventory-support/entities/inventory-support.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { GeoLocation } from "support/geolocation.type";
+import { InventoryRentType } from "support/enums";
 
 @Entity("inventory", { schema: "greenline_db" })
 @ObjectType('inventory')
@@ -33,15 +34,15 @@ export class Inventory {
   @Field(() => GeoLocation)
   location: JSON;
 
-  @Column("int", { name: "rentType" })
-  @Field()
-  rentType: number;
+  @Column("enum", { name: "rentType", enum: InventoryRentType })
+  @Field(() => InventoryRentType)
+  rentType: InventoryRentType;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+  @UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 

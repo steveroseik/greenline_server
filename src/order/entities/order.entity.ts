@@ -3,6 +3,8 @@ import {
   Entity,
   Index,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  CreateDateColumn
 } from "typeorm";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
@@ -66,11 +68,11 @@ export class Order {
   @Field()
   deliveryPart: boolean
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 }

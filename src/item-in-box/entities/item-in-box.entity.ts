@@ -2,14 +2,11 @@ import {
   Column,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  CreateDateColumn
 } from "typeorm";
-import { InventoryHistory } from "src/inventory-history/entities/inventory-history.entity";
-import { Item } from "src/item/entities/item.entity";
-import { Box } from "src/box/entities/box.entity";
+
 import { Field, ObjectType } from "@nestjs/graphql";
 
 @Index("itemSku", ["itemSku"], {})
@@ -46,11 +43,11 @@ export class ItemInBox {
   @Field()
   minCount: number;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 

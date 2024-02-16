@@ -13,7 +13,7 @@ registerEnumType(CourierSheetStatus, {
 
 export enum SheetOrderStatus {
     
-    adminApproved = "adminApproved",
+    adminAccepted = "adminAccepted",
     adminRejected = "adminRejected",
     financeAccepted = "financeAccepted",
     financeRejected = "financeRejected"
@@ -210,4 +210,41 @@ export enum UserType {
 }
 registerEnumType(UserType, {
     name: 'UserType',
+  });
+
+export enum FinancialAccountType {
+   hub = "hub",
+   user = "user",
+   merchant = "merchant",
+   bank = "bank",
+   department = "department"
+};
+
+registerEnumType(FinancialAccountType, {
+    name: 'FinancialAccountType',
+  });
+
+
+export enum InventoryItemHistory{
+
+    firstImport = "firstImport",
+    import = "import",
+    export = "export",
+}
+registerEnumType(InventoryItemHistory, {
+    name: 'InventoryItemHistory',
+  });
+
+export enum InventoryRentType{
+
+    item = "item",
+    box = "box",
+    ballot = "ballot",
+    rack = "rack",
+    inventory = "inventory",
+    meter = "meter"
+  
+}
+registerEnumType(InventoryRentType, {
+    name: 'InventoryRentType',
   });

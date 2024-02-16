@@ -1,4 +1,6 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  CreateDateColumn } from "typeorm";
 import { Order } from "src/order/entities/order.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { OrderStatusEnum } from "support/enums";
@@ -23,11 +25,11 @@ export class OrderStatus {
   @Field()
   description: string;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-  @Column("timestamp", { name: "lastModified", default: () => 'CURRENT_TIMESTAMP'})
+@UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 }

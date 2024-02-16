@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn,} from "typeorm";
+import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn,} from "typeorm";
 import { SheetOrder } from "src/sheet-order/entities/sheet-order.entity";
 import { User } from "src/user/entities/user.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
@@ -21,7 +21,7 @@ export class SheetOrderStatusHistory {
   @Field(() => SheetOrderStatus)
   status:SheetOrderStatus
 
-  @Column("varchar", { name: "description", length: 255 })
+  @Column("varchar", { name: "description", length: 255, default: ''})
   @Field()
   description: string;
 
@@ -29,7 +29,7 @@ export class SheetOrderStatusHistory {
   @Field()
   userId: string;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 

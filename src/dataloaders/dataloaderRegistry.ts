@@ -12,12 +12,18 @@ import ItemInBoxCountLoader from "./loaders/ItemInBoxCountLoader";
 import OrderItemsLoader from "./loaders/OrderItemsLoader";
 import { OrderItemService } from "src/order-item/order-item.service";
 import { ItemPriceService } from "src/item-price/item-price.service";
-import ItemPricesDataLoader from "./loaders/itemPricesDataLoader";
+import ItemPriceListsDataLoader from "./loaders/itemPriceListsDataLoader";
 import ItemInBoxSkuLoader from "./loaders/ItemInBoxSkuLoader";
-import SheetOrdersDataLoader from "./loaders/sheetOrdersDataLoader";
+import SheetOrdersDataLoader from "./loaders/SheetOrdersDataLoader";
 import { SheetOrderService } from "src/sheet-order/sheet-order.service";
 import { OrderService } from "src/order/order.service";
 import OrdersDataLoader from "./loaders/OrdersDataLoader";
+import { UserAddressService } from "src/user-address/user-address.service";
+import UserAddressesDataLoader from "./loaders/userAddressesDataLoader";
+import OrderStatusesDataLoader from "./loaders/orderStatusesDataLoader";
+import { OrderStatusService } from "src/order-status/order-status.service";
+import { ItemPriceListService } from "src/item-price-list/item-price-list.service";
+import ItemPricesDataLoader from "./loaders/itemPricesDataLoader";
 
 export class DataloaderRegistry {
   private cache: Record<string, any> = {};
@@ -31,7 +37,10 @@ export class DataloaderRegistry {
     private readonly orderItemService:OrderItemService,
     private readonly itemPriceService:ItemPriceService,
     private readonly sheetOrderService:SheetOrderService,
-    private readonly orderService:OrderService
+    private readonly orderService:OrderService,
+    private readonly userAddressService:UserAddressService,
+    private readonly orderStatusService:OrderStatusService,
+    private readonly itemPriceListService:ItemPriceListService,
     ) {}
 
   /**
@@ -80,6 +89,10 @@ export class DataloaderRegistry {
     return this.get('OrderItemsDataLoader', () => OrderItemsLoader.create(this.orderItemService))
   }
 
+  public get ItemPriceListsDataLoader(){
+    return this.get('ItemPriceListsDataLoader', () => ItemPriceListsDataLoader.create(this.itemPriceListService))
+  }
+
   public get ItemPricesDataLoader(){
     return this.get('ItemPricesDataLoader', () => ItemPricesDataLoader.create(this.itemPriceService))
   }
@@ -90,5 +103,13 @@ export class DataloaderRegistry {
   
   public get OrdersDataLoader(){
     return this.get('OrdersDataLoader', () => OrdersDataLoader.create(this.orderService))
+  }
+
+  public get UserAddressesDataLoader(){
+    return this.get('UserAddressesLoader', () => UserAddressesDataLoader.create(this.userAddressService))
+  }
+
+  public get OrderStatusesDataLoader(){
+    return this.get('OrderStatusesDataLoader', () => OrderStatusesDataLoader.create(this.orderStatusService))
   }
 }

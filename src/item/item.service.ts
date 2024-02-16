@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateItemInput } from './dto/create-item.input';
 import { UpdateItemInput } from './dto/update-item.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Repository } from 'typeorm';
@@ -10,6 +9,9 @@ import { buildPaginator } from 'typeorm-cursor-pagination';
 import { PaginationInput } from 'support/pagination.input';
 import { ItemInBox } from 'src/item-in-box/entities/item-in-box.entity';
 import { paginateItemsInput } from './dto/paginate-items.input';
+import { CreateMultipleItems } from './dto/create-multiple-item.input';
+import { generateItemEntities } from 'support/item-entity.generator';
+import { ItemPrice } from 'src/item-price/entities/item-price.entity';
 
 @Injectable()
 export class ItemService {
@@ -20,29 +22,36 @@ export class ItemService {
     private dataSource:DataSource){}
 
 
-  async create({sku, merchantSku, merchantId, name, size, color, description, imageUrl, itemPrices }: CreateItemInput) {
+  async create(input: CreateMultipleItems[]) {
 
     const queryRunner = this.dataSource.createQueryRunner();
     
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const result = await queryRunner.manager.insert(Item, {
-      sku,
-      merchantSku,
-      merchantId,
-      name,
-      size,
-      color,
-      description, 
-      imageUrl
-    })
-    if (result.raw.affectedRows === 1){
-      
-      const items = itemPrices.map((item) => ({...item, itemSku: sku}))
+    try{
+    
+      const batchItems = generateItemEntities(input);
 
-      const res = await queryRunner.manager.insert(ItemInBox, items)
+      if (batchItems.length !== 0){
+
+        for (let i = 0; i < batchItems.length; i++){
+
+          console.log(batchItems[i].itemPrices);
+          console.log(batchItems[i].items);
+        }
+      }
+
+      throw Error('incomplete')
+
+    }catch(e){
+      await queryRunner.rollbackTransaction();
+      console.log(e);
+      return e;
+    }finally{
+      if (!queryRunner.isReleased) queryRunner.release();
     }
+
   }
 
   async createFake(merchantId:number, count:number): Promise<boolean> {
@@ -75,12 +84,12 @@ export class ItemService {
     if (itemPageInput.merchantId !== undefined){
       queryBuilder = queryBuilder.where({merchantId: itemPageInput.merchantId})
     }
-    
+
     const nextPaginator = buildPaginator({
       entity: Item,
       paginationKeys: ['sku'],
       query: {
-        limit: itemPageInput.limit,
+        limit: itemPageInput.limit?? 10,
         order: itemPageInput.isAsc ? 'ASC' : 'DESC',
         beforeCursor: itemPageInput.beforeCursor,
         afterCursor: itemPageInput.afterCursor

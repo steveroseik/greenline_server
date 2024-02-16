@@ -8,6 +8,7 @@ import { Item } from 'src/item/entities/item.entity';
 import { DataloaderRegistry } from 'src/dataloaders/dataLoaderRegistry';
 import { OrderPage } from './entities/order-page.entity';
 import { OrderItem } from 'src/order-item/entities/order-item.entity';
+import { OrderStatus } from 'src/order-status/entities/order-status.entity';
 
 @Resolver(() => Order)
 export class OrderResolver {
@@ -41,7 +42,13 @@ export class OrderResolver {
 
   @ResolveField(() => [OrderItem])
   items(@Parent() order:Order, @Context() { loaders } : { loaders:DataloaderRegistry } ){
-    
+
     return loaders.OrderItemsDataLoader.load(order.id);
+  }
+
+  @ResolveField(() => [OrderStatus])
+  history(@Parent() order:Order, @Context() { loaders } : { loaders: DataloaderRegistry }){
+
+    return loaders.OrderStatusesDataLoader.load(order.id);
   }
 }

@@ -10,6 +10,9 @@ import { OrderItemModule } from 'src/order-item/order-item.module';
 import { ItemPriceModule } from 'src/item-price/item-price.module';
 import { SheetOrderModule } from 'src/sheet-order/sheet-order.module';
 import { OrderModule } from 'src/order/order.module';
+import { UserAddressModule } from 'src/user-address/user-address.module';
+import { OrderStatusModule } from 'src/order-status/order-status.module';
+import { ItemPriceListModule } from 'src/item-price-list/item-price-list.module';
 
 @Module({
   imports: [UserRoleModule, 
@@ -17,7 +20,9 @@ import { OrderModule } from 'src/order/order.module';
     ItemModule, 
     ItemInBoxModule, 
     RackModule, OrderItemModule, 
-    ItemPriceModule, SheetOrderModule, OrderModule],
+    ItemPriceModule, SheetOrderModule, 
+    OrderModule, UserAddressModule,
+    OrderStatusModule, ItemPriceListModule],
   providers: [DataloaderRegistry, DataloaderRegistryFactory],
   exports: [DataloaderRegistryFactory]
 })

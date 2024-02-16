@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  CreateDateColumn
 } from "typeorm";
 import { FinancialAccount } from "src/financial-account/entities/financial-account.entity";
 import { User } from "src/user/entities/user.entity";
@@ -14,7 +15,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 import { DecimalToString, DecimalTransformer } from "support/decimal.transformer";
 import Decimal from "decimal.js";
-import { TransactionType } from "support/enums";
+import { TransactionStatus, TransactionType } from "support/enums";
 
 @Index("fromAccountId", ["fromAccountId"], {})
 @Index("toAccountId", ["toAccountId"], {})
@@ -52,15 +53,15 @@ export class FinancialTransaction {
   @Field()
   receipt: string;
 
-  @Column("int", { name: "latestStatus" })
-  @Field()
-  latestStatus: number;
+  @Column("enum", { name: "status", enum:TransactionStatus })
+  @Field(() => TransactionStatus)
+  status: TransactionStatus;
 
   @Column("varchar", { name: "approvedById" })
   @Field()
   approvedById: string;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 

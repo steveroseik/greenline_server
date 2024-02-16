@@ -1,4 +1,4 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, CreateDateColumn } from "typeorm";
 import { Order } from "src/order/entities/order.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 
@@ -14,7 +14,7 @@ export class OrderRelation {
   @Field()
   secondOrderId: number;
 
-  @Column("timestamp", { name: "createdAt", default: () => 'CURRENT_TIMESTAMP'})
+@CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
