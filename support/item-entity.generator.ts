@@ -1,6 +1,6 @@
 import { BatchItemInput } from "src/item/dto/batch-item.input";
 import { CreateMultipleItems } from "src/item/dto/create-multiple-item.input";
-import { ItemSingleInput } from "src/item/dto/item-single.input";
+import { CreateSingleItemInput } from "src/item/dto/item-single.input";
 import { GenerateItemSku as generateItemSku } from "./item-sku.generator";
 
 
@@ -13,7 +13,7 @@ export function generateItemEntities(input:CreateMultipleItems[]): BatchItemInpu
 
         if (input[i].sizes !== undefined && input[i].sizes.length !== 0){
 
-            let items:ItemSingleInput[] = [];
+            let items:CreateSingleItemInput[] = [];
             for (let j = 0; j < input[i].sizes.length ; j++){
 
                 const singleBatch = generateColorIterations(input[i], input[i].sizes[j]);
@@ -36,9 +36,9 @@ export function generateItemEntities(input:CreateMultipleItems[]): BatchItemInpu
     return batch;
 }
 
-export function generateColorIterations(input: CreateMultipleItems, size?: string): ItemSingleInput[] | null{
+export function generateColorIterations(input: CreateMultipleItems, size?: string): CreateSingleItemInput[] | null{
 
-    let items:ItemSingleInput[] = [];
+    let items:CreateSingleItemInput[] = [];
 
     const colorDefined = input.colors !== undefined
     const hexDefined = input.colorsHex !== undefined

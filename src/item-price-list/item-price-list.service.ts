@@ -17,15 +17,11 @@ export class ItemPriceListService {
     return 'This action adds a new itemPriceList';
   }
 
-  async findItemPrices(keys: readonly {key: string, currency?: string}[]){
-
-    let itemKeys = keys.map((key) => key.key);
-    itemKeys = [...new Set(itemKeys)]
+  async findItemPrices(keys: readonly string[]){
 
     return this.repo.find({
       where: {
-        itemSku: In(itemKeys), 
-        currency: keys[0].currency?? null
+        itemSku: In(keys),
       }
     })
   }

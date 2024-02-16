@@ -1,6 +1,6 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { CreateItemPriceInput } from "src/item-price/dto/create-item-price.input";
-import { ItemSingleInput } from "./item-single.input";
+import { CreateSingleItemInput } from "./item-single.input";
 
 @InputType()
 
@@ -9,7 +9,7 @@ export class BatchItemInput{
     @Field(() => [CreateItemPriceInput])
     itemPrices: CreateItemPriceInput[]
 
-    @Field(() => [ItemSingleInput])
-    items: ItemSingleInput[]
+    @Field(() => [CreateSingleItemInput])
+    items: CreateSingleItemInput[]
     
 }

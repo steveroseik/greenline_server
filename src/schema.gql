@@ -24,6 +24,7 @@ scalar Timestamp
 
 type itemPrice {
   id: Int!
+  currency: String!
   price: String!
   discount: String
   startDiscount: Timestamp
@@ -71,7 +72,6 @@ scalar GraphqlCursor
 type ItemPriceList {
   itemSku: String!
   itemPriceId: Int!
-  currency: String!
   info: [itemPrice!]!
 }
 

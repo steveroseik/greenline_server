@@ -14,6 +14,10 @@ export class ItemPrice {
   @Field()
   id: number;
 
+  @Column("varchar", {name: "currency", length: 5})
+  @Field()
+  currency: string;
+
   @Column("decimal", { name: "price", precision: 10, scale: 2, transformer: new DecimalTransformer()})
   @Transform(() => DecimalToString(), { toPlainOnly: true })
   @Field(() => String)

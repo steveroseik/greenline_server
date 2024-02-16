@@ -10,11 +10,11 @@ var _ = require('lodash');
 // TODO 
 class ItemPriceListsDataLoader {
    public static create(service: ItemPriceListService) {
-      return new DataLoader<{ key: string, currency: string }, ItemPrice[]> (async (keys: { key: string; currency: string }[]) => {
+      return new DataLoader<string, ItemPrice[]> (async (keys: string[]) => {
       const items = await service.findItemPrices(keys);
 
       const grouped = _.groupBy(items, 'itemSku');
-      const result = keys.map((key) => grouped.hasOwnProperty(key.key) ? grouped[key.key] : []);
+      const result = keys.map((key) => grouped.hasOwnProperty(key) ? grouped[key] : []);
       console.log(result);
       
       return result;

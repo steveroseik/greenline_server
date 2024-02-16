@@ -13,8 +13,4 @@ export class ItemPriceList {
   @PrimaryColumn("int", {name: "itemPriceId"})
   @Field()
   itemPriceId: number;
-
-  @PrimaryColumn("varchar", {name: "currency", length: 5})
-  @Field()
-  currency: string;
 }

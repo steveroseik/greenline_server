@@ -2,7 +2,7 @@ import { InputType, Int, Field } from '@nestjs/graphql';
 import { CreateItemPriceInput } from 'src/item-price/dto/create-item-price.input';
 
 @InputType()
-export class ItemSingleInput {
+export class CreateSingleItemInput {
 
   @Field()
   sku: string;
@@ -30,5 +30,8 @@ export class ItemSingleInput {
 
   @Field()
   imageUrl: string;
+
+  @Field(() => [CreateItemPriceInput], { nullable: true })
+  itemPrices?: CreateItemPriceInput[]
   
 }

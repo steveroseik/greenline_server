@@ -67,6 +67,6 @@ export class ItemResolver {
     @Args('currency') currency:string,
     @Parent() item:Item, @Context() { loaders } : { loaders:DataloaderRegistry }){
 
-    return loaders.ItemPriceListsDataLoader.load({key: item.sku, currency: currency});
+    return loaders.ItemPriceListsDataLoader.load(item.sku);
   }
 }

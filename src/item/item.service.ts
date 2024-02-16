@@ -12,6 +12,9 @@ import { paginateItemsInput } from './dto/paginate-items.input';
 import { CreateMultipleItems } from './dto/create-multiple-item.input';
 import { generateItemEntities } from 'support/item-entity.generator';
 import { ItemPrice } from 'src/item-price/entities/item-price.entity';
+import { CreateItemPriceInput } from 'src/item-price/dto/create-item-price.input';
+import { ItemPriceList } from 'src/item-price-list/entities/item-price-list.entity';
+import { CreateSingleItemInput as CreateSingleItemInput } from './dto/item-single.input';
 
 @Injectable()
 export class ItemService {
@@ -35,14 +38,41 @@ export class ItemService {
 
       if (batchItems.length !== 0){
 
-        for (let i = 0; i < batchItems.length; i++){
+        let itemPricesOrganized:CreateItemPriceInput[][] = [];
+        let batchItemPrices:CreateItemPriceInput[] = [];
 
-          console.log(batchItems[i].itemPrices);
-          console.log(batchItems[i].items);
+        let itemsOrganized:CreateSingleItemInput[][] = [];
+        let batchItemsList:CreateSingleItemInput[] = [];
+        
+
+        batchItems.forEach((batch) => {
+          itemPricesOrganized.push(batch.itemPrices);
+          batchItemPrices = [...batchItemPrices, ...batch.itemPrices];
+          itemsOrganized.push(batch.items);
+          batchItemsList = [...batchItemsList, ...batch.items];
+        });
+
+        const priceResult = await queryRunner.manager.insert(ItemPrice, batchItemPrices);
+
+        if (priceResult.raw.affectedRows === batchItemPrices.length){
+          
+          const itemResult = await queryRunner.manager.insert(Item, batchItemsList);
+
+          if (itemResult.raw.affectedRows === batchItemsList.length){
+
+            console.log('YAYYY');
+            console.log(`PRICES: ${priceResult.identifiers}`)
+            console.log(`ITEMS: ${itemResult.identifiers}`)
+            await queryRunner.commitTransaction();
+
+          }else{
+            throw Error('failed to create all items');
+          }
+
+        }else{
+          throw Error('failed to create all prices');
         }
       }
-
-      throw Error('incomplete')
 
     }catch(e){
       await queryRunner.rollbackTransaction();
