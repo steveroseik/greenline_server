@@ -53,10 +53,12 @@ export function generateColorIterations(input: CreateMultipleItems, size?: strin
 
     for (let i = 0; i < input.imageUrls.length; i++){
 
+        const genSKU = generateItemSku(input.name, input.merchantId, colorDefined ? input.colors[i] : null,
+                hexDefined ? input.colorsHex[i] : undefined, size);
         items.push({
-            sku: generateItemSku(input.name, input.merchantId, colorDefined ? input.colors[i] : null,
-                hexDefined ? input.colorsHex[i] : undefined, size),
+            sku: genSKU,
             merchantId: input.merchantId,
+            merchantSku: genSKU,
             name: input.name,
             description: input.description,
             imageUrl: input.imageUrls[i],

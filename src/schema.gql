@@ -14,7 +14,7 @@ type item {
   imageUrl: String!
   createdAt: Timestamp!
   lastModified: Timestamp!
-  prices(currency: String!): [ItemPriceList!]!
+  prices: [ItemPriceList!]!
 }
 
 """
@@ -29,6 +29,12 @@ type itemPrice {
   discount: String
   startDiscount: Timestamp
   endDiscount: Timestamp
+}
+
+type ItemPriceList {
+  itemSku: String!
+  itemPriceId: Int!
+  info: [itemPrice!]!
 }
 
 type itemInBox {
@@ -68,12 +74,6 @@ type ItemPage {
 
 """Cursor scalar type for pagination"""
 scalar GraphqlCursor
-
-type ItemPriceList {
-  itemSku: String!
-  itemPriceId: Int!
-  info: [itemPrice!]!
-}
 
 type ItemInBoxPage {
   cursor: GraphqlCursor!
@@ -664,7 +664,8 @@ type Mutation {
   createRole(createRoleInput: CreateRolesInput!): Role!
   updateRole(updateRoleInput: UpdateRoleInput!): Role!
   removeRole(id: Int!): Role!
-  createMultipleItems(input: [CreateMultipleItems!]!): Boolean!
+  createCompoundMerchantItems(input: [CreateMultipleItems!]!): Boolean!
+  createMerchantItemSingles(input: [SingleItemRefInput!]!): Boolean!
   createFakeItem(count: Int! = 1): Boolean!
   updateItem(updateItemInput: UpdateItemInput!): item!
   removeItem(id: Int!): item!
@@ -798,6 +799,20 @@ input CreateItemPriceInput {
   discount: Float
   startDiscount: Timestamp
   endDiscount: Timestamp
+}
+
+input SingleItemRefInput {
+  sku: String
+  merchantSku: String
+  merchantId: Int
+  name: String!
+  color: String
+  colorHex: String
+  size: String
+  description: String
+  imageUrl: String!
+  itemPrices: [CreateItemPriceInput!]
+  priceReference: Int!
 }
 
 input UpdateItemInput {
@@ -976,13 +991,13 @@ input UpdateOrderStatusInput {
 }
 
 input CreateItemPriceListInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  itemSku: String!
+  itemPriceId: Int!
 }
 
 input UpdateItemPriceListInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  itemSku: String
+  itemPriceId: Int
   id: Int!
 }
 

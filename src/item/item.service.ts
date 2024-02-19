@@ -15,6 +15,11 @@ import { ItemPrice } from 'src/item-price/entities/item-price.entity';
 import { CreateItemPriceInput } from 'src/item-price/dto/create-item-price.input';
 import { ItemPriceList } from 'src/item-price-list/entities/item-price-list.entity';
 import { CreateSingleItemInput as CreateSingleItemInput } from './dto/item-single.input';
+import { CreateItemPriceListInput } from 'src/item-price-list/dto/create-item-price-list.input';
+import { SingleItemRefInput } from './dto/create-item-single-ref.input';
+import { GenerateItemSku } from 'support/item-sku.generator';
+
+var _ = require('lodash');
 
 @Injectable()
 export class ItemService {
@@ -25,7 +30,7 @@ export class ItemService {
     private dataSource:DataSource){}
 
 
-  async create(input: CreateMultipleItems[]) {
+  async createCompound(input: CreateMultipleItems[]) {
 
     const queryRunner = this.dataSource.createQueryRunner();
     
@@ -60,11 +65,36 @@ export class ItemService {
 
           if (itemResult.raw.affectedRows === batchItemsList.length){
 
-            console.log('YAYYY');
-            console.log(`PRICES: ${priceResult.identifiers}`)
-            console.log(`ITEMS: ${itemResult.identifiers}`)
-            await queryRunner.commitTransaction();
+            const priceItemIds = priceResult.identifiers.map((identifier: any) => identifier.id);
 
+            let itemLinks:CreateItemPriceListInput[] = [];
+
+            let priceIndex = 0;
+
+            for (let i = 0; i < batchItems.length ; i++){
+
+              for (let j = 0; j < batchItems[i].itemPrices.length; j++){
+
+                for (let k = 0; k < batchItems[i].items.length; k++){
+
+                  itemLinks.push({
+                    itemPriceId: priceItemIds[priceIndex],
+                    itemSku: batchItems[i].items[k].sku
+                  })
+                }
+                priceIndex++;
+              }
+            }
+            
+            const links = await queryRunner.manager.insert(ItemPriceList, itemLinks);
+
+            if (links.raw.affectedRows === itemLinks.length){
+
+              await queryRunner.commitTransaction();
+              return true;
+            }else{
+              throw Error('failed to create all links');
+            }
           }else{
             throw Error('failed to create all items');
           }
@@ -82,6 +112,90 @@ export class ItemService {
       if (!queryRunner.isReleased) queryRunner.release();
     }
 
+  }
+
+  async createSingles(input:SingleItemRefInput[]){
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try{
+
+      let itemPrices:Map<number, CreateItemPriceInput[]> = new Map();
+      let itemPricesList: CreateItemPriceInput[] = [];
+
+      input.forEach((singleItem) => {
+
+        if (singleItem.itemPrices !== undefined){
+          itemPrices.set(singleItem.priceReference, singleItem.itemPrices);
+          itemPricesList = [...itemPricesList, ...singleItem.itemPrices];
+        }
+
+        singleItem.sku = GenerateItemSku(singleItem.name, singleItem.merchantId, 
+          singleItem.color, singleItem.colorHex, singleItem.size);
+
+      })
+
+      const priceResult = await queryRunner.manager
+      .insert(ItemPrice, itemPricesList)
+
+      if (priceResult.raw.affectedRows === itemPrices.size){
+
+        const itemResult = await queryRunner.manager.insert(Item, Array.from(input))
+
+        if (itemResult.raw.affectedRows === input.length){
+
+          const priceItemIds = priceResult.identifiers.map((identifier) => (identifier.id));
+
+          const itemKeys = Array.from(itemPrices.keys());
+
+          let insertKeys: Map<number, number[]> = new Map();
+          let insertIndex = 0;
+
+          for (let i = 0; i < itemKeys.length ; i++){
+            let listOfKeys:number[] = [];
+            for (let j = 0; j < itemPrices.get(itemKeys[i]).length; j++){
+              listOfKeys.push(priceItemIds[insertIndex]);
+              insertIndex++;
+            }
+            insertKeys.set(itemKeys[i], listOfKeys);
+          }
+
+          let itemLinks:CreateItemPriceListInput[] = [];
+
+          input.forEach((item) => {
+            insertKeys.get(item.priceReference).forEach((key) => {
+              itemLinks.push({
+                itemSku: item.sku,
+                itemPriceId: key
+              })
+            })
+          })
+
+          const linksResult = await queryRunner.manager.insert(ItemPriceList, itemLinks);
+          if (linksResult.raw.affectedRows === itemLinks.length){
+
+            await queryRunner.commitTransaction();
+            return true;
+          }else{
+             throw Error('failed to create all links');
+          }
+        }else{
+           throw Error('failed to create all items');
+        }
+      }else{
+         throw Error('failed to create all prices');
+      }
+
+    }catch (e){
+      console.log(e);
+      await queryRunner.rollbackTransaction();
+      return e;
+    }finally{
+
+      if (!queryRunner.isReleased) queryRunner.release();
+    }
   }
 
   async createFake(merchantId:number, count:number): Promise<boolean> {

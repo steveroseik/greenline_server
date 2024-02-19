@@ -5,16 +5,12 @@ import { CreateMultipleItems } from './dto/create-multiple-item.input';
 import { UpdateItemInput } from './dto/update-item.input';
 import { ItemInBoxService } from 'src/item-in-box/item-in-box.service';
 import { ItemPage } from './entities/itemPage.entity';
-import { PaginationInput } from 'support/pagination.input';
-import { count } from 'console';
 import { Public } from 'src/auth/decorators/publicDecorator';
-import { ItemPriceService } from 'src/item-price/item-price.service';
 import { CurrentUser } from 'src/auth/decorators/currentUserDecorator';
-import { ForbiddenError } from '@nestjs/apollo';
 import { paginateItemsInput } from './dto/paginate-items.input';
-import { ItemPrice } from 'src/item-price/entities/item-price.entity';
 import { DataloaderRegistry } from 'src/dataloaders/dataLoaderRegistry';
 import { ItemPriceList } from 'src/item-price-list/entities/item-price-list.entity';
+import { SingleItemRefInput } from './dto/create-item-single-ref.input';
 
 @Resolver(() => Item)
 export class ItemResolver {
@@ -22,16 +18,28 @@ export class ItemResolver {
   private itemInBoxService:ItemInBoxService) {}
 
   @Mutation(() => Boolean)
-  createMultipleItems(@Args('input', { type: () => [CreateMultipleItems] }) createItemInput: CreateMultipleItems[],
-  @CurrentUser("merchantId") merchantId:number) {
-    // if (merchantId === undefined || merchantId === null){
-    //   return Error('cannot continue');
-    // }
-    createItemInput.forEach((inp) => inp.merchantId = 23);
-    
-    console.log(merchantId);
-    return this.itemService.create(createItemInput);
+  createCompoundMerchantItems(
+    @Args('input', { type: () => [CreateMultipleItems] }) createItemInput: CreateMultipleItems[],
+    @CurrentUser("merchantId") merchantId:number) {
+      // if (merchantId === undefined || merchantId === null){
+      //   return Error('cannot continue');
+      // }
+      createItemInput.forEach((inp) => inp.merchantId = 23);
+      
+      console.log(merchantId);
+      return this.itemService.createCompound(createItemInput);
   }
+
+  @Mutation(() => Boolean)
+  createMerchantItemSingles(
+    @Args('input', { type: () => [SingleItemRefInput]}) input:SingleItemRefInput[],
+    @CurrentUser("merchantId") merchantId:number){
+
+      input.forEach((item) => item.merchantId = 23)
+
+      return this.itemService.createSingles(input);
+
+    }
 
   @Public()
   @Mutation(() => Boolean)
@@ -63,9 +71,7 @@ export class ItemResolver {
   }
 
   @ResolveField(() => [ItemPriceList])
-  prices(
-    @Args('currency') currency:string,
-    @Parent() item:Item, @Context() { loaders } : { loaders:DataloaderRegistry }){
+  prices(@Parent() item:Item, @Context() { loaders } : { loaders:DataloaderRegistry }){
 
     return loaders.ItemPriceListsDataLoader.load(item.sku);
   }

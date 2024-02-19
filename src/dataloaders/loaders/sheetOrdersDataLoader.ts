@@ -1,6 +1,4 @@
 import * as DataLoader from 'dataloader';
-import { Item } from 'src/item/entities/item.entity';
-import { ItemService } from 'src/item/item.service';
 import { SheetOrder } from 'src/sheet-order/entities/sheet-order.entity';
 import { SheetOrderService } from 'src/sheet-order/sheet-order.service';
 var _ = require('lodash');

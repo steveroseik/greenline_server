@@ -4,14 +4,14 @@ import { CreateItemPriceInput } from 'src/item-price/dto/create-item-price.input
 @InputType()
 export class CreateSingleItemInput {
 
-  @Field()
-  sku: string;
+  @Field({ nullable: true })
+  sku?: string;
 
   @Field({ nullable: true})
   merchantSku?: string;
 
-  @Field()
-  merchantId: number;
+  @Field({ nullable: true })
+  merchantId?: number;
 
   @Field()
   name: string;
@@ -25,8 +25,8 @@ export class CreateSingleItemInput {
   @Field({ nullable: true })
   size?: string;
 
-  @Field()
-  description: string;
+  @Field({ nullable: true })
+  description?: string;
 
   @Field()
   imageUrl: string;
