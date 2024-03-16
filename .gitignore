@@ -14,10 +14,6 @@ lerna-debug.log*
 # OS
 .DS_Store
 
-
-## data source file
-/db/data-source.ts
-
 ### dotenv ###
 .env
 
@@ -40,3 +36,4 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+db/data-source.ts
