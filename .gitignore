@@ -16,7 +16,7 @@ lerna-debug.log*
 
 
 ## data source file
-db/data-source.ts
+/db/data-source.ts
 
 ### dotenv ###
 .env
