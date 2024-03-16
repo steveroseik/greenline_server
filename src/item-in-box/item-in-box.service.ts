@@ -107,7 +107,7 @@ export class ItemInBoxService {
       return this.inventoryHistoryService.createHistory({
         itemInBoxId: input.id,
         description: `${input.count} item(s) exported out of Inventory`,
-        type: InventoryItemHistory.export,
+        type: input.type??InventoryItemHistory.export,
         amount: input.count
       });
     }
@@ -117,13 +117,15 @@ export class ItemInBoxService {
 
   async importItem(input:ItemCountInput): Promise<Boolean>{
 
+   
+   // TODO:: find if this count overrides the exisiting count
     const result = await this.itemInBoxRepo.update({id: input.id}, {count: input.count});
 
     if (result.affected === 1){
       return this.inventoryHistoryService.createHistory({
         itemInBoxId: input.id,
         description: `${input.count} item(s) imported into the inventory.`,
-        type: InventoryItemHistory.import,
+        type: input.type??InventoryItemHistory.import,
         amount: input.count
       });
     }
@@ -139,7 +141,7 @@ export class ItemInBoxService {
       return this.inventoryHistoryService.createHistory({
         itemInBoxId: result.raw.insertId,
         description: `${input.count} item(s) imported into BoxId:${input.boxId}`,
-        type: InventoryItemHistory.firstImport,
+        type: InventoryItemHistory.newImport,
         amount: input.count
       });
     }

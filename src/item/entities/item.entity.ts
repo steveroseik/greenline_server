@@ -13,6 +13,9 @@ import { ItemPrice } from "src/item-price/entities/item-price.entity";
 import { ItemInBox } from "src/item-in-box/entities/item-in-box.entity";
 import { OrderItem } from "src/order-item/entities/order-item.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
+import { Transform } from "class-transformer";
+import Decimal from "decimal.js";
+import { DecimalTransformer, DecimalToString } from "support/decimal.transformer";
 
 @Index("merchantId", ["merchantId"], {})
 @Entity("item", { schema: "greenline_db" })
@@ -53,6 +56,11 @@ export class Item {
   @Column("varchar", { name: "imageUrl", length: 255 })
   @Field()
   imageUrl: string;
+
+  @Column("decimal", { name: "weight", nullable: true, precision: 10, scale: 2, transformer: new DecimalTransformer()})
+  @Transform(() => DecimalToString(), {toPlainOnly: true })
+  @Field(() => String, { nullable: true })
+  weight?: Decimal;
 
   @CreateDateColumn({ type: "timestamp" })
   @Field()

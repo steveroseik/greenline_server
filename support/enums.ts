@@ -227,9 +227,11 @@ registerEnumType(FinancialAccountType, {
 
 export enum InventoryItemHistory{
 
-    firstImport = "firstImport",
     import = "import",
+    newImport = "newImport",
+    orderReturn = "orderReturn",
     export = "export",
+    orderExport = "orderExport"
 }
 registerEnumType(InventoryItemHistory, {
     name: 'InventoryItemHistory',

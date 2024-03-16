@@ -1,4 +1,4 @@
-import { CreateFinancialRequestStatusInput } from './create-financial-request-status.input';
+import { CreateFinancialRequestStatusInput } from './create-financial-transaction-status.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()

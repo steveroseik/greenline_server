@@ -17,6 +17,10 @@ export class OrderItemInput{
     @Field()
     frozenCurrency:string
 
+    @Transform(() => DecimalToString(), { toPlainOnly: true })
+    @Field(() => String)
+    weight: Decimal;
+
     @Field()
     count: number
 }

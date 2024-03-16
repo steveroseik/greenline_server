@@ -33,15 +33,15 @@ export class UserAddress {
   @Field()
   cityId: number;
 
-  @Column("varchar", { name: "details", length: 255 })
+  @Column("varchar", { name: "address", length: 255 })
   @Field()
-  details: string;
+  address: string;
 
-@CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-@UpdateDateColumn({ type: "timestamp" })
+  @UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 }

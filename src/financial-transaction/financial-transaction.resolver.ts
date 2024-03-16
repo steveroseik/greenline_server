@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { FinancialTransactionService } from './financial-transaction.service';
 import { FinancialTransaction } from './entities/financial-transaction.entity';
-import { CreateFinancialTransactionInput } from './dto/create-financial-transaction.input';
+import { SendTransactionInput } from './dto/send-transaction.input';
 import { UpdateFinancialTransactionInput } from './dto/update-financial-transaction.input';
 import { FinancialTransactionPaginationInput } from './dto/financial-transaction-pagination.input';
 import { FinancialTransactionPage } from './entities/financial-transaction-page';
@@ -11,7 +11,7 @@ export class FinancialTransactionResolver {
   constructor(private readonly financialTransactionService: FinancialTransactionService) {}
 
   @Mutation(() => FinancialTransaction)
-  createFinancialTransaction(@Args('createFinancialTransactionInput') createFinancialTransactionInput: CreateFinancialTransactionInput) {
+  createFinancialTransaction(@Args('createFinancialTransactionInput') createFinancialTransactionInput: SendTransactionInput) {
     return this.financialTransactionService.create(createFinancialTransactionInput);
   }
 

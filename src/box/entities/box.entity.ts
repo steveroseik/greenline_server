@@ -33,11 +33,11 @@ export class Box {
   @Field()
   name: string;
 
-@CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-@UpdateDateColumn({ type: "timestamp" })
+  @UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 }

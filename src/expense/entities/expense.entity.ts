@@ -22,21 +22,25 @@ export class Expense {
   @Field()
   fromAccountId: number;
 
-  
+
+  @Column("varchar", { name: "approvedById", nullable: true})
+  @Field({nullable: true})
+  approvedById?: string;
+
   @Column("decimal", { name: "amount", precision: 10, scale: 2, transformer: new DecimalTransformer()})
   @Transform(() => DecimalToString(), { toPlainOnly: true })
   @Field(() => String, { nullable: true })
   amount: Decimal;
 
-  @Column("varchar", { name: "receipt", length: 255 })
-  @Field()
-  receipt: string;
+  @Column("varchar", { name: "receipt", length: 255, nullable: true })
+  @Field({nullable: true})
+  receipt?: string;
 
-  @Column("varchar", { name: "comment", length: 255 })
-  @Field()
-  comment: string;
+  @Column("varchar", { name: "comment", length: 255, nullable: true })
+  @Field({nullable: true})
+  comment?: string;
 
-@CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 

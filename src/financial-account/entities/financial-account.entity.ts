@@ -14,6 +14,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { DecimalToString, DecimalTransformer } from "support/decimal.transformer";
 import { Transform } from "class-transformer";
 import { FinancialAccountType } from "support/enums";
+import Decimal from "decimal.js";
 
 @Index("userId", ["userId"], {})
 @Index("merchantId", ["merchantId"], {})
@@ -42,17 +43,16 @@ export class FinancialAccount {
   @Field({ nullable: true })
   merchantId?: number;
 
-  
   @Column("decimal", { name: "balance", precision: 10, scale: 2, transformer: new DecimalTransformer(), default: 0})
   @Transform(() => DecimalToString(), { toPlainOnly: true })
-  @Field(() => String, { nullable: true })
-  balance: number;
+  @Field(() => String)
+  balance: Decimal;
 
-@CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-@UpdateDateColumn({ type: "timestamp" })
+  @UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 

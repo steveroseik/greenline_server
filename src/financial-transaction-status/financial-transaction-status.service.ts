@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFinancialRequestStatusInput } from './dto/create-financial-request-status.input';
-import { UpdateFinancialRequestStatusInput } from './dto/update-financial-request-status.input';
+import { CreateFinancialRequestStatusInput } from './dto/create-financial-transaction-status.input';
+import { UpdateFinancialRequestStatusInput } from './dto/update-financial-transaction-status.input';
 
 @Injectable()
-export class FinancialRequestStatusService {
+export class FinancialTransactionStatusService {
   create(createFinancialRequestStatusInput: CreateFinancialRequestStatusInput) {
     return 'This action adds a new financialRequestStatus';
   }

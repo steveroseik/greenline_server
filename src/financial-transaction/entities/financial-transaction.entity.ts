@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { FinancialAccount } from "src/financial-account/entities/financial-account.entity";
 import { User } from "src/user/entities/user.entity";
-import { FinancialRequestStatus } from "src/financial-request-status/entities/financial-request-status.entity";
+import { FinancialTransactionStatus } from "src/financial-transaction-status/entities/financial-transaction-status.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 import { DecimalToString, DecimalTransformer } from "support/decimal.transformer";
@@ -32,9 +32,9 @@ export class FinancialTransaction {
   @Field(() => TransactionType)
   type: TransactionType;
 
-  @Column("varchar", { name: "description", length: 255 })
-  @Field()
-  description: string;
+  @Column("varchar", { name: "description", length: 255, nullable: true })
+  @Field({ nullable: true })
+  description?: string;
 
   @Column("varchar", { name: "fromAccountId" })
   @Field()
@@ -46,22 +46,22 @@ export class FinancialTransaction {
 
   @Column("decimal", { name: "amount", precision: 10, scale: 2, nullable: true, transformer: new DecimalTransformer()})
   @Transform(() => DecimalToString(), { toPlainOnly: true })
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   amount: Decimal;
 
-  @Column("varchar", { name: "receipt", length: 255 })
-  @Field()
-  receipt: string;
+  @Column("varchar", { name: "receipt", length: 255, nullable: true })
+  @Field({nullable: true})
+  receipt?: string;
 
   @Column("enum", { name: "status", enum:TransactionStatus })
   @Field(() => TransactionStatus)
   status: TransactionStatus;
 
-  @Column("varchar", { name: "approvedById" })
-  @Field()
-  approvedById: string;
+  @Column("varchar", { name: "approvedById", nullable: true })
+  @Field({nullable: true})
+  approvedById?: string;
 
-@CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 

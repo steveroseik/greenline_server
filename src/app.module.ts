@@ -22,7 +22,6 @@ import { InventorySupportModule } from './inventory-support/inventory-support.mo
 import { InventoryModule } from './inventory/inventory.module';
 import { ItemPriceModule } from './item-price/item-price.module';
 import { FinancialTransactionModule } from './financial-transaction/financial-transaction.module';
-import { FinancialRequestStatusModule } from './financial-request-status/financial-request-status.module';
 import { RackModule } from './rack/rack.module';
 import { BoxModule } from './box/box.module';
 import { BallotModule } from './ballot/ballot.module';
@@ -51,6 +50,7 @@ import { GeoLocation } from 'support/geolocation.type';
 import { ItemPriceListModule } from './item-price-list/item-price-list.module';
 import express from 'express';
 import config from 'ormconfig';
+import { FinancialTransactionStatusModule } from './financial-transaction-status/financial-transaction-status.module';
 
 @Module({
   imports: [
@@ -104,7 +104,7 @@ import config from 'ormconfig';
     CourierSheetModule, SheetOrderStatusHistoryModule, 
     SheetOrderModule, OrderStatusModule, RequestStatusHistoryModule, 
     RequestModule, FinancialAccountModule, ExpenseModule, 
-    FinancialTransactionModule, FinancialRequestStatusModule, 
+    FinancialTransactionModule, FinancialTransactionStatusModule, 
     AuthModule,
     RoleModule, UserRoleModule, ListenersModule, DataloadersModule, HubModule, ItemPriceListModule,
     ],

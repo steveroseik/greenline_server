@@ -32,25 +32,13 @@ export class OrderItem {
   @Field()
   frozenCurrency: string;
 
-  @Column("varchar", { name: "frozenColorHex", length: 50 })
-  @Field()
-  frozenColorHex: string;
-
-  @Column("varchar", { name: "frozenSize", length: 10 })
-  @Field()
-  frozenSize: string;
-
-  @Column("varchar", { name: "frozenName", length: 10 })
-  @Field()
-  frozenName: string;
-
   @Column('boolean', { name: "partial", default: false})
   @Field()
   partial:boolean
 
   @Column("int", { name: "partialCount", nullable: true})
-  @Field()
-  partialCount: number;
+  @Field({nullable: true })
+  partialCount?: number;
 
   @CreateDateColumn({ type: "timestamp" })
   @Field()
@@ -59,15 +47,4 @@ export class OrderItem {
   @UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
-
-  @JoinColumn([{ name: "orderId", referencedColumnName: "id" }])
-  @Field(() => Order)
-  order: Order;
-
-  @ResolveField(() => Item)
-  info(@Parent() orderItem:OrderItem, @Context() { loaders } : { loaders:DataloaderRegistry} ){
-    
-    return loaders.ItemDataLoader.load(orderItem.itemSku);
-
-  }
 }

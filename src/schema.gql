@@ -12,6 +12,7 @@ type item {
   size: String
   description: String!
   imageUrl: String!
+  weight: String
   createdAt: Timestamp!
   lastModified: Timestamp!
   prices: [ItemPriceList!]!
@@ -62,9 +63,11 @@ type inventoryHistory {
 }
 
 enum InventoryItemHistory {
-  firstImport
   import
+  newImport
+  orderReturn
   export
+  orderExport
 }
 
 type ItemPage {
@@ -80,54 +83,16 @@ type ItemInBoxPage {
   data: [itemInBox!]!
 }
 
-type order {
-  id: Int!
-  otherId: Int
-  type: OrderType!
-  paymentType: PaymentType!
-  userId: String!
-  merchantId: Int!
-  userAddressId: Int!
-  shippingPrice: String
-  includesVat: Boolean!
-  canOpen: Boolean!
-  fragile: Boolean!
-  deliveryPart: Boolean!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
-  items: [orderItem!]!
-  history: [orderStatus!]!
-}
-
-enum OrderType {
-  delivery
-  exchange
-  refund
-  freeDelivery
-  gift
-  freeOfCharge
-}
-
-enum PaymentType {
-  cash
-  card
-  free
-}
-
 type orderItem {
   orderId: Int!
   itemSku: String!
   count: Int!
   frozenPrice: String!
   frozenCurrency: String!
-  frozenColorHex: String!
-  frozenSize: String!
-  frozenName: String!
   partial: Boolean!
-  partialCount: Int!
+  partialCount: Int
   createdAt: Timestamp!
   lastModified: Timestamp!
-  order: order!
   info: item!
   inventory: [itemInBox!]!
 }
@@ -138,7 +103,7 @@ type financialAccount {
   type: FinancialAccountType!
   userId: String
   merchantId: Int
-  balance: String
+  balance: String!
   createdAt: Timestamp!
   lastModified: Timestamp!
 }
@@ -242,7 +207,7 @@ type userAddress {
   userId: String!
   countryId: Int!
   cityId: Int!
-  details: String!
+  address: String!
   createdAt: Timestamp!
   lastModified: Timestamp!
 }
@@ -331,6 +296,41 @@ enum SheetOrderStatus {
   financeRejected
 }
 
+type order {
+  id: Int!
+  otherId: Int
+  type: OrderType!
+  paymentType: PaymentType!
+  userId: String!
+  merchantId: Int!
+  userAddressId: Int!
+  shippingPrice: String!
+  weight: String!
+  includesVat: Boolean!
+  canOpen: Boolean!
+  fragile: Boolean!
+  deliveryPart: Boolean!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
+  items: [orderItem!]!
+  history: [orderStatus!]!
+}
+
+enum OrderType {
+  delivery
+  exchange
+  refund
+  freeDelivery
+  gift
+  freeOfCharge
+}
+
+enum PaymentType {
+  cash
+  card
+  free
+}
+
 type CourierSheetPage {
   cursor: GraphqlCursor!
   data: [courierSheet!]!
@@ -340,6 +340,9 @@ type merchant {
   id: Int!
   name: String!
   includesVat: Boolean!
+  threshold: String!
+  basicShipping: String!
+  overShipping: String!
   createdAt: Timestamp!
   lastModified: Timestamp!
 }
@@ -428,13 +431,13 @@ type box {
 type financialTransaction {
   id: Int!
   type: TransactionType!
-  description: String!
+  description: String
   fromAccountId: String!
   toAccountId: String!
-  amount: String
-  receipt: String!
+  amount: String!
+  receipt: String
   status: TransactionStatus!
-  approvedById: String!
+  approvedById: String
   createdAt: Timestamp!
 }
 
@@ -471,12 +474,6 @@ type FinancialTransactionPage {
   data: [financialTransaction!]!
 }
 
-type financalRequestStatus {
-  requestId: Int!
-  status: TransactionStatus!
-  createdAt: Timestamp!
-}
-
 type OrderPage {
   cursor: GraphqlCursor!
   data: [order!]!
@@ -486,9 +483,10 @@ type expense {
   id: Int!
   type: ExpenseType!
   fromAccountId: Int!
+  approvedById: String
   amount: String
-  receipt: String!
-  comment: String!
+  receipt: String
+  comment: String
   createdAt: Timestamp!
 }
 
@@ -557,6 +555,12 @@ type Hub {
   zoneId: Int!
 }
 
+type financalTransactionStatus {
+  requestId: Int!
+  status: TransactionStatus!
+  createdAt: Timestamp!
+}
+
 type Query {
   findRoles: [Role!]!
   role(id: Int!): Role!
@@ -594,7 +598,7 @@ type Query {
   expense(id: Int!): expense!
   paginateFinancialTransaction(input: FinancialTransactionPaginationInput!): [FinancialTransactionPage!]!
   financialTransaction(id: Int!): financialTransaction!
-  financialRequestStatus(id: Int!): financalRequestStatus!
+  financialRequestStatus(id: Int!): financalTransactionStatus!
   isValidEmail(email: String!): EmailValidityPayload!
   sendToEvent: EventListenObject!
   listeners: [Listener!]!
@@ -745,15 +749,15 @@ type Mutation {
   createRequestStatusHistory(createRequestStatusHistoryInput: CreateRequestStatusHistoryInput!): requestStatusHistory!
   updateRequestStatusHistory(updateRequestStatusHistoryInput: UpdateRequestStatusHistoryInput!): requestStatusHistory!
   removeRequestStatusHistory(id: Int!): requestStatusHistory!
-  createExpense(createExpenseInput: CreateExpenseInput!): expense!
+  createExpense(input: CreateExpenseInput!): expense!
   updateExpense(updateExpenseInput: UpdateExpenseInput!): expense!
   removeExpense(id: Int!): expense!
-  createFinancialTransaction(createFinancialTransactionInput: CreateFinancialTransactionInput!): financialTransaction!
+  createFinancialTransaction(createFinancialTransactionInput: SendTransactionInput!): financialTransaction!
   updateFinancialTransaction(updateFinancialTransactionInput: UpdateFinancialTransactionInput!): financialTransaction!
   removeFinancialTransaction(id: Int!): financialTransaction!
-  createFinancialRequestStatus(createFinancialRequestStatusInput: CreateFinancialRequestStatusInput!): financalRequestStatus!
-  updateFinancialRequestStatus(updateFinancialRequestStatusInput: UpdateFinancialRequestStatusInput!): financalRequestStatus!
-  removeFinancialRequestStatus(id: Int!): financalRequestStatus!
+  createFinancialRequestStatus(createFinancialRequestStatusInput: CreateFinancialRequestStatusInput!): financalTransactionStatus!
+  updateFinancialRequestStatus(updateFinancialRequestStatusInput: UpdateFinancialRequestStatusInput!): financalTransactionStatus!
+  removeFinancialRequestStatus(id: Int!): financalTransactionStatus!
   requestToken(requestTokenInput: TokenRequestInput!): UserTokenResponse!
   updateListener(updateListenerInput: UpdateListenerInput!): Listener!
   removeListener(id: Int!): Listener!
@@ -844,6 +848,7 @@ input CreateItemInBoxInput {
 input ItemCountInput {
   id: Int!
   count: Int!
+  type: InventoryItemHistory!
 }
 
 input ImportItemInput {
@@ -937,6 +942,7 @@ input CreateOrderInput {
   userId: String!
   merchantId: Int!
   userAddressId: Int!
+  weight: String
   shippingPrice: String!
   includesVat: Boolean = true
   canOpen: Boolean = false
@@ -949,6 +955,7 @@ input OrderItemInput {
   itemSku: String!
   frozenPrice: String!
   frozenCurrency: String!
+  weight: String!
   count: Int!
 }
 
@@ -959,6 +966,7 @@ input UpdateOrderInput {
   userId: String
   merchantId: Int
   userAddressId: Int
+  weight: String
   shippingPrice: String
   includesVat: Boolean = true
   canOpen: Boolean = false
@@ -1178,24 +1186,44 @@ input UpdateRequestStatusHistoryInput {
 }
 
 input CreateExpenseInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  type: ExpenseType!
+  fromAccountId: Int!
+  approvedById: String
+  amount: String
+  receipt: String
+  comment: String
 }
 
 input UpdateExpenseInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  type: ExpenseType
+  fromAccountId: Int
+  approvedById: String
+  amount: String
+  receipt: String
+  comment: String
   id: Int!
 }
 
-input CreateFinancialTransactionInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+input SendTransactionInput {
+  type: TransactionType!
+  description: String
+  fromAccountId: String
+  toAccountId: String!
+  amount: String!
+  receipt: String
+  approvedById: String
+  status: TransactionStatus!
 }
 
 input UpdateFinancialTransactionInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  type: TransactionType
+  description: String
+  fromAccountId: String
+  toAccountId: String
+  amount: String
+  receipt: String
+  approvedById: String
+  status: TransactionStatus
   id: Int!
 }
 

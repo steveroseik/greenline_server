@@ -1,8 +1,8 @@
-import { CreateFinancialTransactionInput } from './create-financial-transaction.input';
+import { SendTransactionInput } from './send-transaction.input';
 import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateFinancialTransactionInput extends PartialType(CreateFinancialTransactionInput) {
+export class UpdateFinancialTransactionInput extends PartialType(SendTransactionInput) {
   @Field(() => Int)
   id: number;
 }

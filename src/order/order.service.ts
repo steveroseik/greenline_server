@@ -9,6 +9,7 @@ import Paginator from 'typeorm-cursor-pagination/lib/Paginator';
 import { buildPaginator } from 'typeorm-cursor-pagination';
 import { OrderItemService } from 'src/order-item/order-item.service';
 import { OrderItem } from 'src/order-item/entities/order-item.entity';
+import { UserAddress } from 'src/user-address/entities/user-address.entity';
 
 @Injectable()
 export class OrderService {
@@ -27,6 +28,12 @@ export class OrderService {
     await queryRunner.startTransaction();
 
     try{
+
+      const address = await queryRunner.manager.findOne(UserAddress, {where: {id: input.userAddressId}});
+
+      if (address === null) throw Error('Address not available');
+
+      
 
       const result = await queryRunner.manager.insert(Order, {
 

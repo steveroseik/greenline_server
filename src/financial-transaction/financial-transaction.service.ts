@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFinancialTransactionInput } from './dto/create-financial-transaction.input';
+import { SendTransactionInput } from './dto/send-transaction.input';
 import { UpdateFinancialTransactionInput } from './dto/update-financial-transaction.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FinancialTransaction } from './entities/financial-transaction.entity';
@@ -13,7 +13,7 @@ export class FinancialTransactionService {
   constructor(@InjectRepository(FinancialTransaction) private repo:Repository<FinancialTransaction>){}
 
 
-  create(createFinancialTransactionInput: CreateFinancialTransactionInput) {
+  create(createFinancialTransactionInput: SendTransactionInput) {
     return 'This action adds a new financialTransaction';
   }
 

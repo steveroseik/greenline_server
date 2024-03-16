@@ -27,6 +27,10 @@ export class CreateOrderInput {
   @Field()
   userAddressId: number;
 
+  @Field(() => String,{nullable: true})
+  @Transform(() => DecimalToString, { toPlainOnly: true })
+  weight?: Decimal
+
   @Field(() => String)
   @Transform(() => DecimalToString(), { toPlainOnly: true })
   shippingPrice: Decimal;

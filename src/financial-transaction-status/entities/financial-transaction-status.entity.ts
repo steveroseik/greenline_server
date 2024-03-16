@@ -4,9 +4,9 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { TransactionStatus } from "support/enums";
 
 
-@Entity("financial-request-status", { schema: "greenline_db" })
-@ObjectType('financalRequestStatus')
-export class FinancialRequestStatus {
+@Entity("financial-transaction-status", { schema: "greenline_db" })
+@ObjectType('financalTransactionStatus')
+export class FinancialTransactionStatus {
   @Column("int", { primary: true, name: "requestId" })
   @Field()
   requestId: number;
@@ -15,7 +15,7 @@ export class FinancialRequestStatus {
   @Field(() => TransactionStatus)
   status: TransactionStatus;
 
-@CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 

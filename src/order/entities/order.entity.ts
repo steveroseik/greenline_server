@@ -47,10 +47,17 @@ export class Order {
   @Field()
   userAddressId: number;
 
-  @Column("decimal", { name: "shippingPrice", precision: 10, scale: 2, transformer: new DecimalTransformer()})
+  @Column("decimal", { name: "shippingPrice", precision: 10, scale: 2, default: 0.0,
+  transformer: new DecimalTransformer()})
   @Transform(() => DecimalToString(), { toPlainOnly: true })
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   shippingPrice: Decimal;
+
+  @Column("decimal", { name: "weight", precision: 10, scale: 2, default: 0.0,
+  transformer: new DecimalTransformer()})
+  @Transform(() => DecimalToString(), { toPlainOnly: true })
+  @Field(() => String)
+  weight: Decimal;
 
   @Column("tinyint", { name: "includesVAT", width: 1 })
   @Field()
@@ -68,11 +75,11 @@ export class Order {
   @Field()
   deliveryPart: boolean
 
-@CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-@UpdateDateColumn({ type: "timestamp" })
+  @UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 }

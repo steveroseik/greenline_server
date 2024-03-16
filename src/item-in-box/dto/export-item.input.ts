@@ -1,4 +1,5 @@
 import { Field, InputType } from "@nestjs/graphql";
+import { InventoryItemHistory } from "support/enums";
 
 @InputType()
 export class ItemCountInput{
@@ -8,4 +9,8 @@ export class ItemCountInput{
 
     @Field()
     count:number
+
+    @Field(() => InventoryItemHistory)
+    type:InventoryItemHistory
+
 }

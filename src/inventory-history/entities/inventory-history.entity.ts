@@ -28,11 +28,11 @@ export class InventoryHistory {
   @Field()
   amount: number;
 
-@CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-@UpdateDateColumn({ type: "timestamp" })
+  @UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 }

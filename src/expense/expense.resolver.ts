@@ -9,8 +9,8 @@ export class ExpenseResolver {
   constructor(private readonly expenseService: ExpenseService) {}
 
   @Mutation(() => Expense)
-  createExpense(@Args('createExpenseInput') createExpenseInput: CreateExpenseInput) {
-    return this.expenseService.create(createExpenseInput);
+  createExpense(@Args('input') input: CreateExpenseInput) {
+    return this.expenseService.create(input);
   }
 
   @Query(() => [Expense], { name: 'expense' })
