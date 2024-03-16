@@ -15,6 +15,9 @@ lerna-debug.log*
 .DS_Store
 
 
+## data source file
+db/data-source.ts
+
 ### dotenv ###
 .env
 
