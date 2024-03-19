@@ -53,6 +53,7 @@ export class UserResolver {
   @AllowedRoles(...DefinedRoles.UserManagementRoles)
   @Mutation(() => Boolean)
   updateUserType(@Args('updateInfo') input: UpdateUserTypeInput){
+    
     return this.userService.updateUserType(input);
   }
 

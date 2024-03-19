@@ -36,7 +36,7 @@ export class AuthService {
       if (decoded.email == null || decoded.email.length <= 0) throw Error('no_email_found')
 
     
-      if (tokenPayload.id !== undefined){
+      if (tokenPayload.id !== undefined && tokenPayload.id !== null){
         if (!(await this.userService.signUpAccount(tokenPayload.id, decoded.email, decoded.uid))){
           throw Error('failed_to_signup');
         }

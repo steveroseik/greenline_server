@@ -57,7 +57,7 @@ registerEnumType(TransactionStatus, {
   });
 
 export enum TransactionType {
-     deposit = "deposit",
+    deposit = "deposit",
     withdrawal = "withdrawal",
     transfer = "transfer",
     refund = "refund",

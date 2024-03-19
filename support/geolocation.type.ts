@@ -1,7 +1,7 @@
 import { UserInputError } from "@nestjs/apollo";
 import { GraphQLScalarType, Kind } from "graphql"
 
-export const GeoLocation  = new GraphQLScalarType({
+export const GeoLocation = new GraphQLScalarType({
     name: "GeoLocation",
     description: "Geo location representation.",
     serialize: (value:string) => {
