@@ -564,7 +564,7 @@ type financalTransactionStatus {
 type Query {
   findRoles: [Role!]!
   role(id: Int!): Role!
-  paginateItemsById(itemPageInput: paginateItemsInput): ItemPage!
+  paginateItems(itemPageInput: paginateItemsInput): ItemPage!
   findSingleItem(id: String!): item!
   itemPrices: [itemPrice!]!
   itemPrice(id: Int!): itemPrice!
@@ -612,6 +612,8 @@ input paginateItemsInput {
   afterCursor: String
   beforeCursor: String
   merchantId: Int
+  name: String!
+  sku: String!
 }
 
 input ItemInBoxPageInput {
@@ -725,7 +727,7 @@ type Mutation {
   createOrderRelation(createOrderRelationInput: CreateOrderRelationInput!): orderRelation!
   updateOrderRelation(updateOrderRelationInput: UpdateOrderRelationInput!): orderRelation!
   removeOrderRelation(id: Int!): orderRelation!
-  createMerchant(input: CreateMerchantInput!): String
+  createMerchant(input: CreateMerchantInput!): Int
   createFakeMerchant(count: Int! = 1): Boolean!
   updateMerchant(updateMerchantInput: UpdateMerchantInput!): merchant!
   removeMerchant(id: Int!): merchant!

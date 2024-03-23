@@ -9,7 +9,7 @@ import { Public } from 'src/auth/decorators/publicDecorator';
 export class MerchantResolver {
   constructor(private readonly merchantService: MerchantService) {}
 
-  @Mutation(() => String, { nullable: true })
+  @Mutation(() => Int, { nullable: true })
   createMerchant(@Args('input') input: CreateMerchantInput) {
     return this.merchantService.create(input);
   }

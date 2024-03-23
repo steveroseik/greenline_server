@@ -6,4 +6,11 @@ export class paginateItemsInput extends PaginationInput{
 
     @Field({ nullable: true })
     merchantId?:number
+
+    @Field()
+    name:String
+
+    @Field()
+    sku:String
+    
 }

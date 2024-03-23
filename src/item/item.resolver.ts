@@ -49,9 +49,9 @@ export class ItemResolver {
   }
 
   @Query (() => ItemPage)
-  paginateItemsById(@Args('itemPageInput', {nullable: true}) itemPageInput?:paginateItemsInput){
+  paginateItems(@Args('itemPageInput', {nullable: true}) itemPageInput?:paginateItemsInput){
 
-    return this.itemService.paginateItemsById(itemPageInput);
+    return this.itemService.paginateItems(itemPageInput);
     
   }
 

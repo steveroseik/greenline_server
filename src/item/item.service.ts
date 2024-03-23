@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateItemInput } from './dto/update-item.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Repository } from 'typeorm';
+import { DataSource, In, Like, Repository } from 'typeorm';
 import { Item } from './entities/item.entity';
 import { faker } from '@faker-js/faker';
 import { ItemPriceService } from 'src/item-price/item-price.service';
@@ -220,23 +220,46 @@ export class ItemService {
     return true;
   }
 
-  async paginateItemsById(itemPageInput:paginateItemsInput){
+  async paginateItems(input:paginateItemsInput){
 
     let queryBuilder = this.itemRepo
     .createQueryBuilder('item')
 
-    if (itemPageInput.merchantId !== undefined){
-      queryBuilder = queryBuilder.where({merchantId: itemPageInput.merchantId})
+    let whereSet = false;
+
+    if (input.merchantId !== undefined){
+      whereSet = true;
+      queryBuilder = queryBuilder.where({merchantId: input.merchantId})
     }
+
+    if (input.name.length > 0){
+      if (whereSet){
+        queryBuilder = queryBuilder.andWhere({name: Like(`%${input.name}%`)})
+      }else{
+        whereSet = true;
+        queryBuilder = queryBuilder.where({name: Like(`%${input.name}%`)})
+      }
+    }
+
+    if (input.sku.length > 0){
+      if (whereSet){
+        queryBuilder = queryBuilder.andWhere({merchantSku: Like(`%${input.sku}%`)})
+      }else{
+        whereSet = true;
+        queryBuilder = queryBuilder.where({merchantSku: Like(`%${input.sku}%`)})
+      }
+    }
+
+
 
     const nextPaginator = buildPaginator({
       entity: Item,
-      paginationKeys: ['sku'],
+      paginationKeys: ['createdAt'],
       query: {
-        limit: itemPageInput.limit?? 10,
-        order: itemPageInput.isAsc ? 'ASC' : 'DESC',
-        beforeCursor: itemPageInput.beforeCursor,
-        afterCursor: itemPageInput.afterCursor
+        limit: input.limit?? 10,
+        order: input.isAsc ? 'ASC' : 'DESC',
+        beforeCursor: input.beforeCursor,
+        afterCursor: input.afterCursor
       },
     })
 
