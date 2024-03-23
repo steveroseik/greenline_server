@@ -51,6 +51,7 @@ import { ItemPriceListModule } from './item-price-list/item-price-list.module';
 import express from 'express';
 import config from 'ormconfig';
 import { FinancialTransactionStatusModule } from './financial-transaction-status/financial-transaction-status.module';
+import { MerchantDomesticShippingModule } from './merchant-domestic-shipping/merchant-domestic-shipping.module';
 
 @Module({
   imports: [
@@ -106,7 +107,7 @@ import { FinancialTransactionStatusModule } from './financial-transaction-status
     RequestModule, FinancialAccountModule, ExpenseModule, 
     FinancialTransactionModule, FinancialTransactionStatusModule, 
     AuthModule,
-    RoleModule, UserRoleModule, ListenersModule, DataloadersModule, HubModule, ItemPriceListModule,
+    RoleModule, UserRoleModule, ListenersModule, DataloadersModule, HubModule, ItemPriceListModule, MerchantDomesticShippingModule,
     ],
   controllers: [AppController],
   providers: [AppService, DataloaderRegistryFactory, 

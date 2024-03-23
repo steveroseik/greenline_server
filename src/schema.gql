@@ -561,6 +561,11 @@ type financalTransactionStatus {
   createdAt: Timestamp!
 }
 
+type MerchantDomesticShipping {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   findRoles: [Role!]!
   role(id: Int!): Role!
@@ -604,6 +609,7 @@ type Query {
   listeners: [Listener!]!
   listener(id: Int!): Listener!
   hub(id: Int!): Hub!
+  merchantDomesticShipping(id: Int!): MerchantDomesticShipping!
 }
 
 input paginateItemsInput {
@@ -766,6 +772,9 @@ type Mutation {
   createHub(createHubInput: CreateHubInput!): Hub!
   updateHub(updateHubInput: UpdateHubInput!): Hub!
   removeHub(id: Int!): Hub!
+  createMerchantDomesticShipping(createMerchantDomesticShippingInput: CreateMerchantDomesticShippingInput!): MerchantDomesticShipping!
+  updateMerchantDomesticShipping(updateMerchantDomesticShippingInput: UpdateMerchantDomesticShippingInput!): MerchantDomesticShipping!
+  removeMerchantDomesticShipping(id: Int!): MerchantDomesticShipping!
 }
 
 input UpdateUserRoleInput {
@@ -801,8 +810,8 @@ input CreateMultipleItems {
 
 input CreateItemPriceInput {
   currency: String = "EGP"
-  price: Float!
-  discount: Float
+  price: String!
+  discount: String
   startDiscount: Timestamp
   endDiscount: Timestamp
 }
@@ -835,8 +844,8 @@ input UpdateItemInput {
 
 input UpdateItemPriceInput {
   currency: String = "EGP"
-  price: Float
-  discount: Float
+  price: String
+  discount: String
   startDiscount: Timestamp
   endDiscount: Timestamp
   id: Int!
@@ -1257,6 +1266,17 @@ input CreateHubInput {
 }
 
 input UpdateHubInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateMerchantDomesticShippingInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateMerchantDomesticShippingInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
