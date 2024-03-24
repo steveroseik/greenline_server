@@ -12,6 +12,8 @@ import { UseGuards } from '@nestjs/common';
 import { RolesGaurd } from 'src/auth/gaurds/Roles.gaurd';
 import { AllowedRoles, Roles } from 'src/auth/decorators/RolesDecorator';
 import { FindInventoryInput } from './dto/find-one-inventory.input';
+import { InventoryPage } from './entities/inventoryPage.entity';
+import { PaginateInventoryInput } from './dto/paginateInventory.input';
 
 @Resolver(() => Inventory)
 export class InventoryResolver {
@@ -37,9 +39,9 @@ export class InventoryResolver {
     return this.inventoryService.create(input);
   }
 
-  @Query(() => [Inventory])
-  findAllInventories() {
-    return this.inventoryService.findAll();
+  @Query(() => InventoryPage)
+  paginateInventories(@Args('input') input:PaginateInventoryInput){
+    return this.inventoryService.paginateInventories(input);
   }
 
   @Query(() => Inventory)

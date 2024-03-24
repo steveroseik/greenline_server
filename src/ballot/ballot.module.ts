@@ -7,7 +7,7 @@ import { ItemModule } from 'src/item/item.module';
 import { BoxModule } from 'src/box/box.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Ballot]), ItemModule, BoxModule],
+  imports: [TypeOrmModule.forFeature([Ballot]), ItemModule, BoxModule,],
   providers: [BallotResolver, BallotService],
   exports: [BallotService]
 })

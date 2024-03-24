@@ -2,12 +2,12 @@ import { Column, Entity, Index,
   PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn} from "typeorm";
 import { ItemInBox } from "src/item-in-box/entities/item-in-box.entity";
 import { Field, ObjectType } from "@nestjs/graphql";
-import { InventoryItemHistory } from "support/enums";
+import { ItemHistoryEnum } from "support/enums";
 
 @Index("itemInBoxId", ["itemInBoxId"], {})
-@Entity("inventory-history", { schema: "greenline_db" })
-@ObjectType('inventoryHistory')
-export class InventoryHistory {
+@Entity("inventory-item-history", { schema: "greenline_db" })
+@ObjectType('inventoryItemHistory')
+export class InventoryItemHistory {
   @PrimaryGeneratedColumn({ name: "id" })
   @Field()
   id: number;
@@ -20,9 +20,9 @@ export class InventoryHistory {
   @Field()
   description: string;
 
-  @Column("enum", { name: "type", enum: InventoryItemHistory })
-  @Field(() => InventoryItemHistory)
-  type: InventoryItemHistory;
+  @Column("enum", { name: "type", enum: ItemHistoryEnum })
+  @Field(() => ItemHistoryEnum)
+  type: ItemHistoryEnum;
 
   @Column("int", { name: "amount" })
   @Field()

@@ -4,10 +4,10 @@ import { ItemInBoxResolver } from './item-in-box.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ItemInBox } from './entities/item-in-box.entity';
 import { ItemModule } from 'src/item/item.module';
-import { InventoryHistoryModule } from 'src/inventory-history/inventory-history.module';
+import { InventoryItemHistoryModule } from 'src/inventory-item-history/inventory-item-history.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ItemInBox]), forwardRef(() => ItemModule), InventoryHistoryModule],
+  imports: [TypeOrmModule.forFeature([ItemInBox]), forwardRef(() => ItemModule), InventoryItemHistoryModule],
   providers: [ItemInBoxResolver, ItemInBoxService],
   exports: [ItemInBoxService]
 })

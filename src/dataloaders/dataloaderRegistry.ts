@@ -24,6 +24,8 @@ import OrderStatusesDataLoader from "./loaders/orderStatusesDataLoader";
 import { OrderStatusService } from "src/order-status/order-status.service";
 import { ItemPriceListService } from "src/item-price-list/item-price-list.service";
 import ItemPricesDataLoader from "./loaders/itemPricesDataLoader";
+import { BallotService } from "src/ballot/ballot.service";
+import BallotsInRackDataLoader from "./loaders/BallotInRackDataLoader";
 
 export class DataloaderRegistry {
   private cache: Record<string, any> = {};
@@ -41,6 +43,7 @@ export class DataloaderRegistry {
     private readonly userAddressService:UserAddressService,
     private readonly orderStatusService:OrderStatusService,
     private readonly itemPriceListService:ItemPriceListService,
+    private readonly ballotService:BallotService,
     ) {}
 
   /**
@@ -111,5 +114,9 @@ export class DataloaderRegistry {
 
   public get OrderStatusesDataLoader(){
     return this.get('OrderStatusesDataLoader', () => OrderStatusesDataLoader.create(this.orderStatusService))
+  }
+
+  public get BallotsInRackDataLoader(){
+    return this.get('BallotsInRackDataLoader', () => BallotsInRackDataLoader.create(this.ballotService))
   }
 }

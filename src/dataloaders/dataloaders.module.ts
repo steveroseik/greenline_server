@@ -13,6 +13,7 @@ import { OrderModule } from 'src/order/order.module';
 import { UserAddressModule } from 'src/user-address/user-address.module';
 import { OrderStatusModule } from 'src/order-status/order-status.module';
 import { ItemPriceListModule } from 'src/item-price-list/item-price-list.module';
+import { BallotModule } from 'src/ballot/ballot.module';
 
 @Module({
   imports: [UserRoleModule, 
@@ -22,7 +23,8 @@ import { ItemPriceListModule } from 'src/item-price-list/item-price-list.module'
     RackModule, OrderItemModule, 
     ItemPriceModule, SheetOrderModule, 
     OrderModule, UserAddressModule,
-    OrderStatusModule, ItemPriceListModule],
+    OrderStatusModule, ItemPriceListModule, 
+    BallotModule],
   providers: [DataloaderRegistry, DataloaderRegistryFactory],
   exports: [DataloaderRegistryFactory]
 })

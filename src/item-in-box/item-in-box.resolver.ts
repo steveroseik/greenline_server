@@ -6,11 +6,11 @@ import { UpdateItemInBoxInput } from './dto/update-item-in-box.input';
 import { ItemService } from 'src/item/item.service';
 import { Item } from 'src/item/entities/item.entity';
 import { DataloaderRegistry } from 'src/dataloaders/dataLoaderRegistry';
-import { ItemCountInput } from './dto/export-item.input';
+import { ItemCountInput } from './dto/item-count.input';
 import { UseGuards } from '@nestjs/common';
 import { RolesGaurd } from 'src/auth/gaurds/Roles.gaurd';
 import { AllowedRoles, Roles } from 'src/auth/decorators/RolesDecorator';
-import { ImportItemInput } from './dto/import-item.input';
+import { ImportNewItemInput } from './dto/import-new-item.input';
 import { ItemInBoxPageInput } from './dto/paginate-item-in-box.input';
 import { ItemInBoxPage } from './entities/item-in-box-page.entity';
 
@@ -47,7 +47,7 @@ export class ItemInBoxResolver {
 
 
   @Mutation(() => Boolean)
-  async importNewItem(@Args('input') input:ImportItemInput){
+  async importNewItem(@Args('input') input:ImportNewItemInput){
 
     return await this.itemInBoxService.importNewItem(input);
 
@@ -56,6 +56,7 @@ export class ItemInBoxResolver {
   @ResolveField(() => Int)
   totalCount(@Parent() item:ItemInBox,
   @Context() { loaders } : { loaders: DataloaderRegistry }) {
+
     return loaders.ItemInBoxCountLoader.load({sku: item.itemSku, inventoryId: item.inventoryId});
   }
 

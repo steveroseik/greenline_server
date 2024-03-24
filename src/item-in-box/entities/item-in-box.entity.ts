@@ -23,13 +23,13 @@ export class ItemInBox {
   @Field()
   inventoryId:number
 
-  @Column("int", { name: "merchantId", nullable: true})
-  @Field({ nullable: true })
-  merchantId?: number;
+  @Column("int", { name: "merchantId"})
+  @Field()
+  merchantId: number;
 
   @Column("varchar", { name: "itemSku", length: 255 })
   @Field()
-  itemSku: string;
+  itemSku: string;  
 
   @Column("int", { name: "boxId"})
   @Field()
@@ -43,11 +43,11 @@ export class ItemInBox {
   @Field()
   minCount: number;
 
-@CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: "timestamp" })
   @Field()
   createdAt: Date;
 
-@UpdateDateColumn({ type: "timestamp" })
+  @UpdateDateColumn({ type: "timestamp" })
   @Field()
   lastModified: Date;
 

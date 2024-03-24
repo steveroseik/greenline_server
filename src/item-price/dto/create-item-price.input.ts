@@ -15,7 +15,7 @@ export class CreateItemPriceInput {
     price:Decimal
 
     @Field(() => String, { nullable:  true})
-    @Transform(() => DecimalToString(), { toPlainOnly: true })
+    @Transform(() => DecimalToString(), { toPlainOnly: true})
     discount?:Decimal
 
     @Field({ nullable:  true})

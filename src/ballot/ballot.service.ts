@@ -3,7 +3,7 @@ import { CreateBallotInput } from './dto/create-ballot.input';
 import { UpdateBallotInput } from './dto/update-ballot.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ballot } from './entities/ballot.entity';
-import { QueryRunner, Repository } from 'typeorm';
+import { In, QueryRunner, Repository } from 'typeorm';
 import { faker } from '@faker-js/faker';
 import { ItemService } from 'src/item/item.service';
 import { BoxService } from 'src/box/box.service';
@@ -64,8 +64,8 @@ export class BallotService {
     return 'This action adds a new ballot';
   }
 
-  findAll() {
-    return `This action returns all ballot`;
+  findInRackIds(keys: readonly number[]) {
+    return this.ballotRepo.find({where: {rackId: In(keys)}});
   }
 
   findOne(id: number) {

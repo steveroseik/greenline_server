@@ -4,11 +4,13 @@ import { UpdateInventoryInput } from './dto/update-inventory.input';
 import { faker } from '@faker-js/faker';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inventory } from './entities/inventory.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Like, Repository } from 'typeorm';
 import { RackService } from 'src/rack/rack.service';
 import { InventoryPricesService } from 'src/inventory-prices/inventory-price.service';
 import { FindInventoryInput } from './dto/find-one-inventory.input';
 import { ForbiddenError } from '@nestjs/apollo';
+import { PaginateInventoryInput } from './dto/paginateInventory.input';
+import { buildPaginator } from 'typeorm-cursor-pagination';
 
 @Injectable()
 export class InventoryService {
@@ -86,8 +88,40 @@ export class InventoryService {
     
   }
 
-  findAll() {
-    return this.inventoryRepo.createQueryBuilder("Inventory").getMany();
+  paginateInventories(input:PaginateInventoryInput) {
+
+
+    let queryBuilder = this.inventoryRepo.createQueryBuilder();
+
+    let whereSet = false;
+
+    if (input.hubId != undefined && input.hubId != null){
+      queryBuilder = queryBuilder.where({ hubId: input.hubId });
+      whereSet = true;
+    } 
+
+    if (input.name != undefined && input.name != null){
+      if (whereSet){
+        queryBuilder = queryBuilder.andWhere({ name: Like(`%${input.name}%`) });
+      }else{
+        queryBuilder = queryBuilder.where({ name: Like(`%${input.name}%`) });
+        whereSet = true;
+      }
+    } 
+
+    const paginator = buildPaginator({
+      entity: Inventory,
+      paginationKeys: ["createdAt"],
+      query: {
+        limit: input.limit,
+        order: input.isAsc ? 'ASC' : "DESC",
+        afterCursor: input.afterCursor,
+        beforeCursor: input.beforeCursor
+      }
+    })
+
+    return paginator.paginate(queryBuilder);
+
   }
 
   async findOne({ id, hubId } : FindInventoryInput): Promise<Inventory> {

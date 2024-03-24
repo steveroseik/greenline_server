@@ -41,7 +41,7 @@ type ItemPriceList {
 type itemInBox {
   id: Int!
   inventoryId: Int!
-  merchantId: Int
+  merchantId: Int!
   itemSku: String!
   boxId: Int!
   count: Int!
@@ -52,22 +52,31 @@ type itemInBox {
   item: item!
 }
 
-type inventoryHistory {
+type inventoryItemHistory {
   id: Int!
   itemInBoxId: Int!
   description: String!
-  type: InventoryItemHistory!
+  type: ItemHistoryEnum!
   amount: Int!
   createdAt: Timestamp!
   lastModified: Timestamp!
 }
 
-enum InventoryItemHistory {
+enum ItemHistoryEnum {
   import
   newImport
   orderReturn
   export
   orderExport
+}
+
+type box {
+  id: Int!
+  merchantId: Int
+  ballotId: Int!
+  name: String!
+  createdAt: Timestamp!
+  lastModified: Timestamp!
 }
 
 type ItemPage {
@@ -81,6 +90,11 @@ scalar GraphqlCursor
 type ItemInBoxPage {
   cursor: GraphqlCursor!
   data: [itemInBox!]!
+}
+
+type ItemHistoryPage {
+  cursor: GraphqlCursor!
+  data: [inventoryItemHistory!]!
 }
 
 type orderItem {
@@ -301,6 +315,7 @@ type order {
   otherId: Int
   type: OrderType!
   paymentType: PaymentType!
+  status: OrderStatusEnum!
   userId: String!
   merchantId: Int!
   userAddressId: Int!
@@ -407,6 +422,7 @@ type rack {
   name: String!
   createdAt: Timestamp!
   lastModified: Timestamp!
+  ballots: [ballot!]!
 }
 
 type ballot {
@@ -419,13 +435,14 @@ type ballot {
   lastModified: Timestamp!
 }
 
-type box {
-  id: Int!
-  merchantId: Int
-  ballotId: Int!
-  name: String!
-  createdAt: Timestamp!
-  lastModified: Timestamp!
+type InventoryPage {
+  cursor: GraphqlCursor!
+  data: [inventory!]!
+}
+
+type RacksPage {
+  cursor: GraphqlCursor!
+  data: [rack!]!
 }
 
 type financialTransaction {
@@ -575,8 +592,9 @@ type Query {
   itemPrice(id: Int!): itemPrice!
   itemInBox(id: Int!): itemInBox!
   paginateItemInBox(input: ItemInBoxPageInput!): ItemInBoxPage!
-  inventoryHistory(id: Int!): inventoryHistory!
-  rack(id: Int!): rack!
+  inventoryHistory(id: Int!): inventoryItemHistory!
+  paginateItemHistory(input: PaginateItemHistoryInput!): ItemHistoryPage!
+  paginateRacks(input: PaginateRacksInput!): RacksPage!
   ballot(id: Int!): ballot!
   box(id: Int!): box!
   orderItem(id: Int!): orderItem!
@@ -586,7 +604,7 @@ type Query {
   userAddress(id: Int!): userAddress!
   orderStatus(id: Int!): orderStatus!
   itemPriceList(id: Int!): ItemPriceList!
-  findAllInventories: [inventory!]!
+  paginateInventories(input: PaginateInventoryInput!): InventoryPage!
   findOneInventory(input: FindInventoryInput!): inventory!
   inventoryPrices: [inventoryPrice!]!
   inventoryPrice(id: Int!): inventoryPrice!
@@ -630,12 +648,39 @@ input ItemInBoxPageInput {
   inventoryIds: [Int!]
 }
 
+input PaginateItemHistoryInput {
+  isAsc: Boolean! = true
+  limit: Int! = 1
+  afterCursor: String
+  beforeCursor: String
+  itemInBoxId: Int!
+}
+
+input PaginateRacksInput {
+  isAsc: Boolean! = true
+  limit: Int! = 1
+  afterCursor: String
+  beforeCursor: String
+  invetoryIds: [Int!]!
+}
+
 input PaginateOrdersInput {
   isAsc: Boolean! = true
   limit: Int! = 1
   afterCursor: String
   beforeCursor: String
-  merchantId: Int
+  merchantIds: [Int!]
+  statuses: [OrderStatusEnum!]
+  date: Timestamp
+}
+
+input PaginateInventoryInput {
+  isAsc: Boolean! = true
+  limit: Int! = 1
+  afterCursor: String
+  beforeCursor: String
+  hubId: Int
+  name: String
 }
 
 input FindInventoryInput {
@@ -686,14 +731,13 @@ type Mutation {
   removeItemPrice(id: Int!): itemPrice!
   createItemInBox(createItemInBoxInput: CreateItemInBoxInput!): itemInBox!
   exportItem(input: ItemCountInput!): Boolean!
-  importNewItem(input: ImportItemInput!): Boolean!
+  importNewItem(input: ImportNewItemInput!): Boolean!
   importItem(input: ItemCountInput!): Boolean!
   updateItemInBox(updateItemInBoxInput: UpdateItemInBoxInput!): itemInBox!
   removeItemInBox(id: Int!): itemInBox!
-  createInventoryHistory(createInventoryHistoryInput: CreateInventoryHistoryInput!): inventoryHistory!
-  updateInventoryHistory(updateInventoryHistoryInput: UpdateInventoryHistoryInput!): inventoryHistory!
-  removeInventoryHistory(id: Int!): inventoryHistory!
-  createRack(createRackInput: CreateRackInput!): rack!
+  createInventoryHistory(createInventoryHistoryInput: CreateInventoryItemHistoryInput!): inventoryItemHistory!
+  updateInventoryHistory(updateInventoryHistoryInput: UpdateInventoryItemHistoryInput!): inventoryItemHistory!
+  removeInventoryHistory(id: Int!): inventoryItemHistory!
   updateRack(updateRackInput: UpdateRackInput!): rack!
   removeRack(id: Int!): rack!
   createBallot(createBallotInput: CreateBallotInput!): ballot!
@@ -859,15 +903,18 @@ input CreateItemInBoxInput {
 input ItemCountInput {
   id: Int!
   count: Int!
-  type: InventoryItemHistory!
+  type: ItemHistoryEnum
 }
 
-input ImportItemInput {
+input ImportNewItemInput {
   itemSku: String!
   inventoryId: Int!
-  boxId: Int!
+  boxId: Int
+  ballotId: Int
+  boxName: String
+  ownedByOneMerchant: Boolean = false
   count: Int!
-  minCount: Int!
+  minCount: Int! = 5
 }
 
 input UpdateItemInBoxInput {
@@ -876,24 +923,19 @@ input UpdateItemInBoxInput {
   id: Int!
 }
 
-input CreateInventoryHistoryInput {
+input CreateInventoryItemHistoryInput {
   itemInBoxId: Int!
   description: String!
-  type: InventoryItemHistory!
+  type: ItemHistoryEnum!
   amount: Int!
 }
 
-input UpdateInventoryHistoryInput {
+input UpdateInventoryItemHistoryInput {
   itemInBoxId: Int
   description: String
-  type: InventoryItemHistory
+  type: ItemHistoryEnum
   amount: Int
   id: Int!
-}
-
-input CreateRackInput {
-  inventoryId: Int!
-  name: String!
 }
 
 input UpdateRackInput {

@@ -33,8 +33,6 @@ export class OrderService {
 
       if (address === null) throw Error('Address not available');
 
-      
-
       const result = await queryRunner.manager.insert(Order, {
 
         otherId: input.otherId,
@@ -78,10 +76,31 @@ export class OrderService {
 
     let whereSet = false;
 
-    if (input.merchantId !== null){
+    if (input.merchantIds !== undefined ){
       whereSet = true;
-      queryBuilder = queryBuilder.where({merchantId: input.merchantId})
+      queryBuilder = queryBuilder.where({merchantId: In(input.merchantIds)})
     }
+
+    if (input.statuses !== undefined ){
+      if (whereSet){
+        queryBuilder = queryBuilder.andWhere({status: In(input.statuses)})
+      }else{
+        whereSet = true;
+        queryBuilder = queryBuilder.where({status: In(input.statuses)})
+      }
+    }
+
+
+    if (input.date !== undefined ){
+      if (whereSet){
+        queryBuilder = queryBuilder.andWhere({createdAt: input.date})
+      }else{
+        whereSet = true;
+        queryBuilder = queryBuilder.where({createdAt: input.date})
+      }
+    }
+
+
 
     const paginator = buildPaginator({
       entity: Order,

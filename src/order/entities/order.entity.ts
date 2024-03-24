@@ -10,7 +10,7 @@ import { Field, ObjectType } from "@nestjs/graphql";
 import { Transform } from "class-transformer";
 import { DecimalToString, DecimalTransformer } from "support/decimal.transformer";
 import Decimal from "decimal.js";
-import { OrderType, PaymentType } from "support/enums";
+import { OrderStatusEnum, OrderType, PaymentType } from "support/enums";
 
 @Index("userId", ["userId"], {})
 @Index("merchantId", ["merchantId"], {})
@@ -34,6 +34,10 @@ export class Order {
   @Column("enum", { name: "paymentType", enum: PaymentType, default: PaymentType.cash })
   @Field(() => PaymentType)
   paymentType:PaymentType
+
+  @Column("enum", { name: "status", enum: OrderStatusEnum, default: OrderStatusEnum.idle })
+  @Field(() => OrderStatusEnum)
+  status: OrderStatusEnum
 
   @Column("varchar", { name: "userId" })
   @Field()

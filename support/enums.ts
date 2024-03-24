@@ -35,6 +35,7 @@ registerEnumType(SheetOrderStatus, {
     failedDeliveryAttempt = "failedDeliveryAttempt",
     postponed = "postponed",
 }
+
 registerEnumType(OrderStatusEnum, {
     name: 'OrderStatusEnum',
   }); 
@@ -225,7 +226,7 @@ registerEnumType(FinancialAccountType, {
   });
 
 
-export enum InventoryItemHistory{
+export enum ItemHistoryEnum{
 
     import = "import",
     newImport = "newImport",
@@ -233,8 +234,8 @@ export enum InventoryItemHistory{
     export = "export",
     orderExport = "orderExport"
 }
-registerEnumType(InventoryItemHistory, {
-    name: 'InventoryItemHistory',
+registerEnumType(ItemHistoryEnum, {
+    name: 'ItemHistoryEnum',
   });
 
 export enum InventoryRentType{

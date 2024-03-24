@@ -7,6 +7,8 @@ import { In, QueryRunner, Repository } from 'typeorm';
 import { BallotService } from 'src/ballot/ballot.service';
 import { CreateInventoryInput } from 'src/inventory/dto/create-inventory.input';
 import { numberToLetters } from 'support/numberToLetter.generator';
+import { PaginateRacksInput } from './dto/paginate-racks.input';
+import { buildPaginator } from 'typeorm-cursor-pagination';
 
 @Injectable()
 export class RackService {
@@ -30,10 +32,6 @@ export class RackService {
       await this.ballotService.createFake(inventoryId, result.raw['insertId'])
     }
     
-  }
-
-  create(input:CreateRackInput){
-    throw Error('Unimplemented')
   }
 
 
@@ -64,8 +62,30 @@ export class RackService {
     
   }
 
-  findAll() {
-    return `This action returns all rack`;
+
+  paginateRacks(input:PaginateRacksInput){
+
+    let queryBuilder = this.rackRepo.createQueryBuilder();
+
+    if (input.invetoryIds.length > 0){
+
+      queryBuilder = queryBuilder.where({inventoryId: In(input.invetoryIds)});
+    }
+
+    const paginator = buildPaginator({
+      entity: Rack,
+      paginationKeys: ['createdAt'],
+      query: {
+        limit: input.limit,
+        order: input.isAsc ? 'ASC' : "DESC",
+        afterCursor: input.afterCursor,
+        beforeCursor: input.beforeCursor,
+        
+      }
+    })
+
+    return paginator.paginate(queryBuilder);
+
   }
 
   findAllInInventories(inventoryIds: readonly number[]){
@@ -75,10 +95,6 @@ export class RackService {
 
   findAllInInventory(inventoryId:number){
     return this.rackRepo.find({where: {inventoryId}})
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} rack`;
   }
 
   update(id: number, updateRackInput: UpdateRackInput) {

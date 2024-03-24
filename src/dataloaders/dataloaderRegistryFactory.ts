@@ -12,6 +12,7 @@ import { OrderService } from "src/order/order.service";
 import { UserAddressService } from "src/user-address/user-address.service";
 import { OrderStatusService } from "src/order-status/order-status.service";
 import { ItemPriceListService } from "src/item-price-list/item-price-list.service";
+import { BallotService } from "src/ballot/ballot.service";
 
 
 
@@ -29,13 +30,14 @@ export class DataloaderRegistryFactory {
     private readonly orderService:OrderService,
     private readonly userAddressService:UserAddressService,
     private readonly orderStatusService:OrderStatusService,
-    private readonly itemPriceListService:ItemPriceListService,) {}
+    private readonly itemPriceListService:ItemPriceListService,
+    private readonly ballotService:BallotService,) {}
 
   public create() {
     return new DataloaderRegistry(this.userRoleService, 
       this.roleService, this.itemService, this.itemInBoxService,
       this.rackService, this.orderItemService, this.itemPriceService,
       this.sheetOrderService, this.orderService, this.userAddressService,
-      this.orderStatusService, this.itemPriceListService);
+      this.orderStatusService, this.itemPriceListService, this.ballotService);
   }
 }

@@ -22,12 +22,12 @@ export class FinancialTransactionService {
     let queryBuilder = this.repo.createQueryBuilder();
     let whereSet = false
 
-    if (input.fromAccountId !== null ){
+    if (input.fromAccountId !== undefined ){
       queryBuilder = queryBuilder.where({ fromAccountId: In([input.fromAccountId])})
       whereSet = true;
     }
 
-    if (input.toAccountId !== null ){
+    if (input.toAccountId !== undefined ){
      if (whereSet){
         queryBuilder = queryBuilder.orWhere({ toAccountId: In([input.toAccountId])})
      }else{
@@ -36,7 +36,7 @@ export class FinancialTransactionService {
      }
     }
 
-     if (input.status !== null ){
+     if (input.status !== undefined ){
      if (whereSet){
         queryBuilder = queryBuilder.andWhere({ status: In([input.status])})
      }else{
@@ -45,7 +45,7 @@ export class FinancialTransactionService {
      }
     }
 
-     if (input.type !== null ){
+     if (input.type !== undefined ){
      if (whereSet){
         queryBuilder = queryBuilder.andWhere({ type: In([input.type])})
      }else{

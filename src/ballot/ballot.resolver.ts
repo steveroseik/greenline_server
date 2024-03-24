@@ -13,11 +13,6 @@ export class BallotResolver {
     return this.ballotService.create(createBallotInput);
   }
 
-  @Query(() => [Ballot], { name: 'ballot' })
-  findAll() {
-    return this.ballotService.findAll();
-  }
-
   @Query(() => Ballot, { name: 'ballot' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.ballotService.findOne(id);

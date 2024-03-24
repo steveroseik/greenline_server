@@ -15,7 +15,7 @@ import { UserAddressModule } from './user-address/user-address.module';
 import { UserModule } from './user/user.module';
 import { MerchantModule } from './merchant/merchant.module';
 import { OrderRelationModule } from './order-relation/order-relation.module';
-import { InventoryHistoryModule } from './inventory-history/inventory-history.module';
+import { InventoryItemHistoryModule } from './inventory-item-history/inventory-item-history.module';
 import { ItemInBoxModule } from './item-in-box/item-in-box.module';
 import { InventoryPricesModule } from './inventory-prices/inventory-price.module';
 import { InventorySupportModule } from './inventory-support/inventory-support.module';
@@ -99,7 +99,7 @@ import { MerchantDomesticShippingModule } from './merchant-domestic-shipping/mer
     InventoryModule, InventorySupportModule, 
     InventoryPricesModule, RackModule, 
     BallotModule, BoxModule, 
-    ItemInBoxModule, InventoryHistoryModule, 
+    ItemInBoxModule, InventoryItemHistoryModule, 
     OrderModule, OrderRelationModule, OrderItemModule, 
     MerchantModule, UserModule, UserAddressModule, 
     CourierSheetModule, SheetOrderStatusHistoryModule, 

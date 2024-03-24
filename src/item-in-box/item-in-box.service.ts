@@ -3,21 +3,25 @@ import { CreateItemInBoxInput } from './dto/create-item-in-box.input';
 import { UpdateItemInBoxInput } from './dto/update-item-in-box.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ItemInBox } from './entities/item-in-box.entity';
-import { In, MoreThan, Repository } from 'typeorm';
-import { ItemCountInput } from './dto/export-item.input';
-import { InventoryHistoryService } from 'src/inventory-history/inventory-history.service';
-import { ImportItemInput } from './dto/import-item.input';
+import { DataSource, In, MoreThan, Repository } from 'typeorm';
+import { ItemCountInput } from './dto/item-count.input';
+import { InventoryItemHistoryService } from 'src/inventory-item-history/inventory-item-history.service';
+import { ImportNewItemInput } from './dto/import-new-item.input';
 import { ItemInBoxPageInput } from './dto/paginate-item-in-box.input';
 import { buildPaginator } from 'typeorm-cursor-pagination';
 import { ItemInBoxPage } from './entities/item-in-box-page.entity';
-import { InventoryItemHistory } from 'support/enums';
+import { ItemHistoryEnum } from 'support/enums';
+import { Item } from 'src/item/entities/item.entity';
+import { Box } from 'src/box/entities/box.entity';
+import { InventoryItemHistory } from 'src/inventory-item-history/entities/inventory-item-history.entity';
 
 @Injectable()
 export class ItemInBoxService {
 
   constructor(
     @InjectRepository(ItemInBox) private readonly itemInBoxRepo:Repository<ItemInBox>,
-    private inventoryHistoryService:InventoryHistoryService){}
+    private inventoryHistoryService:InventoryItemHistoryService,
+    private dataSource:DataSource){}
 
   create(createItemInBoxInput: CreateItemInBoxInput) {
     return 'This action adds a new itemInBox';
@@ -46,7 +50,7 @@ export class ItemInBoxService {
 
     const nextPaginator = buildPaginator({
       entity: ItemInBox,
-      paginationKeys: ['id'],
+      paginationKeys: ['createdAt'],
       query: {
         limit: input.limit,
         order: input.isAsc ? 'ASC' : 'DESC',
@@ -103,12 +107,22 @@ export class ItemInBoxService {
         .andWhere('count >= :count', {count: input.count})
         .execute();
 
+
+      let type:ItemHistoryEnum;
+
+      if (input.type !== ItemHistoryEnum.orderExport && 
+          input.type !== ItemHistoryEnum.export){
+            
+            type = ItemHistoryEnum.export;
+      }else{
+        type = input.type;
+      }
     if (result.affected === 1){
       return this.inventoryHistoryService.createHistory({
         itemInBoxId: input.id,
         description: `${input.count} item(s) exported out of Inventory`,
-        type: input.type??InventoryItemHistory.export,
-        amount: input.count
+        type,
+        amount: -input.count
       });
     }
 
@@ -119,13 +133,14 @@ export class ItemInBoxService {
 
    
    // TODO:: find if this count overrides the exisiting count
-    const result = await this.itemInBoxRepo.update({id: input.id}, {count: input.count});
+    const result = await this.itemInBoxRepo.createQueryBuilder()
+    .update({count: () => `count + ${input.count}`}).where({id: input.id}).execute();
 
     if (result.affected === 1){
       return this.inventoryHistoryService.createHistory({
         itemInBoxId: input.id,
         description: `${input.count} item(s) imported into the inventory.`,
-        type: input.type??InventoryItemHistory.import,
+        type: ItemHistoryEnum.import,
         amount: input.count
       });
     }
@@ -133,20 +148,77 @@ export class ItemInBoxService {
     return false;
   }
 
-  async importNewItem(input:ImportItemInput): Promise<Boolean>{
+  async importNewItem(input:ImportNewItemInput): Promise<Boolean>{
 
-    const result = await this.itemInBoxRepo.insert(input);
+    const queryRunner = this.dataSource.createQueryRunner();
 
-    if (result.raw.affectedRows === 1){
-      return this.inventoryHistoryService.createHistory({
-        itemInBoxId: result.raw.insertId,
+    try{
+
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+
+      if (input.boxId == undefined && input.ballotId == undefined) throw Error('no location specified')
+      if (input.boxName && input.ballotId == undefined) throw Error('box name unspecificied')
+
+      const item = await queryRunner.manager.findOne(Item, {where: {sku: input.itemSku}});
+      if (item === null) throw Error('item does not exist');
+
+      const merchantId = item.merchantId;
+      let boxId: number
+    
+      /// box exist
+      if (input.boxId !== undefined){
+        boxId = input.boxId;
+      }else{
+        // should create new box
+        const newBox = await queryRunner.manager.insert(Box, {
+          name: input.boxName,
+          merchantId: input.ownedByOneMerchant ? merchantId : null,
+          ballotId: input.ballotId
+        })
+
+        if (newBox.raw.affectedRows === 1){
+          boxId = newBox.raw.insertId;
+        }else{
+          throw Error('failed to create new box');
+        }
+      }
+      
+      /// create new itemInBox
+
+      const response = await queryRunner.manager.insert(ItemInBox, {
+        itemSku: input.itemSku,
+        merchantId,
+        boxId,
+        count: input.count,
+        minCount: input.minCount,
+        inventoryId: input.inventoryId
+      });
+
+      if (response.raw.affectedRows !== 1) throw Error('failed to create new itemInBox');
+
+      const historyResponse = await queryRunner.manager.insert(InventoryItemHistory, {
+
+        itemInBoxId: response.raw.insertId,
         description: `${input.count} item(s) imported into BoxId:${input.boxId}`,
-        type: InventoryItemHistory.newImport,
+        type: ItemHistoryEnum.newImport,
         amount: input.count
       });
-    }
 
-    return false;
+      if (historyResponse.raw.affectedRows !== 1) throw Error('failed to create history')
+
+      await queryRunner.commitTransaction();
+
+      return true;
+
+    }catch (e){
+
+      await queryRunner.rollbackTransaction();
+      return e;
+
+    }finally{
+      queryRunner.release();
+    }
   }
 
   findAll() {
