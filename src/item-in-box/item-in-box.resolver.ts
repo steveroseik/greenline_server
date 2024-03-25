@@ -80,7 +80,7 @@ export class ItemInBoxResolver {
     return this.itemInBoxService.remove(id);
   }
 
-  @ResolveField(() => Item)
+  @ResolveField(() => Item, { nullable: true })
   item(@Parent() iib:ItemInBox, @Context() { loaders } : { loaders: DataloaderRegistry}){
     return loaders.ItemDataLoader.load(iib.itemSku);
   }
