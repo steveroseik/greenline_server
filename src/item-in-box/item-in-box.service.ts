@@ -83,7 +83,7 @@ export class ItemInBoxService {
           inventoryId,
           SUM(count) AS total_count
       FROM
-          item-in-box
+          \`item-in-box\`
       WHERE
           itemSku in (${skus.join(',')}) AND inventoryId = ${keys[0].inventoryId} AND count > 0
       GROUP BY
