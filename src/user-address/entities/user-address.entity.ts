@@ -25,13 +25,13 @@ export class UserAddress {
   @Field()
   userId: string;
 
-  @Column("int", { name: "countryId" })
+  @Column("varchar", { name: "country" })
   @Field()
-  countryId: number;
+  country: string;
 
-  @Column("int", { name: "cityId" })
+  @Column("varchar", { name: "city" })
   @Field()
-  cityId: number;
+  city: string;
 
   @Column("varchar", { name: "address", length: 255 })
   @Field()

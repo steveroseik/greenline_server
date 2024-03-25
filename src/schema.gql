@@ -219,8 +219,8 @@ type UserPage {
 type userAddress {
   id: Int!
   userId: String!
-  countryId: Int!
-  cityId: Int!
+  country: String!
+  city: String!
   address: String!
   createdAt: Timestamp!
   lastModified: Timestamp!
