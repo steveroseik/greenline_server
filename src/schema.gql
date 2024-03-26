@@ -583,6 +583,18 @@ type MerchantDomesticShipping {
   exampleField: Int!
 }
 
+type MerchantCustomer {
+  id: Int!
+  merchantId: Int!
+  customerId: Int!
+  customerName: String!
+}
+
+type MerchantCustomerAddress {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
 type Query {
   findRoles: [Role!]!
   role(id: Int!): Role!
@@ -628,6 +640,8 @@ type Query {
   listener(id: Int!): Listener!
   hub(id: Int!): Hub!
   merchantDomesticShipping(id: Int!): MerchantDomesticShipping!
+  merchantCustomer(id: Int!): MerchantCustomer!
+  merchantCustomerAddress(id: Int!): MerchantCustomerAddress!
 }
 
 input paginateItemsInput {
@@ -819,6 +833,12 @@ type Mutation {
   createMerchantDomesticShipping(createMerchantDomesticShippingInput: CreateMerchantDomesticShippingInput!): MerchantDomesticShipping!
   updateMerchantDomesticShipping(updateMerchantDomesticShippingInput: UpdateMerchantDomesticShippingInput!): MerchantDomesticShipping!
   removeMerchantDomesticShipping(id: Int!): MerchantDomesticShipping!
+  createMerchantCustomer(createMerchantCustomerInput: CreateMerchantCustomerInput!): MerchantCustomer!
+  updateMerchantCustomer(updateMerchantCustomerInput: UpdateMerchantCustomerInput!): MerchantCustomer!
+  removeMerchantCustomer(id: Int!): MerchantCustomer!
+  createMerchantCustomerAddress(createMerchantCustomerAddressInput: CreateMerchantCustomerAddressInput!): MerchantCustomerAddress!
+  updateMerchantCustomerAddress(updateMerchantCustomerAddressInput: UpdateMerchantCustomerAddressInput!): MerchantCustomerAddress!
+  removeMerchantCustomerAddress(id: Int!): MerchantCustomerAddress!
 }
 
 input UpdateUserRoleInput {
@@ -1319,6 +1339,28 @@ input CreateMerchantDomesticShippingInput {
 }
 
 input UpdateMerchantDomesticShippingInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateMerchantCustomerInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateMerchantCustomerInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input CreateMerchantCustomerAddressInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateMerchantCustomerAddressInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!

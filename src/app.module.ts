@@ -52,6 +52,8 @@ import express from 'express';
 import config from 'ormconfig';
 import { FinancialTransactionStatusModule } from './financial-transaction-status/financial-transaction-status.module';
 import { MerchantDomesticShippingModule } from './merchant-domestic-shipping/merchant-domestic-shipping.module';
+import { MerchantCustomerModule } from './merchant-customer/merchant-customer.module';
+import { MerchantCustomerAddressModule } from './merchant-customer-address/merchant-customer-address.module';
 
 @Module({
   imports: [
@@ -107,7 +109,7 @@ import { MerchantDomesticShippingModule } from './merchant-domestic-shipping/mer
     RequestModule, FinancialAccountModule, ExpenseModule, 
     FinancialTransactionModule, FinancialTransactionStatusModule, 
     AuthModule,
-    RoleModule, UserRoleModule, ListenersModule, DataloadersModule, HubModule, ItemPriceListModule, MerchantDomesticShippingModule,
+    RoleModule, UserRoleModule, ListenersModule, DataloadersModule, HubModule, ItemPriceListModule, MerchantDomesticShippingModule, MerchantCustomerModule, MerchantCustomerAddressModule,
     ],
   controllers: [AppController],
   providers: [AppService, DataloaderRegistryFactory, 

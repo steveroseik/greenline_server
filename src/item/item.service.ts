@@ -129,7 +129,9 @@ export class ItemService {
 
         if (singleItem.itemPrices !== undefined){
           itemPrices.set(singleItem.priceReference, singleItem.itemPrices);
+          
           itemPricesList = [...itemPricesList, ...singleItem.itemPrices];
+
         }
 
         singleItem.sku = GenerateItemSku(singleItem.name, singleItem.merchantId, 
@@ -138,9 +140,9 @@ export class ItemService {
       })
 
       const priceResult = await queryRunner.manager
-      .insert(ItemPrice, itemPricesList)
+      .insert(ItemPrice, Array.from(itemPricesList))
 
-      if (priceResult.raw.affectedRows === itemPrices.size){
+      if (priceResult.raw.affectedRows === itemPricesList.length){
 
         const itemResult = await queryRunner.manager.insert(Item, Array.from(input))
 
